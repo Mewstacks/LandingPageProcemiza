@@ -1165,7 +1165,7 @@ body {
 }
 .margin-result > div { display: flex; align-items: center; gap: 1.25rem; }
 .margin-equals { color: var(--color-accent); font-size: 1.5rem; }
-.margin-result strong { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3.7rem); font-weight: 380; }
+.margin-result strong { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3.7rem); font-weight: 380; line-height: 1.05; }
 .margin-result p { color: var(--color-dim); max-width: 18rem; font-size: 0.95rem; }
 .margin-compression {
   position: absolute; z-index: 2; top: 0; right: 0;
@@ -1175,10 +1175,11 @@ body {
   mix-blend-mode: multiply; pointer-events: none;
 }
 
-/* --------------------------- custo invisível ------------------------------ */
+/* ------------------ onde a margem se perde (dentro de #custo) -------------- */
 
-.hidden-cost { padding-block: clamp(7rem, 12vw, 11rem); }
-.hidden-cost-list { margin-top: clamp(4rem, 8vw, 7rem); }
+.hidden-cost-head-block { margin-top: clamp(5rem, 9vw, 8rem); }
+.hidden-cost-eyebrow { color: var(--color-accent); }
+.hidden-cost-list { margin-top: clamp(2.5rem, 5vw, 4rem); }
 .hidden-cost-row {
   display: grid;
   grid-template-columns: 5rem minmax(15rem, 0.8fr) minmax(18rem, 1fr);
@@ -1189,6 +1190,7 @@ body {
 }
 .hidden-cost-row:last-child { border-bottom: 1px solid var(--color-line); }
 .hidden-cost-index { font-family: var(--font-mono); color: var(--color-accent); font-size: 0.78rem; }
+.hidden-cost-head { display: flex; flex-direction: column; align-items: flex-start; gap: 0.9rem; }
 .hidden-cost-row h3 { font-family: var(--font-display); font-size: clamp(1.55rem, 2.6vw, 2.5rem); font-weight: 380; line-height: 1.12; }
 .hidden-cost-row p { color: var(--color-mist); font-size: 1rem; line-height: 1.7; max-width: 42rem; }
 
@@ -1196,6 +1198,7 @@ body {
 
 .conta-section { padding-block: clamp(7rem, 12vw, 11rem); background: #0c1114; }
 .conta-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(22rem, 0.72fr); gap: clamp(4rem, 9vw, 10rem); align-items: center; }
+.conta-eyebrow { color: var(--color-accent); margin-bottom: 1.4rem; }
 .conta-brand { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 3rem; }
 .conta-brand > img { width: 2.6rem; height: 2.6rem; object-fit: contain; }
 .conta-brand p { font-family: var(--font-display); font-size: 1.45rem; line-height: 1.1; }

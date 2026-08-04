@@ -22,10 +22,10 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.domain),
-  title: "Procemiza — Inteligência operacional para transformar processo em margem",
+  title: "Procemiza — Automação e sistemas para escritórios contábeis",
   description: site.description,
   openGraph: {
-    title: "Procemiza — Inteligência operacional para transformar processo em margem",
+    title: "Procemiza — Automação e sistemas para escritórios contábeis",
     description: site.description,
     url: site.domain,
     siteName: "Procemiza",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
         url: "/media/procemiza/og/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Procemiza — Inteligência operacional",
+        alt: "Procemiza — sistemas para escritórios contábeis",
       },
     ],
   },
@@ -51,11 +51,17 @@ export const viewport: Viewport = {
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "Organization",
+  "@type": "ProfessionalService",
   name: "Procemiza",
   url: site.domain,
   description: site.description,
   logo: `${site.domain}/media/procemiza/brand/logo-horizontal-color.png`,
+  areaServed: "BR",
+  knowsAbout: [
+    "Automação para escritórios contábeis",
+    "Integração de sistemas contábeis",
+    "Rotina fiscal, contábil e de departamento pessoal",
+  ],
 };
 
 export default function RootLayout({

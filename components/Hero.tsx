@@ -76,7 +76,7 @@ export function Hero() {
     <section id="topo" className="hero" aria-labelledby="hero-title">
       <div className="wrap hero-inner">
         <div className="hero-copy">
-          <p className="hero-kicker mono-label">Inteligência operacional / 01—04</p>
+          <p className="hero-kicker mono-label">Inteligência operacional / escritórios contábeis</p>
           <h1 id="hero-title" className="display-xl">
             {hero.title}
           </h1>
@@ -99,8 +99,8 @@ export function Hero() {
 
       <div ref={mediaRef} className="hero-media" aria-hidden="true">
         <div className="hero-media-label">
-          <span>Entradas dispersas</span>
-          <span>Sistema organizado</span>
+          <span>Documentos dispersos</span>
+          <span>Rotina organizada</span>
         </div>
         <Image
           src="/media/procemiza/hero/hero-system-prototype.svg"

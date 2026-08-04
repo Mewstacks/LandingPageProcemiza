@@ -1,9 +1,7 @@
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
-import { OperationalStory } from "@/components/OperationalStory";
 import { LayeredInfrastructure } from "@/components/layers/LayeredInfrastructure";
 import { MarginReality } from "@/components/MarginReality";
-import { HiddenCost } from "@/components/HiddenCost";
 import { Conta200 } from "@/components/Conta200";
 import { Method } from "@/components/Method";
 import { PilotCTA } from "@/components/PilotCTA";
@@ -21,10 +19,8 @@ export default function Home() {
       <Header />
       <main id="conteudo">
         <Hero />
-        <OperationalStory />
-        <LayeredInfrastructure />
         <MarginReality />
-        <HiddenCost />
+        <LayeredInfrastructure />
         <Conta200 />
         <Method />
         <PilotCTA />

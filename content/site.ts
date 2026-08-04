@@ -3,17 +3,16 @@ export const site = {
   name: "Procemiza",
   legalName: "Procemiza — Inteligência de Negócios",
   domain: "https://procemiza.com.br",
-  tagline: "Sistemas para operações que precisam fluir melhor",
+  tagline: "Sistemas para escritórios contábeis que precisam ganhar margem",
   description:
-    "A Procemiza organiza processos dispersos e constrói automações, integrações e sistemas úteis para a operação real.",
+    "A Procemiza constrói automações, integrações e sistemas para escritórios contábeis — menos conferência manual e retrabalho, mais margem por cliente.",
   /** [CANAL OFICIAL DE CONTATO NECESSÁRIO] Validar antes de publicar. */
   contactUrl: "https://procemiza.com.br",
 } as const;
 
 export const nav = [
-  { label: "A empresa", href: "#empresa" },
-  { label: "Camadas", href: "#camadas" },
   { label: "O custo", href: "#custo" },
+  { label: "Camadas", href: "#camadas" },
   { label: "Conta 200", href: "#conta-200" },
   { label: "Método", href: "#como-atuamos" },
 ] as const;
@@ -25,9 +24,10 @@ export const cta = {
 
 export const hero = {
   title: "Transforme processo em margem.",
-  text: "A Procemiza entende como o trabalho realmente acontece, conecta o que está disperso e constrói sistemas que devolvem clareza, tempo e capacidade para a operação.",
+  text: "A Procemiza constrói automações, integrações e sistemas para escritórios contábeis. Nascemos dentro da rotina: do documento que o cliente não envia ao fechamento que sempre aperta no fim do mês.",
 } as const;
 
+/** Fora da página desde o foco em contabilidade (OperationalStory desplugado do page.tsx). */
 export const companyStory = {
   title: "Uma empresa construída dentro da operação.",
   text: "A Procemiza nasceu observando o trabalho entre mensagens, documentos, planilhas, conferências e sistemas que não conversam. É desse contato com a rotina que surgem soluções feitas para uso real — não para uma apresentação.",
@@ -52,75 +52,81 @@ export const companyStory = {
 
 export const layeredInfrastructure = {
   title: "Infraestrutura operacional em camadas.",
-  text: "Cada solução parte das origens que a operação já usa, aplica regras claras, conecta sistemas e devolve uma entrega que as pessoas conseguem usar.",
+  text: "Cada solução parte dos canais que o escritório já usa, aplica os critérios do departamento, conecta os sistemas e devolve a informação pronta para a equipe agir.",
 } as const;
 
 export const marginReality = {
-  title: "Mensalidade não é lucro.",
-  text: "Receita não representa margem quando a operação consome horas, pessoas e conferências que nunca aparecem na linha principal do contrato.",
-  revenue: "Receita recorrente",
-  deductions: ["Horas invisíveis", "Retrabalho", "Conferências manuais", "Ferramentas desconectadas"],
-  result: "Margem real",
-  note: "O que sobra depois que a operação acontece.",
+  title: "Honorário mensal não é margem.",
+  text: "O contrato é recorrente; o custo de atender também. Horas de conferência, retrabalho de fechamento e cobrança de documento consomem a margem antes de ela aparecer.",
+  revenue: "Honorário mensal",
+  deductions: [
+    "Horas de conferência",
+    "Retrabalho de fechamento",
+    "Cobrança de documento",
+    "Sistemas que não conversam",
+  ],
+  result: "Margem por cliente",
+  note: "O que sobra depois que o escritório entrega.",
 } as const;
 
 export const hiddenCost = {
-  title: "O custo invisível da ineficiência.",
-  intro: "O problema raramente está em uma grande falha. Ele se acumula nas pequenas repetições que a rotina aprendeu a aceitar.",
+  eyebrow: "Onde a margem se perde",
+  intro: "O problema raramente está numa grande falha. Ele se acumula nas pequenas repetições que o mês aprendeu a aceitar.",
   items: [
     {
       n: "01",
-      title: "Informações dispersas",
-      text: "O dado existe, mas está dividido entre conversas, sistemas e pessoas — longe de quem precisa decidir.",
+      dept: "Atendimento",
+      title: "Documento que não chega",
+      text: "A equipe cobra o mesmo XML, extrato e comprovante por WhatsApp, e-mail e telefone até o prazo apertar.",
     },
     {
       n: "02",
-      title: "Conferências manuais",
-      text: "A equipe compara telas, arquivos e versões para compensar ferramentas que não compartilham contexto.",
+      dept: "Fiscal",
+      title: "Conferência manual",
+      text: "Nota, guia e sistema comparados tela a tela para compensar ferramentas que não trocam contexto.",
     },
     {
       n: "03",
-      title: "Retrabalho constante",
-      text: "A mesma informação é digitada, corrigida e encaminhada mais de uma vez antes de chegar ao destino.",
+      dept: "Contábil",
+      title: "Retrabalho no fechamento",
+      text: "A mesma informação é digitada, corrigida e reenviada mais de uma vez antes de virar lançamento.",
     },
     {
       n: "04",
-      title: "Planilhas frágeis",
-      text: "Regras importantes ficam presas a fórmulas, arquivos paralelos e conhecimento concentrado em poucas pessoas.",
+      dept: "Pessoal",
+      title: "Planilha paralela",
+      text: "Regras de folha, prazos e controles vivem em arquivos que só uma pessoa da equipe sabe manter.",
     },
     {
       n: "05",
-      title: "Documentos fora de contexto",
-      text: "Arquivos chegam sem empresa, período, finalidade ou próximo passo claramente registrados.",
-    },
-    {
-      n: "06",
+      dept: "Societário",
       title: "Talento preso no operacional",
-      text: "Pessoas qualificadas gastam energia mantendo a rotina de pé em vez de melhorar a operação.",
+      text: "Analista qualificado sustentando rotina em vez de revisar, orientar e segurar o cliente.",
     },
   ],
 } as const;
 
 export const conta200 = {
   name: "Conta 200",
+  eyebrow: "O que o escritório entrega ao cliente",
   tagline: "Sua contabilidade, onde você estiver.",
-  title: "Um processo existente transformado em sistema.",
-  text: "No Conta 200, o cliente pede documentos e informações pelo WhatsApp. A solicitação ganha contexto, consulta apenas dados autorizados e segue para a entrega no canal que a pessoa já usa.",
+  title: "Uma rotina do escritório transformada em sistema.",
+  text: "O cliente pede nota, guia ou documento pelo WhatsApp. O pedido ganha contexto — empresa, competência, finalidade —, consulta apenas dados autorizados e volta pronto, sem ocupar a equipe do escritório.",
   flow: [
     {
       n: "01",
       name: "Pedido",
-      text: "O cliente envia a informação no canal em que já está.",
+      text: "O cliente pede no canal em que já está — sem novo app, sem novo login.",
     },
     {
       n: "02",
       name: "Contexto",
-      text: "Empresa, documento, período e finalidade são organizados para o processo correto.",
+      text: "Empresa, documento, competência e finalidade são identificados e roteados para o processo certo.",
     },
     {
       n: "03",
       name: "Entrega",
-      text: "A informação volta pronta para continuar o trabalho, sem criar mais uma ferramenta para aprender.",
+      text: "A resposta volta pronta no WhatsApp. O atendimento deixa de ser fila da equipe.",
     },
   ],
   screenshotNote: "Captura real anonimizada. Conteúdo preservado no canal original.",
@@ -132,36 +138,36 @@ export const method = {
     {
       n: "01",
       name: "Diagnóstico",
-      text: "Entender onde o processo perde tempo, contexto e margem — olhando pessoas, ferramentas, regras e exceções.",
-      artifact: "Mapa do processo",
+      text: "Acompanhar uma rotina real do escritório — fiscal, contábil, pessoal ou atendimento — e ver onde ela perde tempo, contexto e margem.",
+      artifact: "Mapa da rotina",
     },
     {
       n: "02",
       name: "Construção",
-      text: "Transformar o gargalo em uma solução integrada à operação, começando pelo núcleo que precisa provar valor.",
-      artifact: "Protótipo funcional",
+      text: "Transformar o gargalo em um sistema integrado à rotina, começando pelo recorte que precisa provar valor em semanas.",
+      artifact: "Protótipo em uso",
     },
     {
       n: "03",
       name: "Evolução",
-      text: "Observar o uso, ajustar regras e melhorar continuamente o que foi construído.",
-      artifact: "Acompanhamento e ajustes",
+      text: "Observar o uso no fechamento seguinte, ajustar regras e ampliar para os outros departamentos.",
+      artifact: "Ajuste e expansão",
     },
   ],
 } as const;
 
 export const pilot = {
-  title: "Comece pelo gargalo que mais custa à sua operação.",
-  text: "Escolhemos uma prioridade concreta, entendemos o fluxo atual e desenhamos o menor sistema capaz de melhorar o trabalho de verdade.",
+  title: "Comece pela rotina que mais custa ao escritório.",
+  text: "Escolhemos uma prioridade concreta — cobrança de documento, conferência fiscal, fechamento —, entendemos o fluxo atual e desenhamos o menor sistema capaz de melhorar o trabalho de verdade.",
   next: [
-    "Uma conversa sobre o processo atual",
+    "Uma conversa sobre a rotina atual",
     "Definição conjunta do primeiro recorte",
     "Um caminho claro para construir e acompanhar",
   ],
-  microcopy: "Sem promessa genérica. O primeiro passo é entender o trabalho como ele acontece hoje.",
+  microcopy: "Sem promessa genérica. O primeiro passo é entender o mês como ele acontece hoje.",
 } as const;
 
 export const footer = {
-  line: "Automação, integração, sistemas e inteligência operacional construídos a partir do trabalho real.",
+  line: "Automação, integração e sistemas para escritórios contábeis, construídos a partir da rotina real.",
   note: "Procemiza — Inteligência de Negócios",
 } as const;

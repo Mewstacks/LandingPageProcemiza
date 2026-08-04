@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { marginReality } from "@/content/site";
+import { hiddenCost, marginReality } from "@/content/site";
 import { gsap } from "@/lib/gsap";
 import { Reveal } from "@/components/ui/Reveal";
 
@@ -27,38 +27,60 @@ export function MarginReality() {
 
   return (
     <section id="custo" ref={rootRef} className="margin-section" aria-labelledby="margem-title">
-      <div className="wrap grid lg:grid-cols-[0.82fr_1.18fr] gap-16 lg:gap-28 items-start">
-        <div className="lg:sticky lg:top-28">
-          <Reveal>
-            <h2 id="margem-title" className="display-lg max-w-[13ch]">{marginReality.title}</h2>
-            <p className="lede mt-7">{marginReality.text}</p>
+      <div className="wrap">
+        <div className="grid lg:grid-cols-[0.82fr_1.18fr] gap-16 lg:gap-28 items-start">
+          <div className="lg:sticky lg:top-28">
+            <Reveal>
+              <h2 id="margem-title" className="display-lg max-w-[13ch]">{marginReality.title}</h2>
+              <p className="lede mt-7">{marginReality.text}</p>
+            </Reveal>
+          </div>
+
+          <Reveal delay={0.08}>
+            <div className="margin-equation" aria-label="Composição qualitativa da margem por cliente">
+              <div className="margin-revenue">
+                <span>{marginReality.revenue}</span>
+                <span className="margin-signal" aria-hidden="true" />
+              </div>
+              <div className="margin-deductions">
+                {marginReality.deductions.map((item) => (
+                  <div key={item} className="margin-deduction">
+                    <span aria-hidden="true">−</span>
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="margin-result">
+                <div>
+                  <span className="margin-equals" aria-hidden="true">=</span>
+                  <strong>{marginReality.result}</strong>
+                </div>
+                <p>{marginReality.note}</p>
+              </div>
+              <div className="margin-compression" aria-hidden="true" />
+            </div>
           </Reveal>
         </div>
 
-        <Reveal delay={0.08}>
-          <div className="margin-equation" aria-label="Composição qualitativa da margem real">
-            <div className="margin-revenue">
-              <span>{marginReality.revenue}</span>
-              <span className="margin-signal" aria-hidden="true" />
-            </div>
-            <div className="margin-deductions">
-              {marginReality.deductions.map((item) => (
-                <div key={item} className="margin-deduction">
-                  <span aria-hidden="true">−</span>
-                  <span>{item}</span>
-                </div>
-              ))}
-            </div>
-            <div className="margin-result">
-              <div>
-                <span className="margin-equals" aria-hidden="true">=</span>
-                <strong>{marginReality.result}</strong>
+        <div className="hidden-cost-head-block">
+          <Reveal>
+            <p className="mono-label hidden-cost-eyebrow">{hiddenCost.eyebrow}</p>
+            <p className="lede mt-5">{hiddenCost.intro}</p>
+          </Reveal>
+        </div>
+
+        <ol className="hidden-cost-list">
+          {hiddenCost.items.map((item, index) => (
+            <Reveal as="li" key={item.n} delay={index * 0.035} className="hidden-cost-row">
+              <span className="hidden-cost-index">{item.n}</span>
+              <div className="hidden-cost-head">
+                <h3>{item.title}</h3>
+                <span className="tag-chip">{item.dept}</span>
               </div>
-              <p>{marginReality.note}</p>
-            </div>
-            <div className="margin-compression" aria-hidden="true" />
-          </div>
-        </Reveal>
+              <p>{item.text}</p>
+            </Reveal>
+          ))}
+        </ol>
       </div>
     </section>
   );

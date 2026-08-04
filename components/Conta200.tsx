@@ -9,6 +9,7 @@ export function Conta200() {
         <div className="conta-grid">
           <div className="conta-copy">
             <Reveal>
+              <p className="mono-label conta-eyebrow">{conta200.eyebrow}</p>
               <div className="conta-brand">
                 <Image src="/media/procemiza/conta200/simbolo.png" alt="" width={2831} height={2998} />
                 <div>
@@ -34,7 +35,7 @@ export function Conta200() {
 
             <Reveal delay={0.18}>
               <a href={site.contactUrl} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
-                Conversar sobre um processo <span className="arrow" aria-hidden="true">→</span>
+                Conversar sobre uma rotina <span className="arrow" aria-hidden="true">→</span>
               </a>
             </Reveal>
           </div>
