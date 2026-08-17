@@ -6,8 +6,7 @@ export const site = {
   tagline: "Sistemas para escritórios contábeis que precisam ganhar margem",
   description:
     "A Procemiza constrói automações, integrações e sistemas para escritórios contábeis — menos conferência manual e retrabalho, mais margem por cliente.",
-  /** [CANAL OFICIAL DE CONTATO NECESSÁRIO] Validar antes de publicar. */
-  contactUrl: "https://procemiza.com.br",
+  contactUrl: "https://wa.me/5554999425740",
 } as const;
 
 export const nav = [

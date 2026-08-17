@@ -12,7 +12,7 @@ export function Footer() {
         <nav aria-label="Navegação do rodapé">
           <ul>{nav.map((item) => <li key={item.href}><a href={item.href}>{item.label}</a></li>)}</ul>
         </nav>
-        <a className="footer-contact" href={site.contactUrl} target="_blank" rel="noopener noreferrer">
+        <a className="footer-contact" href={site.domain} target="_blank" rel="noopener noreferrer">
           procemiza.com.br <span aria-hidden="true">↗</span>
         </a>
       </div>
