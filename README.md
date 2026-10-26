@@ -79,8 +79,12 @@ no plano da tela e suas linhas partem da mesma geometria dos planos.
 
 A faixa de clientes contém **Di Bracco Enopizzeria**, **Roselar Móveis**,
 **Fedrizzi Contabilidade & Consultoria**, **Rafael Pandolfo Advogados Associados**,
-**Crescer Consultoria em RH** (Caxias do Sul) e **Miolo**. A grade é estática,
-com três colunas no desktop e duas no celular. As imagens são locais, com cores e
+**Crescer Consultoria em RH** (Caxias do Sul) e **Miolo**. As marcas percorrem uma
+única linha contínua, com tamanhos individuais para equilibrar seu peso visual.
+A esteira pode ser pausada pelo botão ou ao passar o mouse e fica parada quando está fora da tela.
+Com movimento reduzido ou sem JavaScript, a faixa permite rolagem horizontal
+manual. A cópia visual usada no loop fica oculta de leitores de tela.
+As imagens são locais, com cores e
 proporções preservadas. As URLs de origem e o processamento constam em
 `public/media/procemiza/clients/provenance.json`; originais foram preservados.
 

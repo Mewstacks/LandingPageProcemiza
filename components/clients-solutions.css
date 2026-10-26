@@ -1,21 +1,32 @@
-/* The clients form one quiet, continuous strip; original artwork keeps its color. */
+/* Two identical groups make one continuous row; only the first is read aloud. */
 .clients-strip {
   scroll-margin-top: 6rem;
   background: var(--color-paper);
   color: var(--color-ink-800);
-  padding-block: 2.75rem;
+  padding-block: 2rem 2.5rem;
+  --client-gap: clamp(3rem, 4.5vw, 5rem);
 }
-.clients-layout { display: grid; grid-template-columns: minmax(10rem, 1fr) 3fr; align-items: center; gap: 3rem; }
-.clients-layout h2 { max-width: 14rem; font-size: 1rem; line-height: 1.55; font-weight: 400; }
-.clients-marks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: center; gap: 2.25rem 2.5rem; margin: 0; padding: 0; list-style: none; }
-.client-mark { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 5.5rem; }
-.client-mark img { display: block; object-fit: contain; height: auto; max-width: 100%; }
-.client-mark--di-bracco img { width: 6.75rem; border-radius: 50%; }
-.client-mark--roselar img { width: 13.5rem; }
-.client-mark--fedrizzi img { width: 10rem; }
-.client-mark--rafael-pandolfo img { width: 13.5rem; }
-.client-mark--crescer-rh img { width: 11.5rem; }
-.client-mark--miolo img { width: 9.5rem; }
+.clients-heading { display: grid; grid-template-columns: minmax(0, 1fr) 9.5rem; align-items: center; gap: 1.5rem; min-height: 2.5rem; margin-bottom: 1.75rem; }
+.clients-heading h2 { margin: 0; max-width: 30rem; font-size: 1rem; line-height: 1.55; font-weight: 400; }
+.clients-motion-toggle { display: inline-flex; align-items: center; justify-content: end; gap: .5rem; padding: .625rem 0; color: #625f58; background: none; border: 0; font: inherit; font-size: .75rem; cursor: pointer; }
+.clients-motion-toggle svg { width: .875rem; height: .875rem; flex: none; }
+.clients-motion-toggle:hover { color: #1d1c1a; }
+.clients-window { overflow-x: auto; scrollbar-width: thin; scrollbar-color: #aaa69e transparent; }
+.clients-window:focus-visible { outline-offset: -3px; }
+.clients-track { display: flex; width: max-content; }
+.clients-marks { display: flex; align-items: center; justify-content: space-around; flex: none; min-width: 100vw; gap: var(--client-gap); margin: 0; padding: .5rem calc(var(--client-gap) / 2); list-style: none; }
+.client-mark { display: flex; align-items: center; justify-content: center; flex: none; width: var(--logo-width); height: 8rem; }
+.client-mark img { display: block; width: 100%; height: auto; object-fit: contain; }
+.client-mark--di-bracco img { border-radius: 50%; }
+.clients-marks--duplicate { display: none; }
+.clients-strip[data-animated="true"] .clients-window { overflow-x: hidden; mask-image: linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 24px), transparent); }
+.clients-strip[data-animated="true"] .clients-marks--duplicate { display: flex; }
+.clients-strip[data-animated="true"] .clients-track { animation: clients-conveyor 48s linear infinite; }
+.clients-strip[data-paused="true"] .clients-track { animation-play-state: paused; }
+@keyframes clients-conveyor { to { transform: translateX(-50%); } }
+@media (hover: hover) and (pointer: fine) {
+  .clients-window:hover .clients-track { animation-play-state: paused; }
+}
 
 .solutions-section { scroll-margin-top: 4rem; }
 .solutions-intro { display: flex; justify-content: space-between; align-items: end; gap: 3rem; margin-bottom: clamp(3rem, 6vw, 5rem); }
@@ -122,8 +133,6 @@
 @keyframes solution-appear { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
 
 @media (max-width: 1100px) {
-  .clients-layout { gap: 2rem; grid-template-columns: minmax(9rem, 1fr) 3fr; }
-  .clients-marks { gap: 2rem; }
   .solutions-intro { align-items: start; }
   .solutions-intro > p { max-width: 19rem; }
 }
@@ -133,24 +142,13 @@
   .solutions-layout { max-width: 42rem; }
   .solution-visual { max-width: 34rem; }
   .solution-workbench { min-height: 23rem; }
-  .clients-layout { grid-template-columns: 1fr; gap: 2rem; }
-  .clients-layout h2 { max-width: none; text-align: center; }
-  .client-mark--di-bracco img { width: 5.75rem; }
-  .client-mark--roselar img { width: 12rem; }
-  .client-mark--fedrizzi img { width: 8.5rem; }
 }
 @media (max-width: 600px) {
-  .clients-strip { padding-block: 2.5rem; }
-  .clients-layout { gap: 1.75rem; }
-  .clients-layout h2 { max-width: 18rem; margin-inline: auto; font-size: .875rem; }
-  .clients-marks { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 1.25rem; }
-  .client-mark { min-height: 5.5rem; }
-  .client-mark--di-bracco img { width: 4.75rem; }
-  .client-mark--roselar img { width: 8.25rem; }
-  .client-mark--fedrizzi img { width: 7rem; }
-  .client-mark--rafael-pandolfo img { width: 9.25rem; }
-  .client-mark--crescer-rh img { width: 9rem; }
-  .client-mark--miolo img { width: 7rem; }
+  .clients-strip { padding-block: 1.75rem 2rem; --client-gap: 2.5rem; }
+  .clients-heading { grid-template-columns: minmax(0, 1fr) 8rem; gap: 1rem; margin-bottom: 1rem; }
+  .clients-heading h2 { font-size: .875rem; }
+  .clients-motion-toggle { font-size: .6875rem; gap: .3rem; }
+  .client-mark { width: var(--logo-width-mobile); height: 7rem; }
   .solution-detail summary { padding-block: 1.5rem; }
   .solution-description { padding-bottom: 1.5rem; }
   .solution-visual { padding: 1.15rem; }
@@ -167,6 +165,9 @@
   .demo-app-note { font-size: .5rem; }
 }
 @media (prefers-reduced-motion: reduce) {
+  .clients-strip[data-animated] .clients-track { animation: none; transform: none; }
+  .clients-strip[data-animated] .clients-window { overflow-x: auto; mask-image: none; }
+  .clients-strip[data-animated] .clients-marks--duplicate { display: none; }
   .solution-scene { animation: none; }
   .solution-expand::after, .solution-detail summary h3 { transition: none; }
 }
