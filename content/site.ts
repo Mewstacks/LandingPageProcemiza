@@ -1,18 +1,18 @@
-/** Conteúdo público da landing Procemiza. Sem métricas, clientes ou resultados inventados. */
+/** Conteúdo público da Procemiza. Resultados quantitativos dependem de evidência. */
 export const site = {
   name: "Procemiza",
   legalName: "Procemiza — Inteligência de Negócios",
   domain: "https://procemiza.com.br",
-  tagline: "Sistemas para escritórios contábeis que precisam ganhar margem",
+  tagline: "Inteligência para a operação. Margem para o negócio.",
   description:
-    "A Procemiza constrói automações, integrações e sistemas para escritórios contábeis — menos conferência manual e retrabalho, mais margem por cliente.",
+    "Automações, integrações e sistemas sob medida para conectar sua operação, reduzir retrabalho e transformar processo em margem.",
   contactUrl: "https://wa.me/5554999425740",
 } as const;
 
 export const nav = [
-  { label: "O custo", href: "#custo" },
+  { label: "Soluções", href: "#solucoes" },
   { label: "Camadas", href: "#camadas" },
-  { label: "Conta 200", href: "#conta-200" },
+  { label: "Clientes", href: "#clientes" },
   { label: "Método", href: "#como-atuamos" },
 ] as const;
 
@@ -23,10 +23,10 @@ export const cta = {
 
 export const hero = {
   title: "Transforme processo em margem.",
-  text: "A Procemiza constrói automações, integrações e sistemas para escritórios contábeis. Nascemos dentro da rotina: do documento que o cliente não envia ao fechamento que sempre aperta no fim do mês.",
+  text: "Automações, integrações e sistemas sob medida para conectar o que hoje está disperso. Menos trabalho repetido. Mais espaço para o seu negócio.",
 } as const;
 
-/** Fora da página desde o foco em contabilidade (OperationalStory desplugado do page.tsx). */
+/** Conteúdo institucional disponível para futuras páginas. */
 export const companyStory = {
   title: "Uma empresa construída dentro da operação.",
   text: "A Procemiza nasceu observando o trabalho entre mensagens, documentos, planilhas, conferências e sistemas que não conversam. É desse contato com a rotina que surgem soluções feitas para uso real — não para uma apresentação.",
@@ -51,21 +51,21 @@ export const companyStory = {
 
 export const layeredInfrastructure = {
   title: "Infraestrutura operacional em camadas.",
-  text: "Cada solução parte dos canais que o escritório já usa, aplica os critérios do departamento, conecta os sistemas e devolve a informação pronta para a equipe agir.",
+  text: "Dos canais que sua empresa já usa à informação pronta para agir. Quatro níveis conectados, uma operação que faz sentido.",
 } as const;
 
 export const marginReality = {
-  title: "Honorário mensal não é margem.",
-  text: "O contrato é recorrente; o custo de atender também. Horas de conferência, retrabalho de fechamento e cobrança de documento consomem a margem antes de ela aparecer.",
-  revenue: "Honorário mensal",
+  title: "O custo está nas repetições.",
+  text: "Uma informação copiada. Uma conferência refeita. Um pedido que depende de alguém lembrar. A margem se perde nas pequenas interrupções que viraram rotina.",
+  revenue: "Receita",
   deductions: [
     "Horas de conferência",
-    "Retrabalho de fechamento",
-    "Cobrança de documento",
+    "Retrabalho",
+    "Busca por informação",
     "Sistemas que não conversam",
   ],
-  result: "Margem por cliente",
-  note: "O que sobra depois que o escritório entrega.",
+  result: "Margem",
+  note: "Uma operação melhor também constrói um negócio mais eficiente.",
 } as const;
 
 export const hiddenCost = {
@@ -74,42 +74,36 @@ export const hiddenCost = {
   items: [
     {
       n: "01",
-      dept: "Atendimento",
-      title: "Documento que não chega",
-      text: "A equipe cobra o mesmo XML, extrato e comprovante por WhatsApp, e-mail e telefone até o prazo apertar.",
+      dept: "Informação",
+      title: "Tudo em lugares diferentes",
+      text: "Mensagens, documentos e planilhas guardam partes da mesma história. A equipe precisa juntar tudo de novo.",
     },
     {
       n: "02",
-      dept: "Fiscal",
+      dept: "Conferência",
       title: "Conferência manual",
-      text: "Nota, guia e sistema comparados tela a tela para compensar ferramentas que não trocam contexto.",
+      text: "Telas comparadas uma a uma, validações repetidas e decisões que dependem da memória de uma pessoa.",
     },
     {
       n: "03",
-      dept: "Contábil",
-      title: "Retrabalho no fechamento",
-      text: "A mesma informação é digitada, corrigida e reenviada mais de uma vez antes de virar lançamento.",
+      dept: "Processos",
+      title: "O mesmo trabalho, outra vez",
+      text: "O pedido muda de mão, perde contexto e volta para o início. O tempo da equipe vai embora com ele.",
     },
     {
       n: "04",
-      dept: "Pessoal",
-      title: "Planilha paralela",
-      text: "Regras de folha, prazos e controles vivem em arquivos que só uma pessoa da equipe sabe manter.",
-    },
-    {
-      n: "05",
-      dept: "Societário",
-      title: "Talento preso no operacional",
-      text: "Analista qualificado sustentando rotina em vez de revisar, orientar e segurar o cliente.",
+      dept: "Sistemas",
+      title: "Ferramentas que não conversam",
+      text: "Cada sistema funciona sozinho. Entre eles, alguém ainda copia, digita, avisa e atualiza.",
     },
   ],
 } as const;
 
 export const conta200 = {
   name: "Conta 200",
-  eyebrow: "O que o escritório entrega ao cliente",
+  eyebrow: "Uma aplicação real / Contabilidade",
   tagline: "Sua contabilidade, onde você estiver.",
-  title: "Uma rotina do escritório transformada em sistema.",
+  title: "Da solicitação à resposta. No WhatsApp.",
   text: "O cliente pede nota, guia ou documento pelo WhatsApp. O pedido ganha contexto — empresa, competência, finalidade —, consulta apenas dados autorizados e volta pronto, sem ocupar a equipe do escritório.",
   flow: [
     {
@@ -128,7 +122,7 @@ export const conta200 = {
       text: "A resposta volta pronta no WhatsApp. O atendimento deixa de ser fila da equipe.",
     },
   ],
-  screenshotNote: "Captura real anonimizada. Conteúdo preservado no canal original.",
+  screenshotNote: "Recorte da solicitação original. Empresa identificada como X.",
 } as const;
 
 export const method = {
@@ -137,36 +131,36 @@ export const method = {
     {
       n: "01",
       name: "Diagnóstico",
-      text: "Acompanhar uma rotina real do escritório — fiscal, contábil, pessoal ou atendimento — e ver onde ela perde tempo, contexto e margem.",
+      text: "Acompanhar uma rotina real, ouvir quem faz o trabalho e identificar onde sua empresa perde tempo, contexto e margem.",
       artifact: "Mapa da rotina",
     },
     {
       n: "02",
       name: "Construção",
-      text: "Transformar o gargalo em um sistema integrado à rotina, começando pelo recorte que precisa provar valor em semanas.",
+      text: "Transformar o gargalo em uma solução integrada à operação. Começar com um recorte claro e colocar o sistema em uso.",
       artifact: "Protótipo em uso",
     },
     {
       n: "03",
       name: "Evolução",
-      text: "Observar o uso no fechamento seguinte, ajustar regras e ampliar para os outros departamentos.",
+      text: "Acompanhar o uso real, ajustar as regras e ampliar a solução conforme as necessidades do negócio.",
       artifact: "Ajuste e expansão",
     },
   ],
 } as const;
 
 export const pilot = {
-  title: "Comece pela rotina que mais custa ao escritório.",
-  text: "Escolhemos uma prioridade concreta — cobrança de documento, conferência fiscal, fechamento —, entendemos o fluxo atual e desenhamos o menor sistema capaz de melhorar o trabalho de verdade.",
+  title: "Comece pela rotina que mais custa à sua empresa.",
+  text: "Um processo repetitivo, uma integração que falta, uma equipe sobrecarregada. Conte onde o trabalho trava. Vamos entender o fluxo e encontrar um primeiro passo concreto.",
   next: [
     "Uma conversa sobre a rotina atual",
     "Definição conjunta do primeiro recorte",
     "Um caminho claro para construir e acompanhar",
   ],
-  microcopy: "Sem promessa genérica. O primeiro passo é entender o mês como ele acontece hoje.",
+  microcopy: "A primeira conversa é sobre sua operação, seus desafios e o que vale a pena resolver primeiro.",
 } as const;
 
 export const footer = {
-  line: "Automação, integração e sistemas para escritórios contábeis, construídos a partir da rotina real.",
+  line: "Automação, integração e sistemas sob medida. Construídos a partir da rotina real da sua empresa.",
   note: "Procemiza — Inteligência de Negócios",
 } as const;

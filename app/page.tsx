@@ -6,6 +6,8 @@ import { Conta200 } from "@/components/Conta200";
 import { Method } from "@/components/Method";
 import { PilotCTA } from "@/components/PilotCTA";
 import { Footer } from "@/components/Footer";
+import { Clients } from "@/components/Clients";
+import { Solutions } from "@/components/Solutions";
 
 export default function Home() {
   return (
@@ -19,8 +21,10 @@ export default function Home() {
       <Header />
       <main id="conteudo">
         <Hero />
+        <Clients />
         <MarginReality />
         <LayeredInfrastructure />
+        <Solutions />
         <Conta200 />
         <Method />
         <PilotCTA />

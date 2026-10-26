@@ -1,0 +1,30 @@
+{
+  "retrieved": "2026-10-26",
+  "notes": "Official artwork, preserved in original colors and proportions. Display copies are local WebP files. No AI generation, recoloring, redrawing, or upscaling.",
+  "clients": [
+    {
+      "name": "Di Bracco Enopizzeria",
+      "institutionalPage": "https://linktr.ee/DiBraccoEnopizzeria",
+      "assetUrl": "https://ugc.production.linktr.ee/6xXq3ayhRmmndzz7iko1_BzLNqmvSe8icl32A?io=true&size=avatar-v3_0",
+      "original": "di-bracco-original.jpg",
+      "display": "di-bracco.webp",
+      "processing": "400 × 400 JPEG converted to WebP at quality 95. Original framing and artwork preserved."
+    },
+    {
+      "name": "Roselar Móveis",
+      "institutionalPage": "https://roselar.com.br/",
+      "assetUrl": "https://roselar.com.br/wp-content/uploads/2023/08/novo-logo-roselar-moveis.png.webp",
+      "original": "roselar-original.webp",
+      "display": "roselar.webp",
+      "processing": "1874 × 585 source resized proportionally to 600 × 187, lossless WebP. Transparency preserved."
+    },
+    {
+      "name": "Fedrizzi Contabilidade & Consultoria",
+      "institutionalPage": "https://fedrizzicontabilidade.com.br/",
+      "assetUrl": "https://fedrizzicontabilidade.com.br/logo.png",
+      "original": "fedrizzi-original.png",
+      "display": "fedrizzi.webp",
+      "processing": "Transparent outer padding removed from 2880 × 2880 source, then proportionally reduced to 600 × 417, lossless WebP. Artwork, colors, and transparency preserved."
+    }
+  ]
+}

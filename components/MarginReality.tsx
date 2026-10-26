@@ -1,86 +1,39 @@
-"use client";
-
-import { useEffect, useRef } from "react";
 import { hiddenCost, marginReality } from "@/content/site";
-import { gsap } from "@/lib/gsap";
-import { Reveal } from "@/components/ui/Reveal";
+
+function CostMark({ index }: { index: number }) {
+  return (
+    <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      {index === 0 && <><rect x="9" y="13" width="19" height="25" /><rect x="35" y="28" width="19" height="25" /><path d="M35 13h19v8M9 45v8h19M28 25h7v15" /></>}
+      {index === 1 && <><path d="M12 16h33M12 30h33M12 44h20" /><circle cx="43" cy="43" r="12" /><path d="m38 43 4 4 7-8" /></>}
+      {index === 2 && <><path d="M16 23a20 20 0 1 1-2 22M16 23V10M16 23h13" /><path d="M27 27h13v13H27z" /></>}
+      {index === 3 && <><rect x="6" y="20" width="18" height="26" /><rect x="40" y="20" width="18" height="26" /><path d="M24 33h7m5 0h4M30 24l5 18" /></>}
+    </svg>
+  );
+}
 
 export function MarginReality() {
-  const rootRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".margin-compression",
-        { scaleX: 0 },
-        {
-          scaleX: 1,
-          ease: "none",
-          scrollTrigger: { trigger: root, start: "top 72%", end: "center 52%", scrub: 0.7 },
-        }
-      );
-    }, root);
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section id="custo" ref={rootRef} className="margin-section" aria-labelledby="margem-title">
+    <section id="custo" className="margin-section" aria-labelledby="margem-title">
       <div className="wrap">
-        <div className="grid lg:grid-cols-[0.82fr_1.18fr] gap-16 lg:gap-28 items-start">
-          <div className="lg:sticky lg:top-28">
-            <Reveal>
-              <h2 id="margem-title" className="display-lg max-w-[13ch]">{marginReality.title}</h2>
-              <p className="lede mt-7">{marginReality.text}</p>
-            </Reveal>
-          </div>
-
-          <Reveal delay={0.08}>
-            <div className="margin-equation" aria-label="Composição qualitativa da margem por cliente">
-              <div className="margin-revenue">
-                <span>{marginReality.revenue}</span>
-                <span className="margin-signal" aria-hidden="true" />
-              </div>
-              <div className="margin-deductions">
-                {marginReality.deductions.map((item) => (
-                  <div key={item} className="margin-deduction">
-                    <span aria-hidden="true">−</span>
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="margin-result">
-                <div>
-                  <span className="margin-equals" aria-hidden="true">=</span>
-                  <strong>{marginReality.result}</strong>
-                </div>
-                <p>{marginReality.note}</p>
-              </div>
-              <div className="margin-compression" aria-hidden="true" />
-            </div>
-          </Reveal>
+        <div className="cost-intro">
+          <h2 id="margem-title" className="display-lg">{marginReality.title}</h2>
+          <p className="lede">{marginReality.text}</p>
         </div>
-
-        <div className="hidden-cost-head-block">
-          <Reveal>
-            <p className="mono-label hidden-cost-eyebrow">{hiddenCost.eyebrow}</p>
-            <p className="lede mt-5">{hiddenCost.intro}</p>
-          </Reveal>
-        </div>
-
-        <ol className="hidden-cost-list">
+        <ul className="cost-list">
           {hiddenCost.items.map((item, index) => (
-            <Reveal as="li" key={item.n} delay={index * 0.035} className="hidden-cost-row">
-              <span className="hidden-cost-index">{item.n}</span>
-              <div className="hidden-cost-head">
-                <h3>{item.title}</h3>
-                <span className="tag-chip">{item.dept}</span>
-              </div>
+            <li key={item.n} className="cost-item">
+              <CostMark index={index} />
+              <h3>{item.title}</h3>
               <p>{item.text}</p>
-            </Reveal>
+            </li>
           ))}
-        </ol>
+        </ul>
+        <div className="margin-principle">
+          <p>O próximo passo é conectar o que já existe.</p>
+          <div className="margin-formula" aria-label="Relação conceitual: receita menos custos da operação resulta em margem. Sem estimativa de valores.">
+            <span>Receita</span><b aria-hidden="true">−</b><span>Custo operacional</span><b aria-hidden="true">=</b><strong>Margem</strong>
+          </div>
+        </div>
       </div>
     </section>
   );
