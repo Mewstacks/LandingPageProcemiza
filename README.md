@@ -42,7 +42,7 @@ A ordem da página é: cabeçalho → hero → clientes → custo operacional �
 | --- | --- |
 | `app/` | Página, layout, fontes, metadados, JSON-LD, sitemap e robots. |
 | `content/site.ts` | Mensagens institucionais, navegação e contato. |
-| `content/clients.ts` e `content/solutions.ts` | Dados tipados das três marcas e das três soluções. |
+| `content/clients.ts` e `content/solutions.ts` | Dados tipados dos clientes e das três soluções. |
 | `components/` | Seções; CSS específico de clientes e soluções em `clients-solutions.css`. |
 | `components/layers/` | Modelo físico compartilhado, visuais, conteúdo, geometria e controle da experiência de camadas. |
 | `public/media/procemiza/` | Marca, clientes, material real do Conta 200 e imagem de compartilhamento. |
@@ -77,8 +77,10 @@ no plano da tela e suas linhas partem da mesma geometria dos planos.
 
 ### Clientes e soluções
 
-A faixa de clientes contém somente **Di Bracco Enopizzeria**, **Roselar Móveis**
-e **Fedrizzi Contabilidade & Consultoria**. As imagens são locais, com cores e
+A faixa de clientes contém **Di Bracco Enopizzeria**, **Roselar Móveis**,
+**Fedrizzi Contabilidade & Consultoria**, **Rafael Pandolfo Advogados Associados**,
+**Crescer Consultoria em RH** (Caxias do Sul) e **Miolo**. A grade é estática,
+com três colunas no desktop e duas no celular. As imagens são locais, com cores e
 proporções preservadas. As URLs de origem e o processamento constam em
 `public/media/procemiza/clients/provenance.json`; originais foram preservados.
 

@@ -25,6 +25,30 @@
       "original": "fedrizzi-original.png",
       "display": "fedrizzi.webp",
       "processing": "Transparent outer padding removed from 2880 × 2880 source, then proportionally reduced to 600 × 417, lossless WebP. Artwork, colors, and transparency preserved."
+    },
+    {
+      "name": "Rafael Pandolfo Advogados Associados",
+      "institutionalPage": "https://www.rafaelpandolfo.com.br/",
+      "assetUrl": "https://www.rafaelpandolfo.com.br/images/RP_marcahorizontaltransparente.png",
+      "original": "rafael-pandolfo-original.png",
+      "display": "rafael-pandolfo.webp",
+      "processing": "2048 × 720 transparent PNG reduced proportionally to 800 × 281, lossless WebP. Original artwork, colors, transparency, and ICC profile preserved."
+    },
+    {
+      "name": "Crescer Consultoria em RH",
+      "institutionalPage": "https://www.crescerconsultoriarh.com.br/",
+      "assetUrl": "https://www.crescerconsultoriarh.com.br/wp-content/themes/crescerrh-v2%205/assets/images/logo-site-276w.webp",
+      "original": "crescer-rh-original.webp",
+      "display": "crescer-rh.webp",
+      "processing": "Original 249 × 45 WebP copied unchanged; already optimized. Transparency, colors, and dimensions preserved. Client confirmed as Crescer Consultoria em RH in Caxias do Sul."
+    },
+    {
+      "name": "Miolo",
+      "institutionalPage": "https://institucional.miolo.com.br/",
+      "assetUrl": "https://institucional.miolo.com.br/wp-content/themes/miolo/assets/img/logo-top-black.png",
+      "original": "miolo-original.png",
+      "display": "miolo.webp",
+      "processing": "1044 × 340 transparent PNG reduced proportionally to 600 × 195, lossless WebP. Official black artwork and transparency preserved. Asset referenced by the institutional stylesheet at /wp-content/themes/miolo/assets/dist/css/style.css."
     }
   ]
 }

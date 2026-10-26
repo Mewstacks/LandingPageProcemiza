@@ -15,7 +15,7 @@ export function Clients() {
                 alt={client.alt}
                 width={client.width}
                 height={client.height}
-                sizes="(max-width: 600px) 120px, 220px"
+                sizes="(max-width: 600px) 160px, 220px"
               />
             </li>
           ))}
