@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { cta, nav, site } from "@/content/site";
 
@@ -107,7 +108,7 @@ export function Header() {
       <span className="header-sentinel" data-header-sentinel aria-hidden="true" />
       <header className="site-header" data-compact={compact ? "true" : "false"}>
         <div className="wrap header-frame">
-          <a href="#topo" className="header-brand" aria-label="Procemiza — voltar ao topo">
+          <Link href="/" className="header-brand" aria-label="Procemiza — página inicial">
             <span className="header-brand-lockup">
               <Image
                 src="/media/procemiza/brand/logo-header.png"
@@ -115,6 +116,7 @@ export function Header() {
                 width={2100}
                 height={356}
                 priority
+                sizes="168px"
                 className="header-wordmark"
               />
               <Image
@@ -122,16 +124,17 @@ export function Header() {
                 alt=""
                 width={512}
                 height={512}
+                sizes="32px"
                 className="header-symbol"
               />
             </span>
-          </a>
+          </Link>
 
           <nav className="desktop-nav" aria-label="Navegação principal">
             <ul className="desktop-nav-shell">
               {nav.map((item) => (
                 <li key={item.href}>
-                  <a href={item.href}>{item.label}</a>
+                  <Link href={item.href}>{item.label}</Link>
                 </li>
               ))}
             </ul>
@@ -143,7 +146,8 @@ export function Header() {
             rel="noopener noreferrer"
             className="btn btn-primary header-cta"
           >
-            {cta.primary}
+            {cta.whatsapp}
+            <span className="sr-only"> (abre em nova aba)</span>
           </a>
 
           <details ref={detailsRef} className="mobile-menu">
@@ -157,10 +161,10 @@ export function Header() {
                 <ol>
                   {nav.map((item, index) => (
                     <li key={item.href}>
-                      <a href={item.href} onClick={closeMobileMenu}>
+                      <Link href={item.href} onClick={closeMobileMenu}>
                         <span>{item.label}</span>
                         <small>{String(index + 1).padStart(2, "0")}</small>
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ol>
@@ -171,7 +175,8 @@ export function Header() {
                   className="btn btn-primary mobile-menu-cta"
                   onClick={closeMobileMenu}
                 >
-                  {cta.primary}
+                  {cta.whatsapp}
+                  <span className="sr-only"> (abre em nova aba)</span>
                 </a>
               </nav>
             </div>

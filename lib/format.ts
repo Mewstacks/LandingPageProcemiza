@@ -15,6 +15,18 @@ export function formatHours(h: number): string {
   return plain(h < 10 ? dec1.format(h) : int.format(h));
 }
 
+const brl2 = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+/** Para a conta aberta (custo da hora com centavos). */
+export function formatBRL2(n: number): string {
+  return plain(brl2.format(n));
+}
+
+/** Sempre `digits` casas (1 por padrão). */
+export function formatFixed(n: number, digits = 1): string {
+  return plain(new Intl.NumberFormat("pt-BR", { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(n));
+}
+
 export function formatDays(days: number): string {
   return plain(days < 10 ? dec1.format(days) : int.format(days));
 }

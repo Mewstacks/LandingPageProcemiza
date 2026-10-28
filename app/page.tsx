@@ -1,9 +1,10 @@
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
-import { LayeredInfrastructure } from "@/components/layers/LayeredInfrastructure";
-import { MarginReality } from "@/components/MarginReality";
+import { CalculatorSection } from "@/components/CalculatorSection";
+import { RoutineProvider } from "@/components/calculator/RoutineProvider";
 import { Conta200 } from "@/components/Conta200";
 import { Method } from "@/components/Method";
+import { Faq } from "@/components/Faq";
 import { PilotCTA } from "@/components/PilotCTA";
 import { Footer } from "@/components/Footer";
 import { Clients } from "@/components/Clients";
@@ -20,13 +21,15 @@ export default function Home() {
       </a>
       <Header />
       <main id="conteudo">
-        <Hero />
+        <RoutineProvider>
+          <Hero />
+          <CalculatorSection />
+        </RoutineProvider>
         <Clients />
-        <MarginReality />
-        <LayeredInfrastructure />
         <Solutions />
         <Conta200 />
         <Method />
+        <Faq />
         <PilotCTA />
       </main>
       <Footer />

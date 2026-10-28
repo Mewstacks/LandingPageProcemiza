@@ -1,126 +1,70 @@
-/** Conteúdo público da Procemiza. Resultados quantitativos dependem de evidência. */
+/**
+ * Conteúdo público da Procemiza.
+ * Números só aparecem quando vêm do visitante (calculadora) ou de dado autorizado
+ * (content/cases.ts). Nada de métrica inventada.
+ */
+
+export type Entity = {
+  legalName: string;
+  /** "Cidade, UF". Preencher quando confirmado; vazio não é renderizado. */
+  cityState?: string;
+  email?: string;
+  /** Só dígitos ou formatado; é exibido como vem. */
+  cnpj?: string;
+  social: readonly { label: string; url: string }[];
+};
+
+export const entity: Entity = {
+  legalName: "Procemiza — Inteligência de Negócios",
+  cityState: undefined,
+  email: undefined,
+  cnpj: undefined,
+  social: [],
+};
+
 export const site = {
   name: "Procemiza",
-  legalName: "Procemiza — Inteligência de Negócios",
+  /** Host canônico. A produção redireciona o apex para www. */
   domain: "https://www.procemiza.com.br",
   tagline: "Inteligência para a operação. Margem para o negócio.",
   description:
-    "Automações, integrações e sistemas sob medida para conectar sua operação, reduzir retrabalho e transformar processo em margem.",
+    "Automatizamos rotinas, integramos sistemas e criamos sistemas sob medida para empresas. Calcule quanto tempo sua rotina devolve.",
   contactUrl: "https://wa.me/5554999425740",
 } as const;
 
 export const nav = [
-  { label: "Soluções", href: "#solucoes" },
-  { label: "Camadas", href: "#camadas" },
-  { label: "Clientes", href: "#clientes" },
-  { label: "Método", href: "#como-atuamos" },
+  { label: "Calculadora", href: "/#calculadora" },
+  { label: "Soluções", href: "/#solucoes" },
+  { label: "Conta 200", href: "/#conta-200" },
+  { label: "Clientes", href: "/#clientes" },
+  { label: "Como funciona", href: "/#como-atuamos" },
 ] as const;
 
 export const cta = {
-  primary: "Conversar sobre um gargalo",
-  secondary: "Ver como construímos",
+  primary: "Calcular minha rotina",
+  whatsapp: "Conversar no WhatsApp",
+  final: "Conversar sobre uma rotina",
 } as const;
 
 export const hero = {
-  title: "Transforme processo em margem.",
-  text: "Automações, integrações e sistemas sob medida para conectar o que hoje está disperso. Menos trabalho repetido. Mais espaço para o seu negócio.",
+  title: "Automatizamos o trabalho repetido da sua empresa.",
+  support: "Transforme processo em margem.",
+  text: "Automações, integrações e sistemas sob medida para conectar o que hoje está disperso.",
 } as const;
 
-/** Conteúdo institucional disponível para futuras páginas. */
-export const companyStory = {
-  title: "Uma empresa construída dentro da operação.",
-  text: "A Procemiza nasceu observando o trabalho entre mensagens, documentos, planilhas, conferências e sistemas que não conversam. É desse contato com a rotina que surgem soluções feitas para uso real — não para uma apresentação.",
-  inputs: [
-    "WhatsApp",
-    "E-mail",
-    "Documento",
-    "Planilha",
-    "Solicitação",
-    "Conferência",
-    "Aprovação",
-    "Sistema existente",
-  ],
-  logic: ["Entender contexto", "Validar", "Organizar", "Conectar"],
-  outputs: [
-    "Informação pronta",
-    "Tarefa direcionada",
-    "Processo organizado",
-    "Registro atualizado",
-  ],
-} as const;
-
-export const layeredInfrastructure = {
-  title: "Infraestrutura operacional em camadas.",
-  text: "Dos canais que sua empresa já usa à informação pronta para agir. Quatro níveis conectados, uma operação que faz sentido.",
-} as const;
-
-export const marginReality = {
-  title: "O custo está nas repetições.",
-  text: "Uma informação copiada. Uma conferência refeita. Um pedido que depende de alguém lembrar. A margem se perde nas pequenas interrupções que viraram rotina.",
-  revenue: "Receita",
-  deductions: [
-    "Horas de conferência",
-    "Retrabalho",
-    "Busca por informação",
-    "Sistemas que não conversam",
-  ],
-  result: "Margem",
-  note: "Uma operação melhor também constrói um negócio mais eficiente.",
-} as const;
-
-export const hiddenCost = {
-  eyebrow: "Onde a margem se perde",
-  intro: "O problema raramente está numa grande falha. Ele se acumula nas pequenas repetições que o mês aprendeu a aceitar.",
-  items: [
-    {
-      n: "01",
-      dept: "Informação",
-      title: "Tudo em lugares diferentes",
-      text: "Mensagens, documentos e planilhas guardam partes da mesma história. A equipe precisa juntar tudo de novo.",
-    },
-    {
-      n: "02",
-      dept: "Conferência",
-      title: "Conferência manual",
-      text: "Telas comparadas uma a uma, validações repetidas e decisões que dependem da memória de uma pessoa.",
-    },
-    {
-      n: "03",
-      dept: "Processos",
-      title: "O mesmo trabalho, outra vez",
-      text: "O pedido muda de mão, perde contexto e volta para o início. O tempo da equipe vai embora com ele.",
-    },
-    {
-      n: "04",
-      dept: "Sistemas",
-      title: "Ferramentas que não conversam",
-      text: "Cada sistema funciona sozinho. Entre eles, alguém ainda copia, digita, avisa e atualiza.",
-    },
-  ],
+export const calculator = {
+  title: "Quanto sua rotina devolve?",
 } as const;
 
 export const conta200 = {
   name: "Conta 200",
-  eyebrow: "Uma aplicação real / Contabilidade",
   tagline: "Sua contabilidade, onde você estiver.",
   title: "Da solicitação à resposta. No WhatsApp.",
   text: "O cliente pede nota, guia ou documento pelo WhatsApp. O pedido ganha contexto — empresa, competência, finalidade —, consulta apenas dados autorizados e volta pronto, sem ocupar a equipe do escritório.",
   flow: [
-    {
-      n: "01",
-      name: "Pedido",
-      text: "O cliente pede no canal em que já está — sem novo app, sem novo login.",
-    },
-    {
-      n: "02",
-      name: "Contexto",
-      text: "Empresa, documento, competência e finalidade são identificados e roteados para o processo certo.",
-    },
-    {
-      n: "03",
-      name: "Entrega",
-      text: "A resposta volta pronta no WhatsApp. O atendimento deixa de ser fila da equipe.",
-    },
+    { n: "01", name: "Pedido", text: "O cliente pede no canal em que já está — sem novo app, sem novo login." },
+    { n: "02", name: "Contexto", text: "Empresa, documento, competência e finalidade são identificados e roteados para o processo certo." },
+    { n: "03", name: "Entrega", text: "A resposta volta pronta no WhatsApp. O atendimento deixa de ser fila da equipe." },
   ],
   screenshotNote: "Recorte da solicitação original. Empresa identificada como X.",
 } as const;
@@ -149,18 +93,43 @@ export const method = {
   ],
 } as const;
 
+/** Rascunho: só fatos já presentes no site. Confirmar antes de publicar. */
+export const faq = [
+  {
+    q: "O que a Procemiza faz?",
+    a: "Automatiza rotinas, integra os sistemas que a empresa já usa e cria sistemas sob medida. Tudo parte do trabalho real da equipe.",
+  },
+  {
+    q: "Como começa?",
+    a: "Por uma conversa sobre a rotina que mais custa. Depois acompanhamos o trabalho, definimos um primeiro recorte e colocamos em uso.",
+  },
+  {
+    q: "Preciso trocar os sistemas que uso hoje?",
+    a: "Não. O ponto de partida é conectar o que já existe, para a informação circular sem copiar e colar entre telas.",
+  },
+  {
+    q: "De onde vêm os números da calculadora?",
+    a: "Do que você informa: tempo, pessoas e custo da hora, com redução de 80% no cenário esperado e 90% no otimista. A conta fica aberta no resultado. É uma estimativa, não uma promessa.",
+  },
+  {
+    q: "Quanto custa?",
+    a: "Depende da rotina e dos sistemas envolvidos. A primeira conversa define o recorte; o valor vem depois dele.",
+  },
+  {
+    q: "O Conta 200 é um produto?",
+    a: "É uma aplicação real para contabilidade: o cliente pede nota, guia ou documento pelo WhatsApp e recebe a resposta pronta.",
+  },
+] as const;
+
 export const pilot = {
   title: "Comece pela rotina que mais custa à sua empresa.",
-  text: "Um processo repetitivo, uma integração que falta, uma equipe sobrecarregada. Conte onde o trabalho trava. Vamos entender o fluxo e encontrar um primeiro passo concreto.",
   next: [
     "Uma conversa sobre a rotina atual",
     "Definição conjunta do primeiro recorte",
     "Um caminho claro para construir e acompanhar",
   ],
-  microcopy: "A primeira conversa é sobre sua operação, seus desafios e o que vale a pena resolver primeiro.",
 } as const;
 
 export const footer = {
   line: "Automação, integração e sistemas sob medida. Construídos a partir da rotina real da sua empresa.",
-  note: "Procemiza — Inteligência de Negócios",
 } as const;
