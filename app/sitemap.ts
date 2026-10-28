@@ -1,13 +1,12 @@
 import type { MetadataRoute } from "next";
-import { site } from "@/content/site";
+import { pageList } from "@/content/pages";
+import { absoluteUrl } from "@/lib/seo";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    {
-      url: site.domain,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 1,
-    },
-  ];
+  return pageList.map((p) => ({
+    url: absoluteUrl(p.path),
+    lastModified: p.modified,
+    changeFrequency: p.path === "/" ? "monthly" : "yearly",
+    priority: p.priority,
+  }));
 }

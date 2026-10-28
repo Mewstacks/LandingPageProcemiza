@@ -2,6 +2,12 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Archivo, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { site } from "@/content/site";
+import { pages } from "@/content/pages";
+import { buildMetadata, graph, organizationNodes } from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { Analytics } from "@/components/consent/Analytics";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -22,31 +28,8 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.domain),
-  title: "Procemiza — Automação, integração e sistemas para empresas",
-  description: site.description,
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: "Procemiza — Transforme processo em margem",
-    description: site.description,
-    url: site.domain,
-    siteName: "Procemiza",
-    locale: "pt_BR",
-    type: "website",
-    images: [
-      {
-        url: "/media/procemiza/og/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Procemiza — transforme processo em margem. Automação, integração e sistemas para empresas.",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Procemiza — Transforme processo em margem",
-    description: site.description,
-    images: ["/media/procemiza/og/og-image.png"],
-  },
+  ...buildMetadata(pages.home),
+  title: { default: pages.home.title, template: `%s | ${site.name}` },
   robots: { index: true, follow: true },
 };
 
@@ -54,22 +37,6 @@ export const viewport: Viewport = {
   themeColor: "#0c0b0a",
   width: "device-width",
   initialScale: 1,
-};
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  name: "Procemiza",
-  url: site.domain,
-  description: site.description,
-  logo: `${site.domain}/media/procemiza/brand/logo-horizontal-color.png`,
-  areaServed: "BR",
-  knowsAbout: [
-    "Automação de rotinas operacionais",
-    "Integração de sistemas",
-    "Desenvolvimento de sistemas sob medida",
-    "Organização de processos empresariais",
-  ],
 };
 
 export default function RootLayout({
@@ -80,15 +47,20 @@ export default function RootLayout({
       <body>
         <script
           dangerouslySetInnerHTML={{
-            __html:
-              "var d=document.documentElement;d.classList.remove('no-js');d.classList.add('js');if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('reduced-motion');}",
+            __html: "document.documentElement.classList.replace('no-js','js');",
           }}
         />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        <JsonLd data={graph(...organizationNodes())} />
+        <a
+          href="#conteudo"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[100] focus:bg-accent focus:text-ink-950 focus:px-4 focus:py-2 focus:font-mono focus:text-xs"
+        >
+          Pular para o conteúdo
+        </a>
+        <Header />
         {children}
+        <Footer />
+        <Analytics />
       </body>
     </html>
   );

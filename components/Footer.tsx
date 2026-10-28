@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { entity, footer, nav, site } from "@/content/site";
+import { CookiePreferences } from "@/components/consent/Analytics";
 
 export function Footer() {
   const details = [entity.legalName, entity.cityState, entity.cnpj ? `CNPJ ${entity.cnpj}` : undefined].filter(Boolean);
@@ -21,6 +22,8 @@ export function Footer() {
               <span className="sr-only"> (abre em nova aba)</span>
             </a>
           </li>
+          <li><Link href="/privacidade">Privacidade</Link></li>
+          <li><CookiePreferences /></li>
           {entity.email ? <li><a href={`mailto:${entity.email}`}>{entity.email}</a></li> : null}
           {entity.social.map((s) => (
             <li key={s.url}>

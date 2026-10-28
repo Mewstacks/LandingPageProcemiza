@@ -1,139 +1,89 @@
 # Procemiza — Site institucional
 
-Landing page da **Procemiza** para gestores e responsáveis pela operação de
-empresas de vários setores. A mensagem central é **“Transforme processo em
-margem.”**: automação de rotinas, integração de sistemas e sistemas sob medida.
-O Conta 200 aparece como uma aplicação específica para contabilidade.
+Site da **Procemiza**: automação de rotinas, integração de sistemas e sistemas sob medida.
+A home pede a rotina do visitante e o tempo que ela toma, e mostra quanto a automação devolve.
 
-## Desenvolvimento e verificação
-
-- Next.js 15 (App Router), React 19 e TypeScript.
-- Tailwind CSS v4 e CSS próprio para a composição visual.
-- GSAP 3 + ScrollTrigger na experiência central; sem WebGL.
-- Fraunces nos títulos, Archivo na leitura e IBM Plex Mono em identificadores.
+- Next.js 15 (App Router), React 19, TypeScript, Tailwind v4 (tokens em `@theme`) e CSS próprio.
+- Fraunces nos títulos, Archivo na leitura, IBM Plex Mono em rótulos.
+- Site 100% estático (todas as rotas pré-renderizadas).
 
 ```bash
 npm install
-npm run dev
-npx tsc --noEmit --incremental false
-npm run build
-npm run start
+npm run dev          # http://localhost:3000
+npm run typecheck
+npm run lint
+npm test             # Vitest: calculadora, formatação, WhatsApp, SEO
+npm run build && npm run start
 ```
 
-O desenvolvimento usa `http://localhost:3000`. `next build` gera o build de
-produção em `.next`; `next start` o serve. A página é prerenderizada, mas o
-projeto usa a otimização de imagens do Next.js: uma hospedagem puramente
-estática exige configuração adicional.
+Node 22 LTS (`.nvmrc`). O build baixa as fontes do Google, então precisa de rede.
 
 ## Publicação
 
-A produção em `https://www.procemiza.com.br` está ligada à branch `main` de
-`Mewstacks/LandingPageProcemiza` pela Vercel, no projeto `landing-page-procemiza`.
-Antes de enviar alterações, executar a verificação de tipos e o build. Após o
-push, conferir o status Vercel do commit e a atualização no domínio público.
-Não é necessário criar uma hospedagem ou projeto novo.
+Produção em `https://www.procemiza.com.br`, ligada à branch `main` de
+`Mewstacks/LandingPageProcemiza` pela Vercel (projeto `landing-page-procemiza`). O apex
+`procemiza.com.br` redireciona para `www`; o canonical, o sitemap e o robots usam `www`
+(`site.domain` em `content/site.ts`). Antes de enviar: `typecheck`, `lint`, `test` e `build`.
 
-## Conteúdo e estrutura
-
-A ordem da página é: cabeçalho → hero → clientes → custo operacional → camadas
-→ soluções → Conta 200 → método → contato → rodapé.
+## Estrutura
 
 | Local | Responsabilidade |
 | --- | --- |
-| `app/` | Página, layout, fontes, metadados, JSON-LD, sitemap e robots. |
-| `content/site.ts` | Mensagens institucionais, navegação e contato. |
-| `content/clients.ts` e `content/solutions.ts` | Dados tipados dos clientes e das três soluções. |
-| `components/` | Seções; CSS específico de clientes e soluções em `clients-solutions.css`. |
-| `components/layers/` | Modelo físico compartilhado, visuais, conteúdo, geometria e controle da experiência de camadas. |
-| `public/media/procemiza/` | Marca, clientes, material real do Conta 200 e imagem de compartilhamento. |
+| `app/` | Rotas, layout (Header, Footer, JSON-LD de organização), `robots.ts`, `sitemap.ts`, `manifest.ts`, `opengraph-image.tsx`, `not-found.tsx`. |
+| `content/site.ts` | Mensagens, navegação, FAQ e dados da empresa (`entity`). |
+| `content/pages.ts` | Registro único das páginas indexáveis (título, descrição, data de modificação). Alimenta metadata, sitemap e breadcrumb. |
+| `content/intents.ts` | Texto das páginas de solução, Conta 200 e calculadora. |
+| `lib/calculator.ts` | Conta pura, sem React. Testada em `lib/*.test.ts`. |
+| `lib/seo.ts` | `buildMetadata`, nós de JSON-LD e serialização segura. |
+| `lib/consent.ts`, `lib/analytics.ts` | Consentimento (LGPD) e eventos do GA4. |
+| `components/calculator/` | `RoutineProvider` (estado compartilhado), painel do hero e calculadora. |
+| `components/page/` | Blocos das páginas internas. |
 
-As âncoras `#custo`, `#camadas`, `#conta-200` e `#como-atuamos` foram preservadas.
-`#clientes` e `#solucoes` são novos destinos. O WhatsApp continua definido em
-`site.contactUrl`; não há formulário, banco de dados ou API de negócio.
+Páginas: `/`, `/calculadora`, `/automacao-de-processos`, `/integracao-de-sistemas`,
+`/sistemas-sob-medida`, `/conta-200`, `/privacidade`. Nova página: entrada em
+`content/pages.ts` + rota; sitemap e metadata saem do registro.
 
-### Camadas e movimento
+## Calculadora
 
-A mesma informação percorre **Origens → Regras → Integração → Entrega**.
-`layers.data.ts` define textos, portas e percursos. `scene.geometry.ts` calcula
-profundidade, posição da solicitação e projeção dos rótulos. `InfrastructureScene`
-renderiza os planos físicos em CSS 3D e SVG; o hero usa uma vista estática do
-mesmo modelo, sem criar outra timeline.
+Horas por mês = tempo por pessoa × pessoas (21 dias úteis, 52/12 semanas). Custo da hora =
+salário × (1 + encargos) ÷ 220 (encargos 70% CLT, 50% Simples; regra de bolso editável) ou
+valor da hora digitado. Horas devolvidas = horas × redução (esperado 80%, otimista = esperado
++ 10 pontos, máximo 95%). Validação nunca ajusta valor em silêncio. Sem custo informado, só horas.
 
-O controle da narrativa fica em `LayeredInfrastructure`. A experiência longa
-exige largura de pelo menos **1024 px**, altura de pelo menos **700 px** e ausência
-de preferência por movimento reduzido. São **500svh**, incluindo o palco fixo de
-uma viewport, com abertura (0–12%), quatro capítulos (12–84%) e síntese (84–100%).
-Toda a progressão acompanha a rolagem nativa e pode ser revertida; não há
-reprodução automática nem captura da roda do mouse.
+Os números vêm do visitante. Nada é enviado a servidor; o estado fica em `sessionStorage`.
+O link do WhatsApp (`?text=`) leva a rotina e os números.
 
-O índice navega pelos quatro capítulos. “Pular demonstração” leva ao título de
-soluções e transfere o foco. Em telas menores, baixas ou com movimento reduzido,
-uma composição compacta acompanha a explicação em fluxo normal. O HTML completo
-é a base da seção; a animação só o substitui depois da inicialização.
+## Conteúdo e números
 
-Dimensões são medidas na inicialização e no redimensionamento. A atualização da
-animação usa essas medidas, sem consultar layout a cada quadro. Os rótulos ficam
-no plano da tela e suas linhas partem da mesma geometria dos planos.
+Não há métrica, depoimento ou resultado de cliente inventado. Casos só entram com dado
+autorizado. Textos das páginas de solução e o FAQ são rascunhos feitos a partir do que o site
+já dizia; confirmar antes de ampliar qualquer promessa.
 
-### Clientes e soluções
+`entity` em `content/site.ts` (cidade/UF, e-mail, CNPJ, redes) é opcional: campo vazio não é
+renderizado nem vai para o JSON-LD.
 
-A faixa de clientes contém **Di Bracco Enopizzeria**, **Roselar Móveis**,
-**Fedrizzi Contabilidade & Consultoria**, **Rafael Pandolfo Advogados Associados**,
-**Crescer Consultoria em RH** (Caxias do Sul) e **Miolo**. As marcas percorrem uma
-única linha contínua, com tamanhos individuais para equilibrar seu peso visual.
-A esteira pode ser pausada pelo botão ou ao passar o mouse e fica parada quando está fora da tela.
-Com movimento reduzido ou sem JavaScript, a faixa permite rolagem horizontal
-manual. A cópia visual usada no loop fica oculta de leitores de tela.
-As imagens são locais, com cores e
-proporções preservadas. As URLs de origem e o processamento constam em
-`public/media/procemiza/clients/provenance.json`; originais foram preservados.
+## SEO e busca por IA
 
-As três soluções usam `<details>` e `<summary>` nativos, com a primeira aberta.
-No desktop a seleção troca a visualização à direita; no celular, o exemplo
-aparece dentro do item expandido. As demonstrações são identificadas como
-ilustrativas e não são atribuídas aos clientes. A interação básica funciona
-sem JavaScript.
+- Canonical único em `www`; `title`/`description`/OG por página (`buildMetadata`).
+- JSON-LD: Organization + ProfessionalService, WebSite, WebPage, BreadcrumbList, Service,
+  SoftwareApplication (Conta 200), WebApplication (calculadora).
+- `robots.txt` libera busca, consulta de usuário e treino das IAs (lista em `app/robots.ts`).
+- Todo o conteúdo está no HTML do servidor (robôs de IA em geral não executam JavaScript).
+- `public/llms.txt` é opcional e inofensivo (o Google o ignora).
+- Depois do deploy: Search Console (propriedade de domínio, enviar sitemap, conferir o controle de
+  IA generativa), Bing Webmaster Tools, Rich Results Test e PageSpeed.
 
-Não há métricas, depoimentos ou resultados de clientes inventados. A
-representação de margem é qualitativa, sem sugerir um cálculo financeiro.
+## Medição (GA4) e LGPD
 
-### Identidade e compartilhamento
+`NEXT_PUBLIC_GA_ID` (ver `.env.example`) liga o GA4 **só depois do "Aceitar"**. Sem ID não há
+banner nem script. "Cookies" no rodapé reabre a escolha; recusar apaga os cookies do GA.
+Eventos: `calculator_used` (faixa de horas, nunca o texto da rotina) e `whatsapp_click`.
+`/privacidade` é um rascunho técnico: revisar com assessoria jurídica.
 
-Os tokens em `app/globals.css` preservam o fundo `#0C0B0A`, superfícies `#121110`
-e `#1D1C1A`, texto `#F5F2EC`/`#CBC8C0` e laranja `#FC5F02`. O laranja indica
-ação, conexão e estado ativo.
+`lib/resend.ts` é um scaffold de e-mail sem uso hoje.
 
-O layout fornece título e descrição multissetoriais, canonical, OpenGraph,
-Twitter Card e dados estruturados `ProfessionalService`. A imagem de
-compartilhamento é um PNG local de 1200 × 630, com a marca original, Fraunces,
-Archivo e um diagrama vetorial das quatro camadas. Para regenerá-la:
+## Acessibilidade e desempenho
 
-```bash
-node scripts/quality-og-image.mjs
-```
-
-O gerador usa `next/og` e `sharp`, já presentes no projeto, e consulta fontes
-oficiais do Google apenas durante essa tarefa. O site entregue não precisa de
-uma rota dinâmica para a imagem de compartilhamento.
-
-## Acessibilidade e revisão
-
-- Conteúdo semântico, link para pular ao conteúdo, foco visível e textos
-  alternativos; cópias decorativas da cena ficam fora da leitura assistiva.
-- Menu móvel com controles nativos, Escape e gerenciamento de foco após a
-  inicialização. Soluções expansíveis continuam utilizáveis sem scripts.
-- Movimento reduzido, telas baixas e falhas de inicialização mantêm a narrativa
-  disponível sem retenção prolongada da rolagem.
-- Imagens locais com dimensões reservadas; recursos abaixo da primeira dobra
-  usam carregamento adiado. Revelações repetitivas de conteúdo foram removidas.
-
-Revisar 360, 390, 768, 1024, 1440 e 1920 px, incluindo rolagem reversa, índice,
-entrada por âncoras, salto de foco, menu móvel, expansão de soluções e mudança de
-tamanho durante a navegação. Verificar também zoom de 200%, movimento reduzido,
-leitor de tela e ausência de scripts, além de Chrome, Safari e Firefox quando
-disponíveis.
-
-As metas de desempenho são **LCP ≤ 2,5 s** e **CLS ≤ 0,1**. Elas devem ser
-avaliadas em produção com as condições de medição registradas; um build
-concluído, sozinho, não comprova essas metas. Evidências e limitações da revisão
-local ficam em `.review/`, diretório ignorado pelo Git.
+Contraste AA medido (tokens semânticos em `app/globals.css`: escuro por padrão, `.theme-light`
+nas seções claras; laranja nunca como texto sobre claro). Alvos ≥ 44 px, foco visível,
+`prefers-reduced-motion` respeitado. Meta de campo: LCP ≤ 2,5 s, INP ≤ 200 ms, CLS ≤ 0,1.

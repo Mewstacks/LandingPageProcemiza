@@ -62,7 +62,8 @@
  *   claro   texto 15,2 · muted 6,5 · subtle 5,2 · borda de campo 3,4 · foco ink 17,6
  *           texto de destaque rust 5,1 (laranja como TEXTO sobre claro = 2,77, proibido)
  */
-:root {
+:root,
+.theme-dark {
   --surface: var(--color-ink-950);
   --surface-raised: var(--color-ink-850);
   --surface-sunken: #080706;
@@ -103,8 +104,8 @@
   color: var(--text);
 }
 
-.theme-dark-raised {
-  background: var(--color-ink-850);
+.theme-dark {
+  color: var(--text);
 }
 
 /* ---------------------------------- base ---------------------------------- */

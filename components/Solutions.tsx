@@ -64,7 +64,7 @@ function BespokeDemo() {
   );
 }
 
-function SolutionVisual({ solution }: { solution: Solution }) {
+export function SolutionVisual({ solution }: { solution: Solution }) {
   return (
     <figure className={`solution-visual solution-visual--${solution.id}`}>
       <div className="solution-visual-heading"><span className="solution-visual-marker" /><p>{solution.visualTitle}</p></div>

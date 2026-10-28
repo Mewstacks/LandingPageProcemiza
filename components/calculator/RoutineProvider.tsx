@@ -2,7 +2,7 @@
 
 import "./calculator.css";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   calculate,
   hourlyFromSalary,
@@ -14,6 +14,7 @@ import {
   type TimeUnit,
 } from "@/lib/calculator";
 import { parseDecimalPtBR } from "@/lib/format";
+import { hoursBucket, track } from "@/lib/analytics";
 
 export type Regime = "clt" | "simples";
 export type CostMode = "salario" | "hora";
@@ -184,6 +185,14 @@ export function RoutineProvider({ children }: { children: ReactNode }) {
   const reset = useCallback(() => setFields(DEFAULTS), []);
 
   const view = useMemo(() => deriveView(fields), [fields]);
+
+  // Uma vez por visita, só com dado digitado e só faixa de horas (nunca o texto).
+  const reported = useRef(false);
+  useEffect(() => {
+    if (reported.current || view.isExample || view.result.status !== "ok") return;
+    reported.current = true;
+    track("calculator_used", { hours_bucket: hoursBucket(view.result.expected.hours), has_cost: view.result.expected.brlMonth !== null });
+  }, [view]);
   const value = useMemo(() => ({ fields, view, set, fill, reset }), [fields, view, set, fill, reset]);
 
   return <RoutineContext.Provider value={value}>{children}</RoutineContext.Provider>;
