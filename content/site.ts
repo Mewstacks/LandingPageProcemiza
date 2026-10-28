@@ -2,7 +2,7 @@
 export const site = {
   name: "Procemiza",
   legalName: "Procemiza — Inteligência de Negócios",
-  domain: "https://procemiza.com.br",
+  domain: "https://www.procemiza.com.br",
   tagline: "Inteligência para a operação. Margem para o negócio.",
   description:
     "Automações, integrações e sistemas sob medida para conectar sua operação, reduzir retrabalho e transformar processo em margem.",
