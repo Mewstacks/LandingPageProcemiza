@@ -143,7 +143,7 @@ export function Calculator() {
           </summary>
           <ol>
             <li>
-              {formatFixed(view.input.amount ?? 0, 1)} {UNIT_LABEL[view.input.unit]} → {formatFixed(ok.perPersonMonth)} h/mês por pessoa
+              {formatFixed(view.input.amount ?? 0, 1)} {UNIT_LABEL[view.input.unit]} = {formatFixed(ok.perPersonMonth)} h/mês por pessoa
             </li>
             <li>
               × {Math.round(view.input.people)} {Math.round(view.input.people) === 1 ? "pessoa" : "pessoas"} = {formatFixed(ok.totalMonth)} h/mês
@@ -160,7 +160,7 @@ export function Calculator() {
             ) : null}
             {hasMoney ? (
               <li>
-                {formatFixed(exp.hours)} h × {formatBRL2(hourly!)} = {formatBRL2(exp.brlMonth!)}/mês · × 12 = {formatBRL(exp.brlYear!)}/ano
+                {formatFixed(exp.hours)} h × {formatBRL2(hourly!)} = {formatBRL2(exp.brlMonth!)}/mês; × 12 = {formatBRL(exp.brlYear!)}/ano
               </li>
             ) : null}
           </ol>
