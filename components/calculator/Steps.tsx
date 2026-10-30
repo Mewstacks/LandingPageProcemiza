@@ -129,7 +129,7 @@ export function Steps({ uid, active, onActive }: Props) {
                 type="button"
                 className="chip"
                 disabled={full}
-                aria-label={`Adicionar passo: ${kind.label}`}
+                aria-label={`Adicionar passo: ${kind.short} (${kind.label})`}
                 onClick={() => {
                   const id = nextStepId(fields.steps);
                   addStep(kind.id);
