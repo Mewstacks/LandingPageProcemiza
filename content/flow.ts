@@ -1,31 +1,16 @@
 /**
- * Texto dos documentos da cena do hero: um pedido de WhatsApp vira linha de planilha, nota
- * fiscal e resposta, sem ninguém digitar. É ilustração: nomes e valores são de exemplo e não
- * dizem nada sobre resultado de cliente. Palavras de uso comum, sem sigla.
+ * Texto dos cartões da cena do hero: quatro rotinas que viram automáticas. São as mesmas rotinas
+ * dos atalhos da calculadora, então a cena e a conta logo abaixo falam da mesma coisa. Sem número
+ * de resultado: o que muda é o estado, de "Manual" para "Automático".
  */
 export const flow = {
-  chat: {
-    app: "WhatsApp",
-    contact: "Mercado do Vale",
-    incoming: { text: "Oi! Preciso de 12 caixas de azeite pra sexta.", time: "09:41" },
-    outgoing: { text: "Pedido 1042 confirmado. Nota fiscal emitida. Entrega na sexta.", time: "09:42" },
-  },
-  sheet: {
-    title: "Planilha de pedidos",
-    head: ["Pedido", "Cliente", "Qtd", "Status"],
-    rows: [["1041", "Loja Rosa", "5", "Entregue"]],
-    fresh: ["1042", "Mercado do Vale", "12", "Novo"],
-  },
-  invoice: {
-    kind: "Nota fiscal",
-    number: "Nº 512",
-    to: "Mercado do Vale",
-    item: "12 cx Azeite extra virgem",
-    totalLabel: "Valor total",
-    total: "R$ 1.440,00",
-    statusLabel: "Situação",
-    stamp: "Emitida",
-  },
+  routines: [
+    { id: "notas", title: "Conferir notas fiscais", manual: "Comparar cada nota com o pedido.", auto: "Conferência feita sozinha." },
+    { id: "pedidos", title: "Responder pedidos no WhatsApp", manual: "Anotar e confirmar um por um.", auto: "Pedido anotado e confirmado sozinho." },
+    { id: "sistemas", title: "Digitar dados entre sistemas", manual: "Copiar de uma tela para outra.", auto: "Os dados passam sozinhos." },
+    { id: "relatorio", title: "Montar relatório mensal", manual: "Juntar números de várias planilhas.", auto: "Relatório pronto sozinho." },
+  ],
+  status: { manual: "Manual", auto: "Automático" },
   /** Leitor de tela: a cena é decorativa, a frase diz o que ela mostra. */
-  alt: "Um pedido chega pelo WhatsApp, entra na planilha, a nota fiscal é emitida e o cliente recebe a confirmação, sem ninguém digitar.",
+  alt: "Quatro rotinas de escritório, como conferir notas fiscais e responder pedidos no WhatsApp, passam de manuais para automáticas.",
 } as const;

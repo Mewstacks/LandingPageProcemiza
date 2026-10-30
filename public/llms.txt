@@ -4,7 +4,7 @@
 
 ## Páginas
 
-- [Calculadora de ganho com automação](https://www.procemiza.com.br/calculadora): informe rotina, tempo e custo da hora e veja horas e reais devolvidos por mês, com a conta aberta.
+- [Calculadora de ganho com automação](https://www.procemiza.com.br/calculadora): descreva o processo em passos, com o tempo de cada um, e veja horas e reais devolvidos por mês, com a conta aberta.
 - [Automação de processos](https://www.procemiza.com.br/automacao-de-processos): tarefas que se repetem viram fluxos com critérios claros.
 - [Integração de sistemas](https://www.procemiza.com.br/integracao-de-sistemas): conecta as ferramentas que a empresa já usa.
 - [Sistemas sob medida](https://www.procemiza.com.br/sistemas-sob-medida): ferramenta construída em torno do jeito de trabalhar da operação.

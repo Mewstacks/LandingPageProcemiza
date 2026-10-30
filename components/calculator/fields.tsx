@@ -1,31 +1,34 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { TimeUnit } from "@/lib/calculator";
-import type { FieldError } from "./RoutineProvider";
-
-export const UNIT_LABEL: Record<TimeUnit, string> = {
-  min_dia: "min/dia",
-  h_semana: "h/semana",
-  h_mes: "h/mês",
-};
+import type { StepKind } from "@/lib/calculator";
+import type { FieldError } from "@/lib/routine";
 
 const REASON_TEXT: Record<string, string> = {
   nan: "Número inválido",
   negative: "Sem valor negativo",
   zero: "Maior que zero",
-  order: "Confira os percentuais",
 };
 
 const TOO_LARGE: Record<string, string> = {
-  amount: "Máximo 220 h/mês por pessoa",
-  people: "Máximo 1.000 pessoas",
+  runs: "Máximo 100.000 por mês",
+  minutes: "Máximo 600 min",
+  coverage: "Entre 0 e 100%",
   cost: "Máximo R$ 10.000 por hora",
-  pct: "Máximo 95%",
+  exceptions: "Máximo 50%",
+  reworkPercent: "Máximo 100%",
+  reworkMinutes: "Máximo 600 min",
 };
 
-export function errorText(errors: FieldError[], field: FieldError["field"]): string | null {
-  const e = errors.find((x) => x.field === field);
+/** Mensagem do erro desse campo. `step` e `kind` separam campos repetidos (passos, tipos). */
+export function errorText(
+  errors: readonly FieldError[],
+  field: FieldError["field"],
+  where: { step?: number; kind?: StepKind } = {},
+): string | null {
+  const e = errors.find(
+    (x) => x.field === field && (where.step === undefined || x.step === where.step) && (where.kind === undefined || x.kind === where.kind),
+  );
   if (!e) return null;
   return e.reason === "too_large" ? (TOO_LARGE[field] ?? "Valor alto demais") : (REASON_TEXT[e.reason] ?? "Valor inválido");
 }
@@ -43,42 +46,24 @@ export function useDebounced<T>(value: T, ms = 600): T {
 type FieldProps = {
   id: string;
   label: string;
+  /** Nome acessível mais específico (contém o rótulo visível), para campos que se repetem. */
+  ariaLabel?: string;
   error?: string | null;
-  children: (a11y: { id: string; "aria-invalid": boolean; "aria-describedby"?: string }) => React.ReactNode;
+  children: (a11y: { id: string; "aria-invalid": boolean; "aria-describedby"?: string; "aria-label"?: string }) => React.ReactNode;
   className?: string;
 };
 
-export function Field({ id, label, error, children, className }: FieldProps) {
+export function Field({ id, label, ariaLabel, error, children, className }: FieldProps) {
   const errId = `${id}-erro`;
   return (
     <div className={`field${className ? ` ${className}` : ""}`} data-invalid={error ? "true" : undefined}>
       <label htmlFor={id}>{label}</label>
-      {children({ id, "aria-invalid": Boolean(error), "aria-describedby": error ? errId : undefined })}
+      {children({ id, "aria-invalid": Boolean(error), "aria-describedby": error ? errId : undefined, "aria-label": ariaLabel })}
       {error ? (
         <p id={errId} className="field-error">
           {error}
         </p>
       ) : null}
     </div>
-  );
-}
-
-export function UnitSelect({
-  id,
-  value,
-  onChange,
-}: {
-  id: string;
-  value: TimeUnit;
-  onChange: (u: TimeUnit) => void;
-}) {
-  return (
-    <select id={id} aria-label="Unidade de tempo" value={value} onChange={(e) => onChange(e.target.value as TimeUnit)}>
-      {(Object.keys(UNIT_LABEL) as TimeUnit[]).map((u) => (
-        <option key={u} value={u}>
-          {UNIT_LABEL[u]}
-        </option>
-      ))}
-    </select>
   );
 }

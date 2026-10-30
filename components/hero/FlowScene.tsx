@@ -23,13 +23,16 @@ import "./flow.css";
 const WIRE_BASE = 100;
 const FRAME_CAP_MS = 64;
 
+type Fx = { bar: HTMLElement; chip: HTMLElement; autoDetail: HTMLElement; manualDetail: HTMLElement };
+
 /**
- * Quatro documentos reais em 3D: o pedido no WhatsApp, a linha na planilha, a nota fiscal e a resposta.
- * Uma ficha anda de um ao outro e o que ela alcança acende. Só texto de verdade, nenhum ícone.
+ * Quatro rotinas de escritório em 3D, todas "Manual" no começo. Uma ficha passa por cada uma e a
+ * vira "Automático". São as mesmas rotinas dos atalhos da calculadora logo abaixo.
+ * Só texto, nenhum ícone.
  *
  * Nitidez: o mundo nunca é escalado; todo comprimento é "px de projeto × --k" (medido aqui), então o
- * navegador rasteriza cada documento no tamanho final.
- * Desempenho: por quadro só `transform` e `opacity`. O layout (tamanho de cada documento, --k,
+ * navegador rasteriza cada cartão no tamanho final.
+ * Desempenho: por quadro só `transform` e `opacity`. O layout (tamanho de cada cartão, --k,
  * perspectiva) só é escrito quando a caixa muda de tamanho.
  * Movimento reduzido: a entrada e o laço da ficha continuam; balanço e flutuação saem.
  */
@@ -45,11 +48,17 @@ export function FlowScene() {
     const token = root.querySelector<HTMLElement>(".flow-token");
     const wires = Array.from(root.querySelectorAll<HTMLElement>(".flow-wire"));
     const cards = CARD_IDS.map((id) => root.querySelector<HTMLElement>(`[data-card="${id}"]`));
-    const row = root.querySelector<HTMLElement>('[data-fx="row"]');
-    const stamp = root.querySelector<HTMLElement>('[data-fx="stamp"]');
-    const reply = root.querySelector<HTMLElement>('[data-fx="reply"]');
-    if (!stage || !world || !token || !row || !stamp || !reply || wires.length !== CARD_IDS.length - 1 || cards.some((card) => !card)) return;
+    if (!stage || !world || !token || wires.length !== CARD_IDS.length - 1 || cards.some((card) => !card)) return;
     const els = cards as HTMLElement[];
+    const fx: Fx[] = [];
+    for (const el of els) {
+      const bar = el.querySelector<HTMLElement>('[data-fx="bar"]');
+      const chip = el.querySelector<HTMLElement>('[data-fx="chip"]');
+      const autoDetail = el.querySelector<HTMLElement>('[data-fx="auto"]');
+      const manualDetail = el.querySelector<HTMLElement>('[data-fx="manual"]');
+      if (!bar || !chip || !autoDetail || !manualDetail) return;
+      fx.push({ bar, chip, autoDetail, manualDetail });
+    }
 
     const lively = !reduced;
     let layout: Layout = LAYOUTS.wide;
@@ -60,7 +69,7 @@ export function FlowScene() {
     let running = false;
     let visible = true;
 
-    /** Só quando a caixa muda: tamanho dos documentos, escala, perspectiva. */
+    /** Só quando a caixa muda: tamanho dos cartões, escala, perspectiva. */
     function place() {
       root!.dataset.layout = layout.name;
       root!.style.setProperty("--k", String(k));
@@ -88,6 +97,12 @@ export function FlowScene() {
       placed.forEach((box, index) => {
         els[index].style.transform = `translate3d(${box.x * k}px, ${box.y * k}px, ${box.z * k}px)`;
         els[index].style.opacity = String(state.enter[index]);
+        const a = state.auto[index];
+        fx[index].bar.style.opacity = String(a);
+        fx[index].chip.style.opacity = String(a);
+        // a frase antiga sai na primeira metade e a nova entra na segunda: as duas nunca se sobrepõem
+        fx[index].manualDetail.style.opacity = String(Math.max(0, 1 - 2 * a));
+        fx[index].autoDetail.style.opacity = String(Math.max(0, 2 * a - 1));
       });
       wires.forEach((wire, index) => {
         const line = segment(bottomEdge(placed[index]), topEdge(placed[index + 1]));
@@ -98,11 +113,6 @@ export function FlowScene() {
       // a ficha olha sempre para a câmera: desfaz a rotação do mundo
       token!.style.transform = `translate3d(${state.token.x * k}px, ${state.token.y * k}px, ${state.token.z * k}px) rotateY(${-ry}deg) rotateX(${-rx}deg)`;
       token!.style.opacity = String(state.tokenOpacity);
-      row!.style.opacity = String(state.row);
-      stamp!.style.opacity = String(state.stamp);
-      stamp!.style.transform = `rotate(-8deg) scale(${1.35 - 0.35 * state.stamp})`;
-      reply!.style.opacity = String(state.reply);
-      reply!.style.transform = `translateY(${(1 - state.reply) * 10 * k}px)`;
       if (root!.dataset.ready !== "true") root!.dataset.ready = "true";
     }
 
@@ -150,10 +160,11 @@ export function FlowScene() {
       measure();
       play();
     } catch {
-      // Sem a animação, volta a composição estática do CSS.
+      // Sem a animação, volta a composição estática do CSS (tudo Automático).
       pause();
       root.dataset.ready = "static";
-      [world, token, row, stamp, reply, ...wires, ...els].forEach((el) => {
+      const all = [world, token, ...wires, ...els, ...fx.flatMap((f) => [f.bar, f.chip, f.autoDetail, f.manualDetail])];
+      all.forEach((el) => {
         el.style.removeProperty("transform");
         el.style.removeProperty("opacity");
       });
@@ -172,16 +183,31 @@ export function FlowScene() {
     <div ref={rootRef} className="flow" aria-hidden="true" inert data-ui>
       <div className="flow-stage">
         <div className="flow-world">
-          {wide.cards.map((box) => (
-            <div key={box.id} className={`flow-card flow-card--${box.id}`} data-card={box.id} style={boxVars(box)}>
-              <div className="flow-doc">
-                {box.id === "in" ? <ChatIn /> : null}
-                {box.id === "sheet" ? <Sheet /> : null}
-                {box.id === "invoice" ? <Invoice /> : null}
-                {box.id === "out" ? <ChatOut /> : null}
+          {wide.cards.map((box, index) => {
+            const routine = flow.routines[index];
+            return (
+              <div key={box.id} className={`flow-card flow-card--${box.id}`} data-card={box.id} style={boxVars(box)}>
+                <div className="flow-doc rt">
+                  <i className="rt-bar" data-fx="bar" />
+                  <p className="rt-title">{routine.title}</p>
+                  <div className="rt-detail">
+                    <span className="rt-detail-manual" data-fx="manual">
+                      {routine.manual}
+                    </span>
+                    <span className="rt-detail-auto" data-fx="auto">
+                      {routine.auto}
+                    </span>
+                  </div>
+                  <div className="rt-chip">
+                    <span className="rt-chip-manual">{flow.status.manual}</span>
+                    <span className="rt-chip-auto" data-fx="chip">
+                      {flow.status.auto}
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
           {[0, 1, 2].map((index) => (
             <i key={index} className="flow-wire" />
           ))}
@@ -195,106 +221,4 @@ export function FlowScene() {
 /** Composição estática de partida (a larga): vale no servidor, sem JS e se a animação falhar. */
 function boxVars(box: CardBox): CSSProperties {
   return { "--w": box.w, "--h": box.h, "--x": box.x, "--y": box.y, "--z": box.z } as CSSProperties;
-}
-
-function ChatHead() {
-  const { chat } = flow;
-  return (
-    <p className="wa-head">
-      <span>{chat.contact}</span>
-      <b>{chat.app}</b>
-    </p>
-  );
-}
-
-function ChatIn() {
-  const { chat } = flow;
-  return (
-    <>
-      <ChatHead />
-      <div className="wa-body">
-        <p className="wa-bubble wa-bubble--in">
-          {chat.incoming.text}
-          <time>{chat.incoming.time}</time>
-        </p>
-      </div>
-    </>
-  );
-}
-
-function ChatOut() {
-  const { chat } = flow;
-  return (
-    <>
-      <ChatHead />
-      <div className="wa-body">
-        <p className="wa-bubble wa-bubble--out" data-fx="reply">
-          {chat.outgoing.text}
-          <time>{chat.outgoing.time}</time>
-        </p>
-      </div>
-    </>
-  );
-}
-
-function Sheet() {
-  const { sheet } = flow;
-  return (
-    <>
-      <p className="sheet-title">{sheet.title}</p>
-      <table className="sheet">
-        <colgroup>
-          <col style={{ width: "17%" }} />
-          <col style={{ width: "40%" }} />
-          <col style={{ width: "13%" }} />
-          <col style={{ width: "30%" }} />
-        </colgroup>
-        <thead>
-          <tr>
-            {sheet.head.map((cell) => (
-              <th key={cell}>{cell}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {sheet.rows.map((cells) => (
-            <tr key={cells[0]}>
-              {cells.map((cell) => (
-                <td key={cell}>{cell}</td>
-              ))}
-            </tr>
-          ))}
-          <tr className="sheet-fresh" data-fx="row">
-            {sheet.fresh.map((cell) => (
-              <td key={cell}>{cell}</td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
-    </>
-  );
-}
-
-function Invoice() {
-  const { invoice } = flow;
-  return (
-    <>
-      <div className="inv-top">
-        <strong>{invoice.kind}</strong>
-        <span>{invoice.number}</span>
-      </div>
-      <p className="inv-to">{invoice.to}</p>
-      <p className="inv-item">{invoice.item}</p>
-      <div className="inv-total">
-        <span>{invoice.totalLabel}</span>
-        <strong>{invoice.total}</strong>
-      </div>
-      <div className="inv-status">
-        <span>{invoice.statusLabel}</span>
-        <p className="inv-stamp" data-fx="stamp">
-          {invoice.stamp}
-        </p>
-      </div>
-    </>
-  );
 }

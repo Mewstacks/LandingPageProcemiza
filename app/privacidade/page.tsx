@@ -21,7 +21,8 @@ export default function Page() {
         page="privacidade"
         h1="Política de privacidade"
         answer="O que este site trata, para quê e como você exerce seus direitos pela LGPD (Lei 13.709/2018)."
-        primary={null}
+        size="title"
+        actions={false}
       />
       <div className="page-body theme-light">
         <PageSection id="quem" title="Quem trata">

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { entity, footer, nav, site } from "@/content/site";
+import { entity, nav, site } from "@/content/site";
 import { CookiePreferences } from "@/components/consent/Analytics";
 
 export function Footer() {
@@ -10,7 +10,6 @@ export function Footer() {
       <div className="wrap footer-main">
         <div className="footer-brand">
           <Image src="/media/procemiza/brand/logo-header.png" alt="Procemiza" width={2100} height={356} sizes="168px" />
-          <p>{footer.line}</p>
         </div>
         <nav aria-label="Navegação do rodapé">
           <ul>{nav.map((item) => <li key={item.href}><Link href={item.href}>{item.label}</Link></li>)}</ul>

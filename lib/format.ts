@@ -31,6 +31,25 @@ export function formatDays(days: number): string {
   return plain(days < 10 ? dec1.format(days) : int.format(days));
 }
 
+const dec1loose = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
+
+/** Minutos por execução: "8 min", "1,5 min", "2 h", "1 h 30 min". */
+export function formatMinutes(min: number): string {
+  if (!Number.isFinite(min)) return "";
+  if (min >= 60) {
+    const h = Math.floor(min / 60);
+    const m = Math.round(min - h * 60);
+    if (m === 60) return `${h + 1} h`;
+    return m === 0 ? `${h} h` : `${h} h ${m} min`;
+  }
+  return plain(`${dec1loose.format(min)} min`);
+}
+
+/** 0.801 → "80%". */
+export function formatPercent(share: number): string {
+  return plain(`${int.format(Math.round(share * 100))}%`);
+}
+
 /**
  * "1.234,56" → 1234.56; "12,5" → 12.5; "1.234" → 1234; "12.5" → 12.5.
  * Lixo → null. Vazio → null.

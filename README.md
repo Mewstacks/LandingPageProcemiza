@@ -62,17 +62,17 @@ Regras que valem para qualquer tela nova:
 | `app/` | Rotas, layout (Header, Footer, JSON-LD de organização), `robots.ts`, `sitemap.ts`, `manifest.ts`, `opengraph-image.tsx`, `not-found.tsx`. |
 | `app/page.tsx` | Home: Hero → Calculadora → Soluções → Clientes → Fecho. |
 | `content/site.ts` | Mensagens, navegação, fecho e dados da empresa (`entity`). |
-| `content/flow.ts` | Texto dos documentos da cena do hero (exemplo ilustrativo, sem resultado de cliente). |
+| `content/flow.ts` | Texto dos cartões da cena do hero: quatro rotinas que passam de Manual para Automático (exemplo ilustrativo, sem resultado de cliente). |
 | `content/pages.ts` | Registro único das páginas indexáveis (título, descrição, data de modificação). Alimenta metadata, sitemap e breadcrumb. |
 | `content/intents.ts`, `content/solutions.ts` | Texto das páginas de solução, da calculadora e das linhas de soluções da home. |
 | `content/clients.ts` | Logos: arquivo, tamanho intrínseco e altura de exibição. Só o logo, sem legenda; origem de cada arquivo em `public/media/procemiza/clients/provenance.json`. |
-| `lib/calculator.ts` | Conta pura, sem React. Testada em `lib/*.test.ts`. |
+| `lib/calculator.ts`, `lib/routine.ts` | Conta pura, sem React: `calculator` faz a conta por passo; `routine` leva o texto digitado até ela, guarda os atalhos e valida o que vem do `sessionStorage`. Testadas em `lib/*.test.ts`. |
 | `lib/seo.ts` | `buildMetadata`, nós de JSON-LD e serialização segura. |
 | `lib/consent.ts`, `lib/analytics.ts` | Consentimento (LGPD) e eventos do GA4. |
 | `lib/motion.ts` | `useReducedMotion` (lê `prefers-reduced-motion`). |
 | `components/hero/` | Cena 3D: `FlowScene` (componente), `flow.geometry.ts` (geometria pura e testada), `flow.css`. |
-| `components/calculator/` | `RoutineProvider` (estado compartilhado), `Calculator` (formulário e resultado) e `FlatBars` (duas barras planas). |
-| `components/page/` | Blocos das páginas internas. |
+| `components/calculator/` | `RoutineProvider` (estado), `Calculator` (monta a tela), `Steps` e `Adjust` (entrada), `Result` com `Odometer`, `Orb` e `Timeline` (saída) e `Account` (a conta aberta). |
+| `components/page/`, `components/IntentPage.tsx` | Páginas internas: título em cartaz, quando faz sentido, exemplo, perguntas e faixa de convite. |
 
 Páginas: `/`, `/calculadora`, `/automacao-de-processos`, `/integracao-de-sistemas`,
 `/sistemas-sob-medida`, `/privacidade`. Nova página: entrada em `content/pages.ts` + rota;
@@ -80,22 +80,37 @@ sitemap e metadata saem do registro.
 
 ## Calculadora
 
-Uma só (`CalculatorSection`), na home e em `/calculadora`. Horas por mês = tempo por pessoa ×
-pessoas (21 dias úteis, 52/12 semanas). Custo da hora = salário × (1 + encargos) ÷ 220
-(encargos 70% CLT, 50% Simples; regra de bolso editável) ou valor da hora digitado. Horas
-devolvidas = horas × redução (esperado 80%, otimista = esperado + 10 pontos, máximo 95%).
-Validação nunca ajusta valor em silêncio. Sem custo informado, só horas.
+Uma só (`CalculatorSection`), na home e em `/calculadora` (lá o título da página já é o H1, então a
+seção não repete outro). Serve para qualquer processo: a pessoa lista os passos, cada um com
+minutos por execução e um tipo (copiar ou digitar, conferir com regra, avisar ou enviar, procurar
+ou juntar, analisar ou decidir, falar com gente) e diz quantas vezes roda por dia, semana ou mês.
 
-Os números vêm do visitante. Nada é enviado a servidor; o estado fica em `sessionStorage`.
-O link do WhatsApp (`?text=`) leva a rotina e os números. O resultado é um número grande e duas
-barras planas, hoje × com a Procemiza (só `transform` muda ao digitar).
+- Cada tipo tem um percentual automatizável de partida (95% a 10%, `STEP_KINDS`). São premissas, não
+  medições, e todas são editáveis em "Ajustes". Nenhum estudo é citado: os percentuais de consultorias
+  não foram verificados.
+- Volta por passo = minutos × automatizável × (1 − exceções). Exceções: 10% por padrão (editável).
+  Retrabalho é opcional e devolve a mesma fração automatizada. Horas por mês = soma × execuções por
+  mês (21 dias úteis ou 52/12 semanas). Custo da hora = salário × (1 + encargos) ÷ 220 (70% CLT,
+  50% Simples) ou valor da hora digitado. Sem custo informado, só horas.
+- Validação nunca ajusta valor em silêncio: o campo errado (e o passo) mostra a mensagem.
+- Saída: número grande que rola (`Odometer`, dígitos em `content` do CSS para não entrar no HTML),
+  disco laranja de área proporcional à parte que volta (`Orb`), faixa Hoje × Depois com um bloco por
+  passo (`Timeline`; passar o mouse ou focar um passo acende o bloco e a linha da conta) e "A conta"
+  aberta: tabela por passo e uma linha por multiplicação. No celular um número fixo acompanha a
+  rolagem enquanto o cartão está fora da tela.
+- O formulário é uma linha por passo (container query: duas linhas quando a coluna é estreita).
+
+Os números vêm do visitante. Nada é enviado a servidor; o estado fica em `sessionStorage`
+(`procemiza:rotina:v2`, validado ao ler). O link do WhatsApp (`?text=`) leva o processo, o número de
+passos e o que volta. Sem número digitado (exemplo na tela) a mensagem é genérica.
 
 ## Cena do hero e movimento
 
-- Quatro documentos reais em CSS 3D (`perspective`, `rotateX`/`rotateY`, `translateZ`): o pedido
-  no WhatsApp, a linha na planilha, a nota fiscal e a resposta. Uma ficha anda de um ao outro e o
-  que ela alcança acende (linha nova, carimbo, resposta). Só texto, nenhum ícone. Sem canvas, sem
-  biblioteca.
+- Quatro rotinas de escritório em cartões de papel em CSS 3D (`perspective`, `rotateX`/`rotateY`,
+  `translateZ`): conferir notas fiscais, responder pedidos no WhatsApp, digitar dados entre sistemas
+  e montar o relatório mensal (as mesmas dos atalhos da calculadora). Todas começam "Manual"; uma
+  ficha passa por cada uma e a vira "Automático" (barra e etiqueta laranja). A frase antiga sai e a
+  nova entra, nunca as duas ao mesmo tempo. Só texto, nenhum ícone. Sem canvas, sem biblioteca.
 - **Nitidez:** todo comprimento é "px de projeto × `--k`", com `--k` medido em JS. O mundo nunca é
   escalado por `transform: scale()`, então cada documento rasteriza no tamanho final. Texto nunca
   abaixo de 13px.
@@ -110,6 +125,22 @@ barras planas, hoje × com a Procemiza (só `transform` muda ao digitar).
   Sem JavaScript, a composição estática do CSS aparece completa.
 - Limite conhecido: o laço do hero não tem botão de pausa (WCAG 2.2.2 pede um para movimento
   acima de 5 s).
+
+## Ritmo, espaço e texto
+
+- Seções a 48 px (celular) e 80 px (desktop) de padding (`--section-y`). Para comparar: Supabase usa
+  64 a 96 px (`SectionContainer`, Apache-2.0), mas com visual de produto enchendo a seção; aqui a
+  seção é texto, então menos. A faixa de clientes e os convites compactos ficam um passo abaixo.
+- Nada de texto que explique a tela. Cada seção diz uma coisa; o que já aparece em outro lugar não
+  se repete (o rodapé não repete o que o hero diz; a página da calculadora não repete o título e não
+  tem perguntas nem "como calculamos", porque a conta aberta já mostra a conta; o que a calculadora
+  faz com os dados está em `/privacidade`).
+- Páginas de solução: título em cartaz (tinta), "quando faz sentido" em colunas (papel), exemplo e
+  outros caminhos (laranja), perguntas em colunas (papel) e uma faixa só com o convite. O cartaz de
+  fecho (`PilotCTA`) aparece uma vez, na home.
+- Entrada das seções: `[data-reveal]` sobe 1,25 rem e aparece conforme a rolagem, com
+  `animation-timeline: view()` (só `transform` e `opacity`). Sem suporte, ou com
+  `prefers-reduced-motion: reduce`, o conteúdo já está no lugar; nada fica escondido esperando script.
 
 ## Conteúdo e números
 

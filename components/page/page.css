@@ -1,6 +1,9 @@
-/* Páginas internas: faixa de tinta (H1 + resposta), corpo de papel, fecho de tinta (PilotCTA). */
+/*
+ * Páginas internas, em capítulos como a home: tinta (título em cartaz + resposta), papel (quando faz
+ * sentido), laranja (o exemplo e os caminhos), papel (perguntas) e uma faixa de tinta com o convite.
+ */
 
-.page-hero { background: var(--color-ink-950); padding-top: clamp(7rem, 12svh, 9rem); padding-bottom: clamp(2.5rem, 5vw, 4.5rem); }
+.page-hero { background: var(--color-ink-950); padding-top: clamp(7rem, 12svh, 9rem); padding-bottom: clamp(2rem, 4vw, 3.5rem); }
 .page-hero-inner { display: grid; gap: 1.25rem; justify-items: start; }
 .crumbs ol { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 0; padding: 0; list-style: none; color: var(--color-dim); font-size: var(--fs-small); }
 .crumbs li + li::before { content: "/"; margin-right: 0.5rem; color: var(--color-faint); }
@@ -10,40 +13,63 @@
   .related a:hover { color: var(--accent-text); }
   .notfound-links a:hover { color: var(--color-paper); }
 }
-.page-title { max-width: 22ch; margin: 0; font-family: var(--font-display); font-weight: 340; font-size: var(--fs-display); line-height: 1.07; letter-spacing: -0.02em; text-wrap: balance; }
-.page-answer { max-width: 40rem; margin: 0; color: var(--color-paper); font-size: var(--fs-lead); line-height: 1.5; }
-.page-hero .hero-actions { margin-top: 0.75rem; }
+/* o título é o elemento dominante da primeira tela: cartaz de duas linhas */
+.page-title { margin: 0; font-family: var(--font-display); font-weight: 340; font-size: clamp(2.25rem, 8.5vw, 7.5rem); line-height: 0.98; letter-spacing: -0.03em; text-wrap: balance; }
+/* página de ferramenta: título de capítulo, para a calculadora subir na tela */
+.page-title--sm { font-size: var(--fs-display); line-height: 1.05; letter-spacing: -0.02em; }
+.page-answer { max-width: 38rem; margin: 0; color: var(--color-paper); font-size: var(--fs-lead); line-height: 1.5; }
+.page-hero .hero-actions { margin-top: 0.5rem; }
 .page-hero .text-link { color: var(--color-mist); }
 
-.page-body { padding-block: clamp(1rem, 2vw, 2rem); }
-.page-section { padding-block: clamp(2.25rem, 4.5vw, 4rem); }
-.page-section-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: clamp(1.5rem, 5vw, 5rem); align-items: start; }
+.page-h2 { margin: 0 0 clamp(1.5rem, 3vw, 2.5rem); color: var(--text); font-family: var(--font-display); font-weight: 350; font-size: var(--fs-h2); line-height: 1.05; letter-spacing: -0.015em; }
+
+/* papel: quatro frases, duas por linha */
+.page-when { padding-block: var(--section-y); }
+.when-grid { display: grid; grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr)); gap: clamp(1.25rem, 3vw, 2.25rem) clamp(2rem, 4vw, 3.5rem); margin: 0; padding: 0; list-style: none; }
+.when-grid li { color: var(--text); font-family: var(--font-display); font-weight: 350; font-size: var(--fs-h3); line-height: 1.2; text-wrap: pretty; }
+
+/* laranja: o exemplo à esquerda, os outros caminhos à direita */
+.page-example { padding-block: var(--section-y); }
+.example-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 2rem clamp(2rem, 5vw, 5rem); align-items: end; }
+.example-text { margin: 0; max-width: 26ch; color: var(--text); font-family: var(--font-display); font-weight: 380; font-size: clamp(1.5rem, 3vw, 2.25rem); line-height: 1.15; letter-spacing: -0.01em; text-wrap: balance; }
+
+/* papel: perguntas em colunas */
+.page-faq { padding-block: var(--section-y); }
+.qa { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1.75rem clamp(2rem, 4vw, 4rem); margin: 0; }
+.qa-item { display: grid; align-content: start; gap: 0.5rem; }
+.qa dt { margin: 0; color: var(--text); font-size: var(--fs-body); font-weight: 600; line-height: 1.35; }
+.qa dd { margin: 0; color: var(--text); font-size: var(--fs-body); line-height: 1.55; }
+
+.related { display: grid; gap: 0.25rem; }
+.related-title { margin: 0; color: var(--text-muted); font-family: var(--font-sans); font-size: var(--fs-small); font-weight: 500; }
+.related ul { display: grid; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+.related a { display: inline-flex; align-items: center; min-height: 2.75rem; color: var(--text); text-decoration: underline; text-decoration-thickness: 2px; text-decoration-color: var(--accent-text); text-underline-offset: 0.35em; }
+/* no laranja os caminhos ganham o tamanho de um título pequeno */
+.page-example .related a { font-family: var(--font-display); font-weight: 350; font-size: var(--fs-h3); line-height: 1.15; text-decoration-color: var(--text); }
+.page-faq .related { margin-top: clamp(2rem, 4vw, 3rem); }
+.page-faq .related ul { display: flex; flex-wrap: wrap; gap: 0 1.5rem; }
+
+/* privacidade: texto corrido, rótulo à esquerda */
+.page-body { padding-block: clamp(0.5rem, 1.5vw, 1.5rem); }
+.page-section { padding-block: clamp(1.5rem, 3vw, 2.5rem); }
+.page-section-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: clamp(1rem, 4vw, 4rem); align-items: start; }
 .page-section h2 { margin: 0; max-width: 14ch; color: var(--text); font-family: var(--font-display); font-weight: 380; font-size: var(--fs-h3); line-height: 1.12; }
 .page-section-body { display: grid; gap: 1rem; min-width: 0; color: var(--text); font-size: var(--fs-body); line-height: 1.55; }
-.page-section-body p { margin: 0; max-width: 40rem; }
-.page-list { display: grid; gap: 0.875rem; margin: 0; padding: 0; list-style: none; }
-.page-list li { max-width: 40rem; }
-.page-steps { display: grid; gap: 1.25rem; margin: 0; padding: 0; list-style: none; }
-.page-steps li { display: grid; gap: 0.125rem; }
-.page-steps strong { color: var(--text); font-weight: 600; font-size: var(--fs-body); }
-.page-steps span { max-width: 36rem; }
-.page-quote { margin: 0; padding: 1.25rem 1.5rem; max-width: 36rem; border-radius: 0.75rem; background: var(--surface-sunken); color: var(--text); font-family: var(--font-display); font-size: var(--fs-lead); line-height: 1.4; }
+.page-section-body p { margin: 0; max-width: 44rem; }
 
-/* perguntas: sempre abertas, pergunta em negrito e resposta embaixo */
-.qa { display: grid; gap: 1.5rem; margin: 0; max-width: 40rem; }
-.qa-item { display: grid; gap: 0.375rem; }
-.qa dt { margin: 0; color: var(--text); font-size: var(--fs-body); font-weight: 600; line-height: 1.4; }
-.qa dd { margin: 0; color: var(--text); font-size: var(--fs-body); line-height: 1.6; }
-
-.related { padding-block: clamp(2rem, 4vw, 3.5rem); }
-.related .wrap { display: grid; gap: 0.5rem; }
-.related-title { margin: 0; color: var(--text-subtle); font-family: var(--font-sans); font-size: var(--fs-small); font-weight: 500; }
-.related ul { display: flex; flex-wrap: wrap; gap: 0.25rem 1.5rem; margin: 0; padding: 0; list-style: none; }
-.related a { display: inline-flex; align-items: center; min-height: 2.75rem; color: var(--text); text-decoration: underline; text-decoration-thickness: 2px; text-decoration-color: var(--accent-text); text-underline-offset: 0.4em; }
-
+@media (max-width: 1099px) {
+  .when-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 @media (max-width: 899px) {
   .page-section-grid { grid-template-columns: 1fr; }
   .page-section h2 { max-width: none; }
+}
+@media (max-width: 599px) {
+  .example-grid { grid-template-columns: 1fr; align-items: start; }
+}
+
+@media (max-width: 699px) {
+  .when-grid { grid-template-columns: 1fr; }
 }
 
 .notfound-links { display: flex; flex-wrap: wrap; gap: 0.25rem 1.5rem; margin: 0; padding: 0; list-style: none; }

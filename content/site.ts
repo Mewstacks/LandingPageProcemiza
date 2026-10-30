@@ -48,20 +48,14 @@ export const cta = {
 export const hero = {
   title: "Automatizamos o trabalho repetido da sua empresa.",
   support: "Transforme processo em margem.",
-  services: ["Automação", "Integração", "Sistemas sob medida"],
 } as const;
 
 export const calculator = {
   title: "Quanto sua rotina devolve?",
 } as const;
 
-/** O fecho da página: a ideia do hero volta como cartaz, e o que acontece depois do contato. */
+/** O fecho da página: a ideia do hero volta como cartaz e um convite. */
 export const pilot = {
   title: "Menos repetição. Mais margem.",
   lead: "Comece pela rotina que mais custa.",
-  next: ["Conversa", "Primeiro recorte", "Em uso"],
-} as const;
-
-export const footer = {
-  line: "Automação, integração e sistemas sob medida.",
 } as const;

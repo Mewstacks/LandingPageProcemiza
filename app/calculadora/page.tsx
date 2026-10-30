@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { CalculatorSection } from "@/components/CalculatorSection";
 import { JsonLd } from "@/components/JsonLd";
 import { PilotCTA } from "@/components/PilotCTA";
-import { FaqList, PageHero, PageSection, Related } from "@/components/page/parts";
+import { PageHero } from "@/components/page/parts";
 import { calculadoraPage } from "@/content/intents";
 import { pages } from "@/content/pages";
 import { absoluteUrl, breadcrumbNode, buildMetadata, graph, webPageNode } from "@/lib/seo";
@@ -20,26 +20,14 @@ const app = {
   offers: { "@type": "Offer", price: "0", priceCurrency: "BRL" },
 };
 
+/** Página de ferramenta: título de capítulo, a calculadora logo abaixo e o convite. Nada além. */
 export default function Page() {
   return (
     <main id="conteudo">
       <JsonLd data={graph(webPageNode(pages.calculadora), breadcrumbNode(pages.calculadora), app)} />
-      <PageHero page="calculadora" h1={calculadoraPage.h1} answer={calculadoraPage.answer} primary={null} />
-      <CalculatorSection />
-      <div className="page-body theme-light">
-        <PageSection id="conta" title="Como calculamos">
-          <ul className="page-list">
-            {calculadoraPage.how.map((line) => (
-              <li key={line}>{line}</li>
-            ))}
-          </ul>
-        </PageSection>
-        <PageSection id="perguntas" title="Perguntas">
-          <FaqList items={calculadoraPage.faq} />
-        </PageSection>
-        <Related current="calculadora" />
-      </div>
-      <PilotCTA />
+      <PageHero page="calculadora" h1={calculadoraPage.h1} answer={calculadoraPage.answer} size="title" actions={false} />
+      <CalculatorSection withTitle={false} />
+      <PilotCTA compact />
     </main>
   );
 }

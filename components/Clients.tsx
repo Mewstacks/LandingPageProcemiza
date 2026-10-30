@@ -7,8 +7,8 @@ export function Clients() {
   return (
     <section id="clientes" className="clients theme-light" aria-labelledby="clientes-title">
       <div className="wrap clients-grid">
-        <h2 id="clientes-title" className="section-title clients-title">Clientes</h2>
-        <ul className="clients-logos" role="list">
+        <h2 id="clientes-title" className="section-title clients-title" data-reveal>Clientes</h2>
+        <ul className="clients-logos" role="list" data-reveal="2">
           {clients.map((client) => (
             <li
               key={client.id}

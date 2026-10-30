@@ -13,6 +13,10 @@ import {
 } from "./flow.geometry";
 
 const wide = LAYOUTS.wide;
+/** Instante do ciclo (ms depois do início do laço). */
+const at = (c: number) => flowState(START_MS + c, wide);
+/** Instante do ciclo em que a ficha está em `progress` (espelha as janelas de flow.geometry.ts). */
+const whenAt = (progress: number) => 900 + ((progress + 0.4) / 3.6) * 7200;
 
 describe("layout", () => {
   it("quatro documentos, cada um mais perto da câmera que o anterior", () => {
@@ -30,7 +34,12 @@ describe("layout", () => {
         expect(card.x + card.w / 2).toBeLessThanOrEqual(layout.width / 2);
         expect(card.y - card.h / 2).toBeGreaterThanOrEqual(-layout.height / 2);
         expect(card.y + card.h / 2).toBeLessThanOrEqual(layout.height / 2);
-        if (index > 0) expect(card.y).toBeGreaterThan(layout.cards[index - 1].y);
+        if (index > 0) {
+          const before = layout.cards[index - 1];
+          expect(card.y).toBeGreaterThan(before.y);
+          // mais forte que o teste antigo: além de mais embaixo, não encosta no de cima
+          expect(card.y - card.h / 2).toBeGreaterThan(before.y + before.h / 2);
+        }
       });
     }
   });
@@ -43,10 +52,10 @@ describe("layout", () => {
   });
 
   it("a escala cabe na menor das duas medidas e respeita o teto", () => {
-    expect(fitScale(wide, 640, 7000)).toBeCloseTo(1);
-    expect(fitScale(wide, 6400, 700)).toBeCloseTo(1);
-    expect(fitScale(wide, 6400, 7000)).toBe(1.4);
-    expect(fitScale(wide, 0, 700)).toBe(1);
+    expect(fitScale(wide, 640, 6800)).toBeCloseTo(1);
+    expect(fitScale(wide, 6400, 680)).toBeCloseTo(1);
+    expect(fitScale(wide, 6400, 6800)).toBe(1.4);
+    expect(fitScale(wide, 0, 680)).toBe(1);
   });
 });
 
@@ -84,7 +93,7 @@ describe("flowState", () => {
     const s = flowState(0, wide);
     expect(s.enter).toEqual([0, 0, 0, 0]);
     expect(s.tokenOpacity).toBe(0);
-    expect(s.row + s.stamp + s.reply).toBe(0);
+    expect(s.auto).toEqual([0, 0, 0, 0]);
   });
 
   it("a entrada é escalonada e termina com todos no lugar", () => {
@@ -94,48 +103,67 @@ describe("flowState", () => {
     expect(flowState(START_MS + 200, wide).enter).toEqual([1, 1, 1, 1]);
   });
 
-  it("a ficha para sobre cada documento na ordem, e acende o que chegou", () => {
-    const at = (c: number) => flowState(START_MS + c, wide);
-    const start = at(700);
-    expect(start.progress).toBeCloseTo(0, 1);
-    expect(start.row).toBe(0);
+  it("começa tudo Manual, com a ficha sobre a primeira rotina", () => {
+    const s = at(700);
+    expect(s.auto).toEqual([0, 0, 0, 0]);
+    expect(s.token.x).toBeCloseTo(center(wide.cards[0]).x);
+    expect(s.token.y).toBeCloseTo(center(wide.cards[0]).y);
+  });
 
-    const end = at(7300);
-    expect(end.progress).toBeCloseTo(3);
-    expect(end.row).toBe(1);
-    expect(end.stamp).toBe(1);
-    expect(end.reply).toBe(1);
-    expect(end.lift[3]).toBeCloseTo(1);
-    expect(end.lift[0]).toBe(0);
-    // pousa no centro do último documento
+  it("a ficha para sobre cada documento na ordem, e acende o que chegou", () => {
+    const afterFirst = at(whenAt(0.3));
+    expect(afterFirst.auto[0]).toBe(1);
+    expect(afterFirst.auto[1]).toBe(0);
+
+    const afterSecond = at(whenAt(1.3));
+    expect(afterSecond.auto.slice(0, 3)).toEqual([1, 1, 0]);
+    expect(afterSecond.auto[3]).toBe(0);
+
+    const end = at(whenAt(3.2));
+    expect(end.auto).toEqual([1, 1, 1, 1]);
+    // termina sobre o centro da última rotina
     expect(end.token.x).toBeCloseTo(center(wide.cards[3]).x);
     expect(end.token.y).toBeCloseTo(center(wide.cards[3]).y);
+    expect(end.lift[3]).toBeGreaterThan(0.75);
+    expect(at(whenAt(3)).lift[3]).toBeCloseTo(1);
+    expect(end.lift[0]).toBe(0);
+  });
+
+  it("o progresso vai de -0,4 a 3,2 entre 900 e 8100 ms do ciclo e para nas pontas", () => {
+    expect(flowState(0, wide).progress).toBeCloseTo(-0.4);
+    expect(at(0).progress).toBeCloseTo(-0.4);
+    expect(at(900).progress).toBeCloseTo(-0.4);
+    expect(at(4500).progress).toBeCloseTo(1.4);
+    expect(at(8100).progress).toBeCloseTo(3.2);
+    expect(at(9500).progress).toBeCloseTo(3.2);
   });
 
   it("o progresso nunca anda para trás durante a viagem", () => {
-    let last = -1;
-    for (let c = 0; c <= 7300; c += 100) {
-      const { progress } = flowState(START_MS + c, wide);
+    let last = -Infinity;
+    for (let c = 0; c <= 8100; c += 100) {
+      const { progress } = at(c);
       expect(progress).toBeGreaterThanOrEqual(last);
       last = progress;
     }
   });
 
   it("no fim do ciclo tudo apaga junto e o ciclo seguinte recomeça igual", () => {
-    const quiet = flowState(START_MS + 10700, wide);
-    expect(quiet.row + quiet.stamp + quiet.reply + quiet.tokenOpacity).toBe(0);
+    const quiet = at(11100);
+    expect(quiet.auto).toEqual([0, 0, 0, 0]);
+    expect(quiet.tokenOpacity).toBe(0);
     expect(quiet.lift.every((value) => value === 0)).toBe(true);
 
-    const a = flowState(START_MS + 3000, wide);
-    const b = flowState(START_MS + 3000 + CYCLE_MS, wide);
+    const a = at(4000);
+    const b = flowState(START_MS + 4000 + CYCLE_MS, wide);
     expect(b.progress).toBeCloseTo(a.progress);
     expect(b.token.x).toBeCloseTo(a.token.x);
+    expect(b.auto).toEqual(a.auto);
   });
 
   it("a ficha sobe no meio do trecho e desce ao chegar", () => {
-    const mid = flowState(START_MS + 600 + 1100, wide);
+    const mid = at(whenAt(0.5));
     expect(mid.token.z).toBeGreaterThan(center(wide.cards[0]).z + 20);
-    const land = flowState(START_MS + 600 + 2200, wide);
+    const land = at(whenAt(1));
     expect(land.token.z).toBeCloseTo(center(wide.cards[1]).z + 6, 0);
   });
 });

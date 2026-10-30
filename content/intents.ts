@@ -18,12 +18,6 @@ export type IntentContent = {
   faq: readonly Qa[];
 };
 
-export const steps = [
-  { name: "Diagnóstico", text: "Acompanhamos uma rotina real." },
-  { name: "Construção", text: "Um primeiro recorte entra em uso." },
-  { name: "Evolução", text: "Ajustamos e ampliamos com o uso." },
-] as const;
-
 const preco: Qa = {
   q: "Quanto custa?",
   a: "Depende da rotina. A conversa define o recorte; o valor vem depois.",
@@ -53,10 +47,6 @@ export const automacao: IntentContent = {
       q: "Que rotina automatizar primeiro?",
       a: "A que se repete, segue regras claras e toma tempo de várias pessoas.",
     },
-    {
-      q: "Quanto tempo devolve?",
-      a: "Depende da rotina. A calculadora estima 80% e, no cenário otimista, 90%. É estimativa.",
-    },
     semTrocar,
     preco,
   ],
@@ -80,10 +70,6 @@ export const integracao: IntentContent = {
     {
       q: "O que muda para a equipe?",
       a: "Menos digitação. Cada área vê a mesma informação, atualizada.",
-    },
-    {
-      q: "Como saber se vale a pena?",
-      a: "Some o tempo gasto copiando e conferindo. A calculadora faz a conta.",
     },
     preco,
   ],
@@ -114,25 +100,5 @@ export const sobMedida: IntentContent = {
 
 export const calculadoraPage = {
   h1: "Calculadora de ganho com automação",
-  answer: "Informe rotina, tempo e custo. Veja quanto a automação devolve por mês.",
-  how: [
-    "Horas por mês = tempo por pessoa × pessoas (21 dias úteis, 52/12 semanas).",
-    "Custo da hora = salário × 1,7 ÷ 220, ou o valor da hora que você digitar.",
-    "Horas devolvidas = horas por mês × 80% (90% no cenário otimista).",
-    "Ganho = horas devolvidas × custo da hora. Por ano, × 12.",
-  ],
-  faq: [
-    {
-      q: "A calculadora guarda meus dados?",
-      a: "Não. Os números ficam no seu navegador. O texto da rotina só sai daqui se você abrir o WhatsApp.",
-    },
-    {
-      q: "Por que 80% e 90%?",
-      a: "São os cenários esperado e otimista para rotinas repetitivas com regra clara. Rotinas com muita exceção devolvem menos.",
-    },
-    {
-      q: "É uma promessa?",
-      a: "Não. É uma estimativa sobre os números que você informa.",
-    },
-  ],
+  answer: "Descreva o processo em passos, com o tempo de cada um. Veja quanto a automação devolve por mês.",
 } as const;

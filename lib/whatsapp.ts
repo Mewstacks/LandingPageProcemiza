@@ -1,15 +1,23 @@
-import { formatBRL, formatHours } from "./format";
+import { formatBRL, formatHours, formatPercent } from "./format";
 
 export const ROUTINE_MAX = 80;
 export const MESSAGE_MAX = 600;
 
 export type WhatsAppContext = {
   routine?: string;
-  /** Horas devolvidas por mês no cenário esperado. */
+  /** Quantos passos o processo tem. */
+  steps?: number;
+  /** Horas devolvidas por mês. */
   hoursReturned?: number;
   brlMonth?: number | null;
-  pct?: number;
+  /** Parte do tempo que volta, 0..1. Sai da conta. */
+  share?: number;
 };
+
+/** ["a"] → "a"; ["a", "b", "c"] → "a, b e c". */
+function joinPt(parts: string[]): string {
+  return parts.length < 2 ? parts.join("") : `${parts.slice(0, -1).join(", ")} e ${parts[parts.length - 1]}`;
+}
 
 /** Uma linha, sem controle, com teto. Nunca vai para o GA. */
 export function cleanRoutine(raw: string): string {
@@ -20,16 +28,17 @@ export function cleanRoutine(raw: string): string {
 export function buildMessage(ctx: WhatsAppContext = {}): string {
   const routine = cleanRoutine(ctx.routine ?? "");
   let text: string;
-  if (!routine || !ctx.hoursReturned || ctx.hoursReturned <= 0) {
+  if (!ctx.hoursReturned || ctx.hoursReturned <= 0) {
     text = routine
       ? `Olá! Quero conversar sobre automatizar esta rotina: "${routine}".`
       : "Olá! Quero conversar sobre automatizar uma rotina da minha empresa.";
   } else {
-    const pct = Math.round((ctx.pct ?? 0.8) * 100);
-    const money = ctx.brlMonth ? ` (${formatBRL(ctx.brlMonth)}/mês)` : "";
-    text =
-      `Olá! Simulei no site a rotina "${routine}". Automatizando ${pct}%, ` +
-      `devolve cerca de ${formatHours(ctx.hoursReturned)} h/mês${money}. Quero conversar sobre isso.`;
+    const size = ctx.steps && ctx.steps > 1 ? ` (${ctx.steps} passos)` : "";
+    const gain = [`${formatHours(ctx.hoursReturned)} h/mês`];
+    if (ctx.share !== undefined) gain.push(`${formatPercent(ctx.share)} do tempo`);
+    if (ctx.brlMonth) gain.push(`${formatBRL(ctx.brlMonth)}/mês`);
+    const what = routine ? `o processo "${routine}"` : "um processo";
+    text = `Olá! Simulei no site ${what}${size}. A automação devolve cerca de ${joinPt(gain)}. Quero conversar sobre isso.`;
   }
   return text.slice(0, MESSAGE_MAX);
 }

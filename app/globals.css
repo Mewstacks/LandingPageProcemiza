@@ -34,7 +34,7 @@
   --font-display: var(--font-fraunces), Georgia, serif;
   --font-sans: var(--font-archivo), system-ui, sans-serif;
 
-  /* escala: sete tamanhos para a página toda; o cartaz só aparece no fecho */
+  /* escala: sete tamanhos para a página toda; o cartaz é o fecho e o título das páginas internas */
   --fs-tiny: 0.8125rem;
   --fs-small: 0.9375rem;
   --fs-body: 1.0625rem;
@@ -43,7 +43,7 @@
   --fs-h2: clamp(2rem, 3.6vw, 3.25rem);
   /* teto 3,85rem: acima disso a frase do hero (11,7 em de largura) não cabe em duas linhas na coluna de 7fr */
   --fs-display: clamp(2.5rem, 4.2vw, 3.85rem);
-  --fs-poster: clamp(2.5rem, 11vw, 9.5rem);
+  --fs-poster: clamp(2.75rem, 8.5vw, 7.5rem);
 
   /* movimento: curvas fortes (as nativas são fracas demais) */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -51,8 +51,9 @@
   --duration-fast: 160ms;
   --duration-med: 260ms;
 
-  /* ritmo */
-  --section-y: clamp(4.5rem, 9vw, 8rem);
+  /* ritmo: 48px no celular, 80px no desktop. Supabase usa 64 a 96px com visual de produto
+     enchendo a seção (SectionContainer, Apache-2.0); aqui a seção é texto, então menos. */
+  --section-y: clamp(3rem, 5.5vw, 5rem);
   --maxw: 88rem;
 }
 
@@ -323,7 +324,6 @@ button { cursor: pointer; }
 .hero-copy { display: grid; justify-items: start; gap: 1.25rem; min-width: 0; }
 .hero-title { margin: 0; font-family: var(--font-display); font-weight: 340; font-size: var(--fs-display); line-height: 1.04; letter-spacing: -0.02em; text-wrap: balance; }
 .hero-support { margin: 0; color: var(--accent-text); font-family: var(--font-display); font-weight: 350; font-size: var(--fs-h3); line-height: 1.15; }
-.hero-services { display: grid; gap: 0.25rem; margin: 0.5rem 0 0; padding: 0; color: var(--text); font-size: var(--fs-lead); }
 .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 1.75rem; margin-top: 0.75rem; }
 
 /* altura mínima 40rem (escala ≥ 0,91): abaixo disso o texto dos documentos, com piso de 13px, não cabe */
@@ -344,29 +344,28 @@ button { cursor: pointer; }
 /* entrada: o disco desliza da borda; o texto só desloca (a opacidade não mexe, para o LCP não esperar) */
 @keyframes disc-in { from { transform: translateX(28%) scale(0.86); } to { transform: none; } }
 @keyframes rise { from { transform: translateY(14px); } to { transform: none; } }
-.hero-title, .hero-support, .hero-services, .hero-actions { animation: rise 640ms var(--ease-out) both; }
+.hero-title, .hero-support, .hero-actions { animation: rise 640ms var(--ease-out) both; }
 .hero-support { animation-delay: 70ms; }
-.hero-services { animation-delay: 140ms; }
-.hero-actions { animation-delay: 210ms; }
+.hero-actions { animation-delay: 140ms; }
 
 /* ----------------------------- capítulo 3: soluções ---------------------------- */
 
-/* Laranja. Três linhas de cartaz: o nome à esquerda, o que muda à direita. Só tipografia. */
+/* Laranja. Três colunas de cartaz: o nome, o que muda e o caminho. Só tipografia, alturas iguais. */
 .solutions { padding-block: var(--section-y); }
-.solutions-title { margin: 0 0 clamp(2.5rem, 6vw, 5rem); font-family: var(--font-display); font-weight: 350; font-size: var(--fs-display); line-height: 1.04; letter-spacing: -0.02em; }
-.solutions-list { display: grid; gap: clamp(2.75rem, 5.5vw, 5rem); margin: 0; padding: 0; list-style: none; }
-.solution { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(1rem, 2vw, 2rem); row-gap: 1rem; align-items: start; }
-.solution h3 { grid-column: 1 / span 5; margin: 0; font-family: var(--font-display); font-weight: 350; font-size: var(--fs-h2); line-height: 1.05; letter-spacing: -0.015em; text-wrap: balance; }
-.solution-body { grid-column: 7 / -1; display: grid; justify-items: start; gap: 0.875rem; max-width: 36rem; }
+.solutions-title { margin: 0 0 clamp(1.75rem, 3.5vw, 2.75rem); font-family: var(--font-display); font-weight: 350; font-size: var(--fs-display); line-height: 1.04; letter-spacing: -0.02em; }
+.solutions-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(2rem, 3.5vw, 3.5rem); margin: 0; padding: 0; list-style: none; }
+.solution { display: grid; align-content: start; justify-items: start; gap: 0.875rem; min-width: 0; }
+.solution h3 { margin: 0; font-family: var(--font-display); font-weight: 350; font-size: var(--fs-h2); line-height: 1.05; letter-spacing: -0.015em; text-wrap: balance; }
 .solution-line { margin: 0; font-size: var(--fs-lead); font-weight: 500; line-height: 1.35; }
-.solution-example { margin: 0; font-size: var(--fs-body); line-height: 1.55; }
+.solution .text-link { margin-top: -0.25rem; }
 
 /* ------------------------------ capítulo 4: clientes --------------------------- */
 
-.clients { padding-block: var(--section-y); }
-.clients-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: center; gap: 2.5rem clamp(1rem, 2vw, 2rem); }
-.clients-title { grid-column: 1 / span 4; }
-.clients-logos { grid-column: 5 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2rem 1.5rem; margin: 0; padding: 0; list-style: none; }
+/* faixa de prova: um passo abaixo do ritmo normal */
+.clients { padding-block: calc(var(--section-y) * 0.8); }
+.clients-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: center; gap: 1.75rem clamp(1rem, 2vw, 2rem); }
+.clients-title { grid-column: 1 / span 3; }
+.clients-logos { grid-column: 4 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem 1.5rem; margin: 0; padding: 0; list-style: none; }
 /* só o logo: células de mesma altura, marcas centradas na linha, qualquer que seja a altura de cada uma */
 .client-mark { display: flex; align-items: center; justify-content: flex-start; height: 4.25rem; }
 /* um só tom de tinta para todas as marcas (as com fundo transparente viram silhueta; o selo redondo, que tem fundo, fica em cinza) */
@@ -377,29 +376,31 @@ button { cursor: pointer; }
 
 /* --------------------------------- fecho --------------------------------- */
 
-/* Tinta de novo: a ideia do início volta como cartaz, em duas linhas. */
-.cta { display: grid; align-content: center; min-height: min(92svh, 60rem); padding-block: var(--section-y); }
+/* Tinta de novo: a ideia do início volta como cartaz, em duas linhas; o convite fica ao lado da
+   segunda, na mesma linha de base. Nas páginas internas vira uma faixa (variante compacta). */
+.cta { padding-block: var(--section-y); }
+.cta-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 1.5rem clamp(2rem, 5vw, 5rem); }
 .cta-title { margin: 0; font-family: var(--font-display); font-weight: 340; font-size: var(--fs-poster); line-height: 0.95; letter-spacing: -0.03em; }
 /* cada frase numa linha */
 .cta-title span { display: block; }
-.cta-row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 2rem; margin-top: clamp(2.5rem, 6vw, 5rem); }
-.cta-lead { margin: 0; color: var(--text); font-size: var(--fs-lead); line-height: 1.4; }
-.cta-steps { display: flex; flex-wrap: wrap; gap: 0.25rem 1.75rem; margin: 0.75rem 0 0; padding: 0; list-style: none; color: var(--text-muted); font-size: var(--fs-body); }
+.cta-action { display: grid; justify-items: start; gap: 1rem; padding-bottom: 0.5rem; }
+.cta-lead { margin: 0; max-width: 18ch; color: var(--text); font-size: var(--fs-lead); line-height: 1.3; }
+.cta--compact { padding-block: calc(var(--section-y) * 0.8); }
+.cta--compact .cta-grid { align-items: center; }
+.cta--compact .cta-lead { max-width: none; font-family: var(--font-display); font-weight: 350; font-size: var(--fs-h3); line-height: 1.15; }
 
 /* --------------------------------- rodapé --------------------------------- */
 
-.site-footer { background: var(--surface-sunken); padding-top: 4rem; }
-.footer-main { display: grid; grid-template-columns: 1.2fr 0.6fr 0.6fr; gap: 4rem; align-items: start; padding-bottom: 3rem; }
+.site-footer { background: var(--surface-sunken); padding-top: 2.5rem; }
+.footer-main { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 2.5rem; padding-bottom: 0.5rem; }
 .footer-brand img { width: 10.5rem; height: auto; }
-.footer-brand p { max-width: 25rem; margin-top: 1.25rem; color: var(--color-mist); font-size: var(--fs-body); line-height: 1.6; }
-.footer-main ul { display: grid; gap: 0.25rem; }
+.footer-main nav ul, .footer-contact { display: flex; flex-wrap: wrap; gap: 0 1.75rem; margin: 0; padding: 0; list-style: none; }
 .footer-main a { display: inline-flex; align-items: center; min-height: 2.75rem; color: var(--color-mist); font-size: var(--fs-body); }
 @media (hover: hover) and (pointer: fine) {
   .footer-main a:hover { color: var(--color-paper); }
 }
-.footer-contact { justify-items: end; }
-.footer-bottom { padding-block: 1.25rem 2rem; }
-.footer-bottom p { color: var(--color-dim); font-size: var(--fs-small); }
+.footer-bottom { padding-block: 0.5rem 1.75rem; }
+.footer-bottom p { margin: 0; color: var(--color-dim); font-size: var(--fs-small); }
 
 /* ------------------------------- responsivo ------------------------------- */
 
@@ -408,32 +409,35 @@ button { cursor: pointer; }
   .hero-grid { grid-template-columns: 1fr; gap: 2rem; padding-top: 7rem; padding-bottom: 2rem; }
   .hero-title { font-size: clamp(2rem, 5.6vw, 3.5rem); }
   .hero-support { font-size: var(--fs-lead); }
-  .hero-services { font-size: var(--fs-body); }
   /* o disco passa para trás da pilha, centrado e cortado pelas bordas */
   .hero-visual { height: 40rem; margin-right: calc(-1 * clamp(1.25rem, 4vw, 3rem)); margin-left: calc(-1 * clamp(1.25rem, 4vw, 3rem)); }
-  .hero-disc { left: 50%; top: 52%; width: min(150vw, 56rem); }
-  .solution { grid-template-columns: 1fr; }
-  .solution h3, .solution-body { grid-column: 1 / -1; }
+  .hero-disc { left: 50%; top: 52%; width: min(150vw, 44rem); }
   .clients-grid { grid-template-columns: 1fr; }
   .clients-title, .clients-logos { grid-column: 1 / -1; }
+}
+@media (max-width: 899px) {
+  .cta-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 699px) {
+  .solutions-list { grid-template-columns: 1fr; gap: 2rem; }
 }
 @media (max-width: 767px) {
   .header-cta .cta-long { display: none; }
   .header-cta .cta-short { display: inline; }
   .header-wordmark { width: 9.6rem; }
   .hero-grid { padding-top: 6.5rem; }
-  .cta-row { align-items: flex-start; flex-direction: column; }
-  .cta-row .btn { width: 100%; }
-  .footer-main { grid-template-columns: 1fr 1fr; gap: 2rem; }
-  .footer-brand { grid-column: 1 / -1; }
-  .footer-contact { justify-items: start; }
+  .cta-action .btn { width: 100%; }
 }
 @media (max-width: 639px) {
   /* H1 do dono em 3 linhas no celular: duas linhas pediriam ~28px e perderiam o peso */
   .hero-title { font-size: clamp(2.125rem, 9.4vw, 2.75rem); max-width: 14ch; }
-  .hero-visual { height: 41rem; }
-  .clients-logos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 1rem; }
+  .clients-logos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem 1rem; }
+  .client-mark { height: 3.75rem; }
   .client-mark img { height: var(--mark-h-sm); }
+}
+/* pilha estreita (cena < 600px): 340 × 600 de projeto; com 38rem a escala fica ~1,0 e sobra margem para o 3D */
+@media (max-width: 599px) {
+  .hero-visual { height: 38rem; }
 }
 @media (max-width: 380px) {
   .hero-actions { flex-direction: column; align-items: flex-start; }
@@ -441,8 +445,21 @@ button { cursor: pointer; }
 @media (max-width: 359px) {
   .header-cta { display: none; }
 }
+/* Entrada das seções: sobe 1,25rem e aparece conforme a rolagem (só transform e opacity). Sem
+   animation-timeline o conteúdo simplesmente já está lá; nada fica escondido esperando script. */
+@keyframes reveal-up { from { opacity: 0; transform: translateY(1.25rem); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    [data-reveal] { animation: reveal-up linear both; animation-timeline: view(); animation-range: entry 4% entry 38%; }
+    [data-reveal="2"] { animation-range: entry 9% entry 43%; }
+    [data-reveal="3"] { animation-range: entry 14% entry 48%; }
+    [data-reveal="4"] { animation-range: entry 19% entry 53%; }
+  }
+}
+@media print { [data-reveal] { animation: none; } }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   /* o texto fica parado; a cena de documentos continua andando (é o que o site mostra) */
-  .hero-title, .hero-support, .hero-services, .hero-actions { animation: none; }
+  .hero-title, .hero-support, .hero-actions { animation: none; }
 }

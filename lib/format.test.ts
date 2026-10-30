@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatBRL, formatDays, formatHours, parseDecimalPtBR } from "./format";
+import { formatBRL, formatDays, formatHours, formatMinutes, formatPercent, parseDecimalPtBR } from "./format";
 
 describe("parseDecimalPtBR", () => {
   it.each([
@@ -30,5 +30,21 @@ describe("formatação", () => {
   it("dias", () => {
     expect(formatDays(3.15)).toMatch(/^3,[12]$/);
     expect(formatDays(12.4)).toBe("12");
+  });
+  it("minutos: até uma casa abaixo de uma hora, horas e minutos acima", () => {
+    expect(formatMinutes(8)).toBe("8 min");
+    expect(formatMinutes(1.5)).toBe("1,5 min");
+    expect(formatMinutes(1.99)).toBe("2 min");
+    expect(formatMinutes(0.04)).toBe("0 min");
+    expect(formatMinutes(59.7)).toBe("59,7 min");
+    expect(formatMinutes(60)).toBe("1 h");
+    expect(formatMinutes(90)).toBe("1 h 30 min");
+    expect(formatMinutes(119.6)).toBe("2 h");
+    expect(formatMinutes(Number.NaN)).toBe("");
+  });
+  it("percentual inteiro, sem NBSP", () => {
+    expect(formatPercent(0.801)).toBe("80%");
+    expect(formatPercent(1)).toBe("100%");
+    expect(formatPercent(0)).toBe("0%");
   });
 });

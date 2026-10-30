@@ -1,11 +1,12 @@
 /*
- * Cena do hero: documentos de papel em 3D (pedido no WhatsApp, planilha, nota fiscal, resposta).
- * Os documentos têm a cara do que são, então as cores deles (verde do WhatsApp, grade da
- * planilha) vivem aqui, em variáveis da cena; o resto vem dos tokens da marca.
+ * Cena do hero: quatro rotinas de escritório em cartões de papel 3D. Cada uma começa "Manual" e a
+ * ficha que passa a vira "Automático" (barra e etiqueta laranja). Só consome tokens da marca.
  *
  * Todo comprimento é "px de projeto × --u" (--u = 1px × --k, escala medida pelo JS): nada de
- * scale() no mundo, então cada documento rasteriza no tamanho final. Texto nunca abaixo de 13px.
+ * scale() no mundo, então cada cartão rasteriza no tamanho final. Texto nunca abaixo de 13px.
  * A raiz carrega data-ui: é um fragmento de interface, modelo do produto.
+ *
+ * Sem JavaScript (ou se a animação falhar) vale a composição de partida: tudo Automático.
  */
 .flow {
   --k: 0.85;
@@ -14,11 +15,6 @@
   --doc-ink: #1d1c1a;
   --doc-muted: #55514a;
   --doc-edge: color-mix(in oklab, var(--color-ink-950) 16%, var(--doc));
-  --doc-head: #e9e8e4;
-  --chat-bg: #efeae2;
-  --chat-in: #fbfaf8;
-  --chat-out: #d9fdd3;
-  --chat-brand: #0b6b57;
   position: relative;
   width: 100%;
   height: 100%;
@@ -53,6 +49,7 @@
   line-height: 1.3;
 }
 .flow-doc {
+  position: relative;
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -61,48 +58,21 @@
   background: var(--doc);
 }
 
-/* ------------------------------- WhatsApp ------------------------------ */
+/* ------------------------------- rotina -------------------------------- */
 
-.wa-head { display: flex; align-items: baseline; justify-content: space-between; gap: calc(8 * var(--u)); margin: 0; padding: calc(9 * var(--u)) calc(14 * var(--u)); background: var(--doc-head); font-weight: 600; }
-.wa-head b { color: var(--chat-brand); font-size: max(13px, calc(13 * var(--u))); font-weight: 700; }
-.wa-body { display: grid; align-content: start; gap: calc(8 * var(--u)); height: 100%; padding: calc(12 * var(--u)); background: var(--chat-bg); }
-.wa-bubble { position: relative; max-width: 88%; margin: 0; padding: calc(7 * var(--u)) calc(10 * var(--u)) calc(19 * var(--u)); border-radius: calc(8 * var(--u)); background: var(--chat-in); }
-.wa-bubble time { position: absolute; right: calc(9 * var(--u)); bottom: calc(3 * var(--u)); color: var(--doc-muted); font-size: max(13px, calc(12 * var(--u))); }
-.wa-bubble--out { margin-left: auto; background: var(--chat-out); }
-
-/* ------------------------------- planilha ------------------------------ */
-
-.sheet-title { margin: 0; padding: calc(8 * var(--u)) calc(10 * var(--u)); font-weight: 700; }
-.sheet { width: 100%; border-collapse: collapse; table-layout: fixed; }
-.sheet th { padding: calc(8 * var(--u)) calc(8 * var(--u)); background: var(--doc-head); color: var(--doc-muted); font-size: max(13px, calc(13 * var(--u))); font-weight: 600; text-align: left; }
-.sheet td { padding: calc(9 * var(--u)) calc(8 * var(--u)); border-top: 1px solid var(--doc-edge); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: max(13px, calc(14 * var(--u))); font-variant-numeric: tabular-nums; }
-.sheet-fresh td { background: color-mix(in oklab, var(--color-accent) 26%, var(--doc)); font-weight: 600; }
-
-/* ----------------------------- nota fiscal ----------------------------- */
-
-.flow-card--invoice .flow-doc { display: grid; align-content: start; gap: calc(3 * var(--u)); padding: calc(14 * var(--u)) calc(16 * var(--u)); }
-.inv-top { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: calc(6 * var(--u)); }
-.inv-top strong { font-size: max(13px, calc(20 * var(--u))); }
-.inv-top span { color: var(--doc-muted); font-size: max(13px, calc(13 * var(--u))); }
-.inv-to { margin: 0; font-weight: 600; }
-.inv-item { margin: 0 0 calc(6 * var(--u)); }
-.inv-total, .inv-status { display: flex; align-items: baseline; justify-content: space-between; gap: calc(8 * var(--u)); }
-.inv-total { padding-top: calc(8 * var(--u)); border-top: 1px solid var(--doc-edge); }
-.inv-total span, .inv-status span { color: var(--doc-muted); font-size: max(13px, calc(13 * var(--u))); }
-.inv-total strong { font-size: max(13px, calc(21 * var(--u))); font-variant-numeric: tabular-nums; }
-.inv-status { align-items: center; margin-top: calc(4 * var(--u)); }
-.inv-stamp {
-  margin: 0;
-  padding: calc(2 * var(--u)) calc(10 * var(--u));
-  border: calc(2 * var(--u)) solid var(--color-rust);
-  border-radius: calc(4 * var(--u));
-  color: var(--color-rust);
-  font-size: max(13px, calc(14 * var(--u)));
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  transform: rotate(-8deg);
-}
+.rt { display: grid; align-content: center; gap: calc(4 * var(--u)); padding: calc(14 * var(--u)) calc(16 * var(--u)) calc(14 * var(--u)) calc(24 * var(--u)); }
+.rt-bar { position: absolute; left: 0; top: 0; bottom: 0; width: calc(8 * var(--u)); background: var(--color-accent); }
+.rt-title { margin: 0; font-size: max(13px, calc(18 * var(--u))); font-weight: 700; line-height: 1.25; }
+/* as duas frases ocupam o mesmo lugar: a de "antes" some, a de "depois" aparece */
+.rt-detail { position: relative; min-height: calc(20 * var(--u)); font-size: max(13px, calc(15 * var(--u))); }
+.rt-detail span { display: block; }
+.rt-detail-manual { color: var(--doc-muted); opacity: 0; }
+.rt-detail-auto { position: absolute; left: 0; top: 0; color: var(--doc-ink); }
+.rt-chip { position: relative; width: fit-content; margin-top: calc(8 * var(--u)); }
+.rt-chip span { display: block; min-width: calc(112 * var(--u)); padding: calc(3 * var(--u)) calc(14 * var(--u)); border: calc(1.5 * var(--u)) solid transparent; border-radius: 999px; font-size: max(13px, calc(14 * var(--u))); font-weight: 700; text-align: center; white-space: nowrap; }
+/* dois seletores de classe: `.rt-chip span` (borda transparente) tem peso maior que um só */
+.rt-chip .rt-chip-manual { border-color: var(--doc-muted); color: var(--doc-muted); }
+.rt-chip .rt-chip-auto { position: absolute; left: 0; top: 0; border-color: var(--color-accent); background: var(--color-accent); color: var(--color-ink-950); }
 
 /* ------------------------------ ficha e fios ---------------------------- */
 
