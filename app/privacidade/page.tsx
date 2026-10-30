@@ -4,6 +4,7 @@ import { PageHero, PageSection } from "@/components/page/parts";
 import { entity, site } from "@/content/site";
 import { pages } from "@/content/pages";
 import { breadcrumbNode, buildMetadata, graph, webPageNode } from "@/lib/seo";
+import { formatPhone } from "@/lib/whatsapp";
 
 export const metadata: Metadata = buildMetadata(pages.privacidade);
 
@@ -38,9 +39,9 @@ export default function Page() {
         </PageSection>
         <PageSection id="whatsapp" title="WhatsApp">
           <p>
-            Ao clicar em “Conversar no WhatsApp”, abrimos uma conversa com a Procemiza com uma mensagem pronta, que você pode editar
+            Ao clicar em “Falar no WhatsApp”, abrimos uma conversa com a Procemiza com uma mensagem pronta, que você pode editar
             antes de enviar. O que você enviar passa a ser tratado pelo WhatsApp e pela Procemiza para responder ao seu contato.
-            Número de contato: {site.contactUrl.replace("https://wa.me/", "+")}.
+            Número de contato: {formatPhone(site.contactUrl)}.
           </p>
         </PageSection>
         <PageSection id="medicao" title="Medição">

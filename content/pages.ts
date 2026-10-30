@@ -19,7 +19,7 @@ export const pages = {
     title: "Procemiza | Automação, integração e sistemas sob medida",
     description:
       "Automatizamos rotinas, integramos sistemas e criamos sistemas sob medida para empresas. Calcule quanto tempo sua rotina devolve.",
-    modified: "2026-10-28",
+    modified: "2026-10-30",
     priority: 1,
   },
   calculadora: {
@@ -58,21 +58,12 @@ export const pages = {
     modified: "2026-10-28",
     priority: 0.8,
   },
-  conta200: {
-    path: "/conta-200",
-    name: "Conta 200",
-    title: "Conta 200: pedidos de contabilidade pelo WhatsApp",
-    description:
-      "Aplicação para escritórios de contabilidade: o cliente pede nota, guia ou documento pelo WhatsApp e recebe a resposta pronta.",
-    modified: "2026-10-28",
-    priority: 0.7,
-  },
   privacidade: {
     path: "/privacidade",
     name: "Privacidade",
     title: "Política de privacidade",
     description: "Que dados o site trata, para quê e como exercer seus direitos pela LGPD.",
-    modified: "2026-10-28",
+    modified: "2026-10-30",
     priority: 0.2,
   },
 } as const satisfies Record<string, PageMeta>;

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { CalculatorSection } from "@/components/CalculatorSection";
-import { RoutineProvider } from "@/components/calculator/RoutineProvider";
 import { JsonLd } from "@/components/JsonLd";
 import { PilotCTA } from "@/components/PilotCTA";
 import { FaqList, PageHero, PageSection, Related } from "@/components/page/parts";
@@ -26,9 +25,7 @@ export default function Page() {
     <main id="conteudo">
       <JsonLd data={graph(webPageNode(pages.calculadora), breadcrumbNode(pages.calculadora), app)} />
       <PageHero page="calculadora" h1={calculadoraPage.h1} answer={calculadoraPage.answer} primary={null} />
-      <RoutineProvider>
-        <CalculatorSection />
-      </RoutineProvider>
+      <CalculatorSection />
       <div className="page-body theme-light">
         <PageSection id="conta" title="Como calculamos">
           <ul className="page-list">

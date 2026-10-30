@@ -50,7 +50,7 @@ const DEFAULTS: RoutineFields = {
   routine: "",
   amount: "",
   unit: "h_semana",
-  people: "1",
+  people: "",
   costMode: "salario",
   cost: "",
   regime: "clt",

@@ -18,7 +18,7 @@ export function Footer() {
         <ul className="footer-contact">
           <li>
             <a href={site.contactUrl} target="_blank" rel="noopener noreferrer">
-              WhatsApp<span aria-hidden="true"> ↗</span>
+              WhatsApp
               <span className="sr-only"> (abre em nova aba)</span>
             </a>
           </li>

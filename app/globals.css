@@ -1,73 +1,73 @@
 @import "tailwindcss";
 
 /*
- * Design tokens — Procemiza
- * Base editorial escura e quente: preto quente, carvão, branco levemente
- * quente, cinzas neutros. O laranja Procemiza (#FC5F02, vetor oficial da
- * marca) é acento pontual: estado ativo, foco, marcador de progresso,
- * pequeno detalhe físico — nunca preenchimento de grandes áreas nem
- * segunda cor de títulos.
+ * Tokens — Procemiza
+ * A página é uma sequência de capítulos de cor cheia, de ponta a ponta: tinta (hero e fecho),
+ * papel (calculadora, clientes) e o laranja da marca (soluções). Cada capítulo troca os tokens
+ * semânticos; o componente só lê `--surface`, `--text` e companhia. Sem gradiente, sem sombra.
+ * `static`: todas as variáveis saem no CSS, mesmo as lidas só por arquivos de componente.
  */
-@theme {
-  /* superfícies — preto quente / carvão */
-  --color-ink-950: #0c0b0a; /* canvas */
-  --color-ink-900: #121110; /* surface */
-  --color-ink-850: #171615; /* surface-raised */
-  --color-ink-800: #1d1c1a; /* surface-elevated */
+@theme static {
+  /* tinta: preto quente */
+  --color-ink-950: #0c0b0a;
+  --color-ink-900: #121110;
+  --color-ink-850: #171615;
+  --color-ink-800: #1d1c1a;
   --color-ink-700: #272522;
 
   /* contornos */
   --color-line: #312d28;
   --color-line-strong: #4b453d;
 
-  /* texto (branco levemente quente) */
-  --color-paper: #f5f2ec;
+  /* papel e texto sobre tinta (osso quente) */
+  --color-paper: #f4f3f0;
   --color-mist: #cbc8c0;
   --color-dim: #aaa298;
-  --color-faint: #8d867b; /* 5,0:1 sobre ink-850 (o antigo #817a70 dava 4,26) */
+  --color-faint: #8d867b;
 
   /* marca */
-  --color-accent: #fc5f02; /* laranja oficial (vetor da marca) */
-  --color-amber: #dc9825;  /* apoio da marca */
-  --color-rust: #b83c12;   /* apoio da marca */
-  --color-navy: #383944;   /* grafite da marca */
+  --color-accent: #fc5f02; /* laranja oficial */
+  --color-amber: #dc9825;
+  --color-rust: #b83c12;
 
-  /* sinais — apenas dentro de dados/visualizações */
-  --color-signal-green: #57b585;
-  --color-signal-cyan: #5ab9cf;
-  --color-signal-lilac: #a98bd4;
-  --color-signal-red: #d9685c;
-
-  /* tipografia */
+  /* tipografia: Fraunces nos títulos, Archivo na leitura */
   --font-display: var(--font-fraunces), Georgia, serif;
   --font-sans: var(--font-archivo), system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 
-  /* movimento */
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-standard: cubic-bezier(0.5, 0, 0.75, 0);
-  --duration-fast: 180ms;
-  --duration-med: 330ms;
+  /* escala: sete tamanhos para a página toda; o cartaz só aparece no fecho */
+  --fs-tiny: 0.8125rem;
+  --fs-small: 0.9375rem;
+  --fs-body: 1.0625rem;
+  --fs-lead: 1.3125rem;
+  --fs-h3: clamp(1.625rem, 2.4vw, 2rem);
+  --fs-h2: clamp(2rem, 3.6vw, 3.25rem);
+  /* teto 3,85rem: acima disso a frase do hero (11,7 em de largura) não cabe em duas linhas na coluna de 7fr */
+  --fs-display: clamp(2.5rem, 4.2vw, 3.85rem);
+  --fs-poster: clamp(2.5rem, 11vw, 9.5rem);
+
+  /* movimento: curvas fortes (as nativas são fracas demais) */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --duration-fast: 160ms;
+  --duration-med: 260ms;
 
   /* ritmo */
-  --section-y: clamp(5rem, 10vw, 9rem);
+  --section-y: clamp(4.5rem, 9vw, 8rem);
   --maxw: 88rem;
 }
 
 /*
- * Tokens semânticos. Escuro é o padrão; `.theme-light` troca a seção inteira.
- * Ficam em :root (não em @theme) para não serem podados pelo Tailwind.
- * Contrastes medidos (WCAG):
- *   escuro  texto 17,6 · muted 11,8 · subtle 7,8 · borda de campo 4,5 · foco laranja 6,35
- *   claro   texto 15,2 · muted 6,5 · subtle 5,2 · borda de campo 3,4 · foco ink 17,6
- *           texto de destaque rust 5,1 (laranja como TEXTO sobre claro = 2,77, proibido)
+ * Capítulos. Contrastes medidos (WCAG):
+ *   tinta    texto 17,6 · muted 11,8 · subtle 7,8 · borda de campo 4,5 · foco laranja 6,35
+ *   papel    texto 15,3 · muted 7,1 · subtle 5,5 · borda de campo 3,4 · foco tinta 17,6
+ *            laranja como TEXTO sobre papel = 2,77 (proibido): destaque em texto é o rust, 5,1
+ *   laranja  texto tinta 6,35 · tinta suave 5,5 · foco tinta
  */
 :root,
 .theme-dark {
   --surface: var(--color-ink-950);
   --surface-raised: var(--color-ink-850);
   --surface-sunken: #080706;
-  --surface-warm: #211c17;
   --text: var(--color-paper);
   --text-muted: var(--color-mist);
   --text-subtle: var(--color-dim);
@@ -85,13 +85,13 @@
 
 .theme-light {
   --surface: var(--color-paper);
-  --surface-raised: #fbf9f5;
-  --surface-sunken: #ebe6dc;
+  --surface-raised: #fbfaf8;
+  --surface-sunken: #e9e8e4;
   --text: #1d1c1a;
-  --text-muted: #5c564d;
-  --text-subtle: #6b645a;
-  --border: #d9d3c8;
-  --border-strong: #b9b2a5;
+  --text-muted: #55514a;
+  --text-subtle: #66615a;
+  --border: #d8d6d0;
+  --border-strong: #b7b4ac;
   --control-border: #8a8378;
   --focus: var(--color-ink-950);
   --accent-text: var(--color-rust);
@@ -100,11 +100,31 @@
   --btn-fg: var(--color-paper);
   --danger-text: #a8321f;
   color-scheme: light;
-  background: var(--surface);
-  color: var(--text);
 }
 
+.theme-orange {
+  --surface: var(--color-accent);
+  --surface-raised: color-mix(in oklab, var(--color-ink-950) 10%, var(--color-accent));
+  --surface-sunken: color-mix(in oklab, var(--color-ink-950) 16%, var(--color-accent));
+  --text: var(--color-ink-950);
+  --text-muted: #1d1c1a;
+  --text-subtle: #1d1c1a;
+  --border: var(--color-ink-950);
+  --border-strong: var(--color-ink-950);
+  --control-border: var(--color-ink-950);
+  --focus: var(--color-ink-950);
+  --accent-text: var(--color-ink-950);
+  --btn-bg: var(--color-ink-950);
+  --btn-bg-hover: #2a2825;
+  --btn-fg: var(--color-paper);
+  --danger-text: #7a1f10;
+  color-scheme: light;
+}
+
+.theme-light,
+.theme-orange,
 .theme-dark {
+  background: var(--surface);
   color: var(--text);
 }
 
@@ -112,13 +132,19 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent; /* o feedback de toque é o :active de cada controle */
+  -webkit-text-size-adjust: 100%;
 }
+
+/* sem espera de duplo toque, e rótulo de controle não vira seleção no toque longo */
+a, button, summary, label, select, input, [role="button"] { touch-action: manipulation; }
+button, .btn, .chip, summary { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 
 body {
   background: var(--color-ink-950);
   color: var(--color-paper);
   font-family: var(--font-sans);
-  font-size: 1rem;
+  font-size: var(--fs-body);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: clip;
@@ -134,65 +160,28 @@ body {
   outline-offset: 3px;
 }
 
-/* ------------------------------- tipografia ------------------------------- */
-
-.font-display {
-  font-family: var(--font-display);
-  font-optical-sizing: auto;
-}
-
-.display-xl {
-  font-family: var(--font-display);
-  font-weight: 340;
-  font-size: clamp(2.75rem, 6.8vw, 6rem);
-  line-height: 1.02;
-  letter-spacing: -0.015em;
-}
-
-.display-lg {
-  font-family: var(--font-display);
-  font-weight: 350;
-  font-size: clamp(2.1rem, 4.4vw, 3.8rem);
-  line-height: 1.06;
-  letter-spacing: -0.01em;
-}
-
-.display-md {
-  font-family: var(--font-display);
-  font-weight: 380;
-  font-size: clamp(1.6rem, 3vw, 2.5rem);
-  line-height: 1.12;
-}
-
-.mono-label {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
-}
-
-.lede {
-  color: var(--color-mist);
-  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
-  line-height: 1.55;
-  max-width: 38rem;
-}
-
-/* --------------------------------- layout --------------------------------- */
+section[id] { scroll-margin-top: 4.5rem; }
+button { cursor: pointer; }
 
 .wrap {
   width: 100%;
   max-width: var(--maxw);
   margin-inline: auto;
-  padding-inline: clamp(1.25rem, 4vw, 3rem);
+  /* com viewport-fit=cover, o conteúdo respeita o entalhe em paisagem */
+  padding-left: max(clamp(1.25rem, 4vw, 3rem), env(safe-area-inset-left, 0px));
+  padding-right: max(clamp(1.25rem, 4vw, 3rem), env(safe-area-inset-right, 0px));
 }
 
-.section {
-  padding-block: var(--section-y);
-  position: relative;
-}
-
-.hairline-top {
-  border-top: 1px solid var(--color-line);
+/* título de capítulo: sempre na mesma margem esquerda, em qualquer cor de fundo */
+.section-title {
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 350;
+  font-size: var(--fs-display);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
 /* --------------------------------- botões --------------------------------- */
@@ -200,73 +189,77 @@ body {
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
+  justify-content: center;
   min-height: 3rem;
   font-family: var(--font-sans);
-  font-size: 0.9375rem;
+  font-size: var(--fs-small);
+  font-weight: 500;
   letter-spacing: -0.01em;
   padding: 0.85rem 1.6rem;
   border-radius: 9999px;
   border: 1px solid transparent;
-  transition: background var(--duration-fast) var(--ease-standard),
-    color var(--duration-fast) var(--ease-standard),
-    border-color var(--duration-fast) var(--ease-standard);
+  transition: background-color var(--duration-fast) ease, color var(--duration-fast) ease, transform 160ms var(--ease-out);
   white-space: nowrap;
 }
-.btn .arrow {
-  transition: transform var(--duration-med) var(--ease-out-expo);
-}
-.btn:hover .arrow,
-.btn:focus-visible .arrow {
-  transform: translateX(4px);
-}
-.btn:active { transform: translateY(1px); }
+.btn:active { transform: scale(0.97); }
 
-/* primário: papel no escuro, tinta no claro (tokens da seção) */
+/* primário: papel na tinta, tinta no papel e no laranja (tokens do capítulo) */
 .btn-primary {
   background: var(--btn-bg);
   color: var(--btn-fg);
-  font-weight: 500;
 }
-.btn-primary:hover { background: var(--btn-bg-hover); }
+/* o fecho: laranja cheio sobre a tinta */
+.btn-accent {
+  min-height: 3.5rem;
+  padding-inline: 2rem;
+  background: var(--color-accent);
+  color: var(--color-ink-950);
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover { background: var(--btn-bg-hover); }
+  .btn-accent:hover { background: #ff7a2a; }
+}
 
-/* Content is visible by default. */
-section[id] { scroll-margin-top: 5.5rem; }
-button, summary { -webkit-tap-highlight-color: transparent; }
-button { cursor: pointer; }
-.section-note { color: var(--color-dim); font-size: .8125rem; line-height: 1.6; }
-.section-note span { color: var(--color-accent); padding-inline: .6rem; }
-.text-link { display: inline-flex; align-items: center; gap: 1rem; color: var(--color-paper); padding-block: .6rem; border-bottom: 1px solid var(--color-line-strong); font-size: .9375rem; }
-.text-link span { color: var(--color-accent); }
-.text-link:hover { border-color: var(--color-accent); }
+.text-link {
+  display: inline-block;
+  padding-block: 0.7rem;
+  min-height: 2.75rem;
+  color: var(--text);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-decoration-color: var(--accent-text);
+  text-underline-offset: 0.4em;
+}
+@media (hover: hover) and (pointer: fine) {
+  .text-link:hover { color: var(--accent-text); }
+  .theme-orange .text-link:hover { text-decoration-thickness: 4px; }
+}
 
 /* -------------------------------- header --------------------------------- */
 
 .header-sentinel { position: absolute; top: 4.5rem; left: 0; width: 1px; height: 1px; pointer-events: none; }
 
-/* Sobre o hero é transparente; depois do sentinela vira barra escura sólida,
-   legível sobre qualquer seção (inclusive as claras). Só cor e opacidade animam. */
+/* Sobre o hero é transparente; depois do sentinela vira barra de tinta sólida,
+   legível sobre qualquer capítulo (inclusive papel e laranja). Só cor anima. */
 .site-header {
   position: fixed;
   z-index: 50;
   inset: 0 0 auto;
   height: 5rem;
   background: transparent;
-  border-bottom: 1px solid transparent;
   pointer-events: none;
-  transition: background-color 300ms var(--ease-out-expo), border-color 300ms var(--ease-out-expo);
+  transition: background-color 300ms var(--ease-out);
 }
 .site-header[data-compact="true"] {
-  background: rgb(12 11 10 / 0.94);
-  border-bottom-color: var(--color-line);
-  backdrop-filter: blur(10px);
+  background: var(--color-ink-950);
 }
 
 .header-frame { height: 5rem; display: grid; grid-template-columns: minmax(10.5rem, 1fr) auto minmax(14rem, 1fr); align-items: center; gap: clamp(1rem, 2.6vw, 2.75rem); }
 .header-brand, .desktop-nav, .header-cta, .mobile-menu { pointer-events: auto; }
 .header-brand { position: relative; z-index: 51; width: 11rem; height: 3rem; display: flex; align-items: center; }
 .header-brand-lockup { position: relative; display: block; width: 10.5rem; height: 2.1rem; }
-.header-wordmark, .header-symbol { position: absolute; left: 0; top: 50%; height: auto; transition: opacity 360ms var(--ease-out-expo), transform 360ms var(--ease-out-expo); }
+.header-wordmark, .header-symbol { position: absolute; left: 0; top: 50%; height: auto; transition: opacity 360ms var(--ease-out), transform 360ms var(--ease-out); }
 .header-wordmark { width: 10.5rem; transform: translateY(-50%); transform-origin: left center; }
 .header-symbol { width: 2rem; opacity: 0; transform: translateY(-50%) scale(0.72); }
 .site-header[data-compact="true"] .header-wordmark { opacity: 0; transform: translateY(-50%) translateX(-0.75rem) scale(0.92); }
@@ -274,158 +267,182 @@ button { cursor: pointer; }
 
 .desktop-nav { justify-self: center; }
 .desktop-nav-shell { display: flex; align-items: center; gap: clamp(1rem, 2vw, 2rem); min-height: 3rem; }
-.desktop-nav a { min-height: 2.75rem; display: inline-flex; align-items: center; color: var(--color-mist); font-size: 0.875rem; font-weight: 500; white-space: nowrap; transition: color 180ms ease; }
-.desktop-nav a:hover, .desktop-nav a:focus-visible { color: var(--color-paper); }
+.desktop-nav a { min-height: 2.75rem; display: inline-flex; align-items: center; color: var(--color-mist); font-size: var(--fs-small); font-weight: 500; white-space: nowrap; transition: color 180ms ease; }
+.desktop-nav a:focus-visible { color: var(--color-paper); }
+@media (hover: hover) and (pointer: fine) {
+  .desktop-nav a:hover { color: var(--color-paper); }
+}
 
-.header-cta { justify-self: end; min-height: 2.75rem; padding: 0.6rem 1.15rem; font-size: 0.8125rem; --btn-bg: var(--color-paper); --btn-fg: var(--color-ink-950); --btn-bg-hover: #fff; }
+/* contorno, não preenchido: só um botão cheio por tela, o do conteúdo */
+.header-cta { justify-self: end; min-height: 2.75rem; padding: 0.6rem 1.15rem; background: transparent; color: var(--color-paper); border-color: color-mix(in oklab, var(--color-paper) 45%, transparent); transition: background-color var(--duration-fast) ease, border-color var(--duration-fast) ease, transform 160ms var(--ease-out); }
+.header-cta .cta-short { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .header-cta:hover { background: color-mix(in oklab, var(--color-paper) 12%, transparent); border-color: var(--color-paper); }
+}
 .mobile-menu { display: none; }
 .menu-open { overflow: hidden; }
 
 @media (max-width: 1099px) {
   .site-header { height: 4.5rem; }
-  .header-frame { height: 4.5rem; grid-template-columns: 1fr auto; }
+  .header-frame { height: 4.5rem; grid-template-columns: 1fr auto auto; gap: 0.75rem; }
   .header-brand { width: 10rem; }
-  .desktop-nav, .header-cta { display: none; }
+  .desktop-nav { display: none; }
+  .header-cta { padding: 0.5rem 1rem; }
   .mobile-menu { display: block; justify-self: end; }
   .mobile-menu-trigger { position: relative; z-index: 51; width: 2.75rem; height: 2.75rem; padding: 0.75rem 0.55rem; display: flex; flex-direction: column; justify-content: center; align-items: flex-end; gap: 0.45rem; cursor: pointer; list-style: none; border-radius: 999px; background: var(--color-ink-800); }
   .mobile-menu-trigger::-webkit-details-marker { display: none; }
-  .menu-line { display: block; width: 1.5rem; height: 1px; background: var(--color-paper); transition: transform 360ms var(--ease-out-expo); }
-  .mobile-menu[open] .menu-line:first-of-type { transform: translateY(0.25rem) rotate(45deg); }
-  .mobile-menu[open] .menu-line:last-of-type { transform: translateY(-0.25rem) rotate(-45deg); }
+  .menu-line { display: block; width: 1.5rem; height: 2px; background: var(--color-paper); transition: transform 360ms var(--ease-out); }
+  .mobile-menu[open] .menu-line:first-of-type { transform: translateY(0.3rem) rotate(45deg); }
+  .mobile-menu[open] .menu-line:last-of-type { transform: translateY(-0.3rem) rotate(-45deg); }
+  /* fechado, o painel nem entra na árvore de renderização */
+  .mobile-menu:not([open]) .mobile-menu-panel { display: none; }
   .mobile-menu-panel { position: fixed; z-index: 49; inset: 0; padding: 6rem max(1.25rem, calc((100vw - var(--maxw)) / 2 + 3rem)) 2rem; background: var(--color-ink-950); overflow-y: auto; }
   .mobile-nav { min-height: calc(100dvh - 8rem); display: flex; flex-direction: column; }
-  .mobile-nav li { border-bottom: 1px solid var(--color-line); }
-  .mobile-nav a:not(.mobile-menu-cta) { min-height: 4.25rem; display: flex; align-items: center; justify-content: space-between; color: var(--color-paper); font-family: var(--font-display); font-size: clamp(1.5rem, 5vw, 2.25rem); }
-  .mobile-nav small { color: var(--color-accent); font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.12em; }
-  .mobile-menu-cta { width: 100%; justify-content: center; margin-top: auto; --btn-bg: var(--color-paper); --btn-fg: var(--color-ink-950); --btn-bg-hover: #fff; }
+  .mobile-nav li + li { margin-top: 0.25rem; }
+  .mobile-nav a:not(.mobile-menu-cta) { min-height: 4rem; display: flex; align-items: center; color: var(--color-paper); font-family: var(--font-display); font-size: var(--fs-h3); }
+  .mobile-menu-cta { width: 100%; margin-top: auto; --btn-bg: var(--color-paper); --btn-fg: var(--color-ink-950); --btn-bg-hover: #fff; }
   .no-js .site-header { position: absolute; }
   .no-js .mobile-menu[open] .mobile-menu-panel { position: absolute; inset: 4.5rem 0 auto; min-height: calc(100dvh - 4.5rem); }
 }
 
-/* ---------------------------------- hero ---------------------------------- */
+/* ------------------------------ capítulo 1: hero ------------------------------ */
 
-.hero { position: relative; background: var(--color-ink-950); overflow: clip; }
-.hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: center; gap: clamp(2rem, 5vw, 4.5rem); padding-top: clamp(8rem, 14svh, 10.5rem); padding-bottom: clamp(3.5rem, 7vw, 6rem); }
-.hero-copy { min-width: 0; }
-.hero-title { max-width: 15ch; font-family: var(--font-display); font-weight: 340; font-size: clamp(2.5rem, 4.6vw, 4.25rem); line-height: 1.05; letter-spacing: -0.02em; text-wrap: balance; }
-.hero-support { margin-top: 1.1rem; color: var(--accent-text); font-family: var(--font-display); font-style: italic; font-weight: 350; font-size: clamp(1.25rem, 2vw, 1.75rem); line-height: 1.2; }
-.hero-lede { max-width: 30rem; margin-top: 1.5rem; font-size: clamp(1rem, 1.3vw, 1.15rem); }
-.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; margin-top: 2rem; }
-.hero-explore { display: inline-flex; align-items: center; gap: .6rem; min-height: 2.75rem; font-size: .9375rem; color: var(--color-mist); }
-.hero-explore span { color: var(--color-accent); }
-.hero-explore:hover { color: var(--color-paper); }
+/* Tinta. À esquerda a frase do dono; à direita a cena de documentos sobre um disco laranja
+   enorme, cortado pela borda da tela. O disco nunca encosta no título. */
+.hero { position: relative; display: grid; align-items: center; min-height: 100svh; overflow: clip; }
+.hero-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  align-items: center;
+  column-gap: clamp(1rem, 2vw, 2rem);
+  padding-top: 6.5rem;
+  padding-bottom: 2.5rem;
+}
+.hero-copy { display: grid; justify-items: start; gap: 1.25rem; min-width: 0; }
+.hero-title { margin: 0; font-family: var(--font-display); font-weight: 340; font-size: var(--fs-display); line-height: 1.04; letter-spacing: -0.02em; text-wrap: balance; }
+.hero-support { margin: 0; color: var(--accent-text); font-family: var(--font-display); font-weight: 350; font-size: var(--fs-h3); line-height: 1.15; }
+.hero-services { display: grid; gap: 0.25rem; margin: 0.5rem 0 0; padding: 0; color: var(--text); font-size: var(--fs-lead); }
+.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 1.75rem; margin-top: 0.75rem; }
 
-/* ------------------------------- Conta 200 -------------------------------- */
+/* altura mínima 40rem (escala ≥ 0,91): abaixo disso o texto dos documentos, com piso de 13px, não cabe */
+.hero-visual { position: relative; min-width: 0; height: clamp(40rem, calc(100svh - 9rem), 48rem); margin-left: -5rem; margin-right: calc(-1 * clamp(1.25rem, 4vw, 3rem)); }
+.hero-disc {
+  position: absolute;
+  left: 66%;
+  top: 56%;
+  width: 125%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: var(--color-accent);
+  animation: disc-in 1100ms var(--ease-out) both;
+}
+.hero-visual .flow { position: relative; z-index: 1; }
 
-.conta-section { padding-block: clamp(3rem, 6vw, 6rem); background: var(--color-ink-850); }
-.conta-grid { display: grid; grid-template-columns: 1fr .7fr; gap: 5rem; align-items: center; max-width: 64rem; margin-inline: auto; }
-.conta-copy .section-note { margin-bottom: 1.75rem; }
-.conta-brand { display: flex; align-items: center; gap: .8rem; margin-bottom: 1.25rem; }
-.conta-brand img { width: 2.5rem; height: 2.5rem; object-fit: contain; }
-.conta-brand > span { font-size: .9375rem; }
-.conta-copy h2 { max-width: 18ch; font-size: clamp(2rem, 3.1vw, 2.75rem); }
-.conta-copy > p:not(.section-note) { color: var(--color-mist); font-size: 1rem; line-height: 1.7; max-width: 32rem; margin-top: 1.5rem; }
-.conta-flow { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-block: 1.8rem; }
-.conta-flow li { display: inline-flex; align-items: center; gap: .5rem; color: var(--color-mist); font-size: .875rem; }
-.conta-flow li + li::before { content: '→'; color: var(--color-dim); margin-right: .4rem; }
-.conta-flow span { color: var(--color-accent); font-family: var(--font-mono); font-size: .75rem; }
-.conta-proof { justify-self: center; width: 100%; max-width: 23rem; }
-.conta-proof-image { width: 100%; margin-inline: auto; border-radius: .75rem; overflow: hidden; background: var(--color-ink-900); border: 1px solid var(--color-line-strong); }
-.conta-proof-label { display: flex; align-items: center; gap: .6rem; padding: 1rem 1.25rem; font-size: .75rem; color: var(--color-mist); }
-.conta-proof-label span { width: .35rem; height: .35rem; border-radius: 50%; background: var(--color-signal-green); }
-.conta-proof-viewport { height: 175px; overflow: hidden; position: relative; }
-.conta-proof-image img { width: 100%; height: auto; display: block; transform: translateY(-29%); }
-.conta-proof figcaption { color: var(--color-dim); font-size: .75rem; line-height: 1.55; margin-top: .9rem; text-align: center; }
+/* entrada: o disco desliza da borda; o texto só desloca (a opacidade não mexe, para o LCP não esperar) */
+@keyframes disc-in { from { transform: translateX(28%) scale(0.86); } to { transform: none; } }
+@keyframes rise { from { transform: translateY(14px); } to { transform: none; } }
+.hero-title, .hero-support, .hero-services, .hero-actions { animation: rise 640ms var(--ease-out) both; }
+.hero-support { animation-delay: 70ms; }
+.hero-services { animation-delay: 140ms; }
+.hero-actions { animation-delay: 210ms; }
 
-/* --------------------------------- método ---------------------------------- */
+/* ----------------------------- capítulo 3: soluções ---------------------------- */
 
-.method-section { padding-block: clamp(5rem, 8vw, 8rem); }
-.method-intro { display: flex; align-items: flex-end; justify-content: space-between; gap: 3rem; }
-.method-intro h2 { max-width: 16ch; }
-.method-intro .lede { max-width: 22rem; font-size: 1rem; }
-.method-chapters { margin-top: 3.5rem; }
-.method-chapter { display: grid; grid-template-columns: 3.5rem .85fr 1.3fr .75fr; gap: 2.5rem; align-items: baseline; padding-block: 2.25rem; border-top: 1px solid var(--color-line-strong); }
-.method-chapter:last-child { border-bottom: 1px solid var(--color-line-strong); }
-.method-number { font-family: var(--font-mono); font-size: .75rem; color: var(--color-accent); }
-.method-chapter h3 { font-family: var(--font-display); font-size: clamp(1.6rem, 2.6vw, 2.4rem); font-weight: 350; }
-.method-text { color: var(--color-mist); font-size: .9375rem; line-height: 1.7; }
-.method-artifact { font-size: .8125rem; color: var(--color-dim); }
-.method-artifact span { display: inline-block; width: .35rem; height: .35rem; border: 1px solid var(--color-accent); margin-right: .65rem; vertical-align: .15em; }
+/* Laranja. Três linhas de cartaz: o nome à esquerda, o que muda à direita. Só tipografia. */
+.solutions { padding-block: var(--section-y); }
+.solutions-title { margin: 0 0 clamp(2.5rem, 6vw, 5rem); font-family: var(--font-display); font-weight: 350; font-size: var(--fs-display); line-height: 1.04; letter-spacing: -0.02em; }
+.solutions-list { display: grid; gap: clamp(2.75rem, 5.5vw, 5rem); margin: 0; padding: 0; list-style: none; }
+.solution { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(1rem, 2vw, 2rem); row-gap: 1rem; align-items: start; }
+.solution h3 { grid-column: 1 / span 5; margin: 0; font-family: var(--font-display); font-weight: 350; font-size: var(--fs-h2); line-height: 1.05; letter-spacing: -0.015em; text-wrap: balance; }
+.solution-body { grid-column: 7 / -1; display: grid; justify-items: start; gap: 0.875rem; max-width: 36rem; }
+.solution-line { margin: 0; font-size: var(--fs-lead); font-weight: 500; line-height: 1.35; }
+.solution-example { margin: 0; font-size: var(--fs-body); line-height: 1.55; }
 
-/* ---------------------------------- FAQ ----------------------------------- */
+/* ------------------------------ capítulo 4: clientes --------------------------- */
 
-.faq-section { padding-block: clamp(4rem, 8vw, 7rem); }
-.faq-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
-.faq-item { border-top: 1px solid var(--border-strong); }
-.faq-item:last-child { border-bottom: 1px solid var(--border-strong); }
-.faq-item summary { display: flex; justify-content: space-between; align-items: center; gap: 1rem; min-height: 3.5rem; padding-block: 1rem; cursor: pointer; list-style: none; }
-.faq-item summary::-webkit-details-marker { display: none; }
-.faq-item h3 { margin: 0; color: var(--text); font-family: var(--font-sans); font-size: 1.0625rem; font-weight: 500; line-height: 1.4; }
-.faq-item .solution-expand { color: var(--text-subtle); }
-.faq-item[open] .solution-expand { color: var(--accent-text); }
-.faq-item[open] .solution-expand::after { transform: rotate(0); }
-.faq-item p { max-width: 40rem; margin: 0; padding-bottom: 1.5rem; color: var(--text-muted); font-size: 1rem; line-height: 1.7; }
+.clients { padding-block: var(--section-y); }
+.clients-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: center; gap: 2.5rem clamp(1rem, 2vw, 2rem); }
+.clients-title { grid-column: 1 / span 4; }
+.clients-logos { grid-column: 5 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2rem 1.5rem; margin: 0; padding: 0; list-style: none; }
+/* só o logo: células de mesma altura, marcas centradas na linha, qualquer que seja a altura de cada uma */
+.client-mark { display: flex; align-items: center; justify-content: flex-start; height: 4.25rem; }
+/* um só tom de tinta para todas as marcas (as com fundo transparente viram silhueta; o selo redondo, que tem fundo, fica em cinza) */
+.client-mark img { display: block; width: auto; height: var(--mark-h); filter: brightness(0); opacity: 0.86; }
+.client-mark--di-bracco img { border-radius: 50%; filter: grayscale(1) contrast(1.5) brightness(0.7); opacity: 0.92; }
+/* o redemoinho de fitas some na silhueta preta: em tons de cinza ele mantém as camadas */
+.client-mark--flores-tintas img { filter: grayscale(1) contrast(1.35) brightness(0.55); opacity: 0.95; }
 
-/* ------------------------------- CTA final -------------------------------- */
+/* --------------------------------- fecho --------------------------------- */
 
-.pilot-section { position: relative; padding-block: clamp(5rem, 8vw, 8rem); background: var(--surface-warm); }
-.pilot-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(3rem, 8vw, 8rem); align-items: center; }
-.pilot-signal { display: block; width: 2.5rem; height: 2px; background: var(--color-accent); margin-bottom: 2rem; }
-.pilot-title { font-family: var(--font-display); font-weight: 350; font-size: clamp(2.5rem, 4.8vw, 4.5rem); line-height: 1.06; letter-spacing: -.025em; max-width: 15ch; }
-.pilot-next { display: grid; gap: .9rem; margin-bottom: 2rem; }
-.pilot-next li { display: grid; grid-template-columns: 1.8rem 1fr; gap: .5rem; color: var(--color-mist); font-size: .9375rem; }
-.pilot-next span { font-family: var(--font-mono); color: var(--color-accent); font-size: .75rem; padding-top: .25rem; }
+/* Tinta de novo: a ideia do início volta como cartaz, em duas linhas. */
+.cta { display: grid; align-content: center; min-height: min(92svh, 60rem); padding-block: var(--section-y); }
+.cta-title { margin: 0; font-family: var(--font-display); font-weight: 340; font-size: var(--fs-poster); line-height: 0.95; letter-spacing: -0.03em; }
+/* cada frase numa linha */
+.cta-title span { display: block; }
+.cta-row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 2rem; margin-top: clamp(2.5rem, 6vw, 5rem); }
+.cta-lead { margin: 0; color: var(--text); font-size: var(--fs-lead); line-height: 1.4; }
+.cta-steps { display: flex; flex-wrap: wrap; gap: 0.25rem 1.75rem; margin: 0.75rem 0 0; padding: 0; list-style: none; color: var(--text-muted); font-size: var(--fs-body); }
 
 /* --------------------------------- rodapé --------------------------------- */
 
 .site-footer { background: var(--surface-sunken); padding-top: 4rem; }
-.footer-main { display: grid; grid-template-columns: 1.2fr .6fr .6fr; gap: 4rem; align-items: start; padding-bottom: 3rem; }
+.footer-main { display: grid; grid-template-columns: 1.2fr 0.6fr 0.6fr; gap: 4rem; align-items: start; padding-bottom: 3rem; }
 .footer-brand img { width: 10.5rem; height: auto; }
-.footer-brand p { color: var(--color-dim); max-width: 25rem; margin-top: 1.3rem; font-size: .9375rem; line-height: 1.65; }
-.footer-main ul { display: grid; gap: .25rem; }
-.footer-main a { display: inline-flex; align-items: center; min-height: 2.75rem; color: var(--color-mist); font-size: .9375rem; }
-.footer-main a:hover { color: var(--color-paper); }
+.footer-brand p { max-width: 25rem; margin-top: 1.25rem; color: var(--color-mist); font-size: var(--fs-body); line-height: 1.6; }
+.footer-main ul { display: grid; gap: 0.25rem; }
+.footer-main a { display: inline-flex; align-items: center; min-height: 2.75rem; color: var(--color-mist); font-size: var(--fs-body); }
+@media (hover: hover) and (pointer: fine) {
+  .footer-main a:hover { color: var(--color-paper); }
+}
 .footer-contact { justify-items: end; }
-.footer-bottom { border-top: 1px solid var(--color-line); padding-block: 1.25rem; }
-.footer-bottom p { color: var(--color-dim); font-size: .75rem; }
+.footer-bottom { padding-block: 1.25rem 2rem; }
+.footer-bottom p { color: var(--color-dim); font-size: var(--fs-small); }
 
 /* ------------------------------- responsivo ------------------------------- */
 
 @media (max-width: 1023px) {
-  .hero-grid { grid-template-columns: 1fr; padding-top: 7.5rem; }
-  .hero-title { max-width: 18ch; font-size: clamp(2.25rem, 6.5vw, 3.5rem); }
-  .conta-grid { gap: 3rem; }
-  .method-chapter { grid-template-columns: 2.5rem .7fr 1.3fr; }
-  .method-artifact { grid-column: 3; }
-  .pilot-grid { gap: 3rem; }
-  .faq-grid { grid-template-columns: 1fr; }
+  .hero { min-height: 0; }
+  .hero-grid { grid-template-columns: 1fr; gap: 2rem; padding-top: 7rem; padding-bottom: 2rem; }
+  .hero-title { font-size: clamp(2rem, 5.6vw, 3.5rem); }
+  .hero-support { font-size: var(--fs-lead); }
+  .hero-services { font-size: var(--fs-body); }
+  /* o disco passa para trás da pilha, centrado e cortado pelas bordas */
+  .hero-visual { height: 40rem; margin-right: calc(-1 * clamp(1.25rem, 4vw, 3rem)); margin-left: calc(-1 * clamp(1.25rem, 4vw, 3rem)); }
+  .hero-disc { left: 50%; top: 52%; width: min(150vw, 56rem); }
+  .solution { grid-template-columns: 1fr; }
+  .solution h3, .solution-body { grid-column: 1 / -1; }
+  .clients-grid { grid-template-columns: 1fr; }
+  .clients-title, .clients-logos { grid-column: 1 / -1; }
 }
 @media (max-width: 767px) {
+  .header-cta .cta-long { display: none; }
+  .header-cta .cta-short { display: inline; }
   .header-wordmark { width: 9.6rem; }
   .hero-grid { padding-top: 6.5rem; }
-  .hero-title { font-size: clamp(2.125rem, 9.4vw, 2.75rem); max-width: 14ch; }
-  .hero-actions { gap: .5rem 1.25rem; }
-  .conta-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-  .conta-copy h2 { max-width: 19ch; }
-  .conta-copy > p:not(.section-note) { font-size: .9375rem; }
-  .conta-proof { max-width: 20rem; }
-  .method-intro { display: block; }
-  .method-intro .lede { margin-top: 1.5rem; }
-  .method-chapters { margin-top: 2.5rem; }
-  .method-chapter { grid-template-columns: 2rem 1fr; gap: .75rem 1rem; padding-block: 1.75rem; }
-  .method-text, .method-artifact { grid-column: 2; }
-  .method-text { font-size: .875rem; }
-  .method-artifact { margin-top: .5rem; }
-  .pilot-grid { grid-template-columns: 1fr; gap: 2rem; }
-  .pilot-title { font-size: clamp(2.25rem, 10vw, 3rem); }
+  .cta-row { align-items: flex-start; flex-direction: column; }
+  .cta-row .btn { width: 100%; }
   .footer-main { grid-template-columns: 1fr 1fr; gap: 2rem; }
   .footer-brand { grid-column: 1 / -1; }
   .footer-contact { justify-items: start; }
 }
+@media (max-width: 639px) {
+  /* H1 do dono em 3 linhas no celular: duas linhas pediriam ~28px e perderiam o peso */
+  .hero-title { font-size: clamp(2.125rem, 9.4vw, 2.75rem); max-width: 14ch; }
+  .hero-visual { height: 41rem; }
+  .clients-logos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 1rem; }
+  .client-mark img { height: var(--mark-h-sm); }
+}
 @media (max-width: 380px) {
   .hero-actions { flex-direction: column; align-items: flex-start; }
 }
+@media (max-width: 359px) {
+  .header-cta { display: none; }
+}
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  /* o texto fica parado; a cena de documentos continua andando (é o que o site mostra) */
+  .hero-title, .hero-support, .hero-services, .hero-actions { animation: none; }
 }

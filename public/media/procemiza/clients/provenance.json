@@ -49,6 +49,24 @@
       "original": "miolo-original.png",
       "display": "miolo.webp",
       "processing": "1044 × 340 transparent PNG reduced proportionally to 600 × 195, lossless WebP. Official black artwork and transparency preserved. Asset referenced by the institutional stylesheet at /wp-content/themes/miolo/assets/dist/css/style.css."
+    },
+    {
+      "name": "EletroVoltz",
+      "institutionalPage": "https://eletrovoltz.com/",
+      "assetUrl": "https://eletrovoltz.com/wp-content/uploads/2025/07/logo.png",
+      "original": "eletrovoltz-original.png",
+      "display": "eletrovoltz.webp",
+      "retrieved": "2026-10-30",
+      "processing": "Current site logo (2025 upload, 235 × 44 transparent PNG) converted to lossless WebP at the same dimensions: no upscaling. Colors and transparency preserved. Business identified from the site as EletroVoltz, fire prevention systems (PPCI) in Caxias do Sul; the client name was given by the project owner."
+    },
+    {
+      "name": "Flores Tintas",
+      "institutionalPage": "https://www.florestintas.com.br/",
+      "assetUrl": "https://www.florestintas.com.br/www/imagens/site/logo.svg?1",
+      "original": "flores-tintas-original.svg",
+      "display": "flores-tintas.webp",
+      "retrieved": "2026-10-30",
+      "processing": "Vector logo (viewBox 193.9 × 48.7, Illustrator export, no scripts or external references) rasterized to 800 × 201 lossless WebP, transparency and colors preserved. Not redrawn. Business identified from the site as FloresTintas, paint retailer; the client name was given by the project owner."
     }
   ]
 }

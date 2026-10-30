@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { entity, site } from "@/content/site";
 import { pages, type PageMeta } from "@/content/pages";
+import { formatPhone } from "./whatsapp";
 
 export function absoluteUrl(path: string): string {
   return new URL(path, site.domain).toString().replace(/\/$/, path === "/" ? "/" : "");
@@ -64,6 +65,7 @@ export function organizationNodes(): Json[] {
         "@type": "ContactPoint",
         contactType: "customer support",
         url: site.contactUrl,
+        telephone: formatPhone(site.contactUrl),
         email: entity.email,
         availableLanguage: "pt-BR",
       }),

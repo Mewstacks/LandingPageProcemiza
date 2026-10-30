@@ -1,17 +1,28 @@
 import { cta, pilot, site } from "@/content/site";
 
+/** Tinta de novo: a ideia do início volta como cartaz, com o único botão laranja da página. */
 export function PilotCTA() {
+  // uma frase por linha; o texto lido continua sendo o título inteiro
+  const lines = pilot.title.split(/(?<=\.)\s+/);
   return (
-    <section id="contato" className="pilot-section" aria-labelledby="piloto-title">
-      <div className="wrap pilot-grid">
-        <div>
-          <span className="pilot-signal" aria-hidden="true" />
-          <h2 id="piloto-title" className="pilot-title">{pilot.title}</h2>
-        </div>
-        <div className="pilot-copy">
-          <ol className="pilot-next">{pilot.next.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ol>
-          <a href={site.contactUrl} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
-            {cta.final}<span className="arrow" aria-hidden="true">↗</span>
+    <section id="contato" className="cta theme-dark" aria-labelledby="piloto-title">
+      <div className="wrap">
+        <h2 id="piloto-title" className="cta-title">
+          {lines.map((line) => (
+            <span key={line}>{line} </span>
+          ))}
+        </h2>
+        <div className="cta-row">
+          <div>
+            <p className="cta-lead">{pilot.lead}</p>
+            <ol className="cta-steps">
+              {pilot.next.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </div>
+          <a href={site.contactUrl} target="_blank" rel="noopener noreferrer" className="btn btn-accent">
+            {cta.final}
             <span className="sr-only"> (abre em nova aba)</span>
           </a>
         </div>

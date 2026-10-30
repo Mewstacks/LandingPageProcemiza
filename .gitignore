@@ -9,3 +9,6 @@ next-env.d.ts
 !.env.example
 .vercel
 .playwright-mcp
+.taste-skill
+.impeccable
+.next-prod

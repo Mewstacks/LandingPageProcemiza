@@ -30,11 +30,11 @@ export function PageHero({
         <div className="hero-actions">
           {primary ? (
             <Link href={pages[primary].path} className="btn btn-primary">
-              {cta.primary}<span className="arrow" aria-hidden="true">→</span>
+              {cta.primary}
             </Link>
           ) : null}
-          <a href={site.contactUrl} target="_blank" rel="noopener noreferrer" className="hero-explore">
-            {cta.whatsapp}<span aria-hidden="true">↗</span>
+          <a href={site.contactUrl} target="_blank" rel="noopener noreferrer" className="text-link">
+            {cta.whatsapp}
             <span className="sr-only"> (abre em nova aba)</span>
           </a>
         </div>
@@ -54,22 +54,22 @@ export function PageSection({ id, title, children }: { id: string; title: string
   );
 }
 
-/** <details> nativo: legível antes da hidratação e sem JavaScript. */
+/** Perguntas sempre abertas: lista de definição, legível sem JavaScript e sem clique. */
 export function FaqList({ items }: { items: readonly Qa[] }) {
   return (
-    <div className="faq-list">
+    <dl className="qa">
       {items.map((item) => (
-        <details key={item.q} className="faq-item">
-          <summary><h3>{item.q}</h3><span className="solution-expand" aria-hidden="true" /></summary>
-          <p>{item.a}</p>
-        </details>
+        <div key={item.q} className="qa-item">
+          <dt>{item.q}</dt>
+          <dd>{item.a}</dd>
+        </div>
       ))}
-    </div>
+    </dl>
   );
 }
 
 export function Related({ current }: { current: PageKey }) {
-  const keys: PageKey[] = ["calculadora", "automacao", "integracao", "sobMedida", "conta200"];
+  const keys: PageKey[] = ["calculadora", "automacao", "integracao", "sobMedida"];
   return (
     <nav className="related theme-light" aria-label="Veja também">
       <div className="wrap">
@@ -79,7 +79,7 @@ export function Related({ current }: { current: PageKey }) {
             .filter((k) => k !== current)
             .map((k) => (
               <li key={k}>
-                <Link href={pages[k].path}>{pages[k].name}<span aria-hidden="true"> →</span></Link>
+                <Link href={pages[k].path}>{pages[k].name}</Link>
               </li>
             ))}
         </ul>

@@ -38,3 +38,10 @@ export function buildMessage(ctx: WhatsAppContext = {}): string {
 export function buildWhatsAppUrl(base: string, ctx?: WhatsAppContext): string {
   return `${base}?text=${encodeURIComponent(buildMessage(ctx))}`;
 }
+
+/** "https://wa.me/555494898181" → "+55 54 9489-8181". Fora do padrão brasileiro volta só com "+". */
+export function formatPhone(contactUrl: string): string {
+  const digits = contactUrl.replace(/\D/g, "");
+  const match = digits.match(/^55(\d{2})(\d{4,5})(\d{4})$/);
+  return match ? `+55 ${match[1]} ${match[2]}-${match[3]}` : `+${digits}`;
+}

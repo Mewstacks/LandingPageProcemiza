@@ -56,7 +56,6 @@ export function Field({ id, label, error, children, className }: FieldProps) {
       {children({ id, "aria-invalid": Boolean(error), "aria-describedby": error ? errId : undefined })}
       {error ? (
         <p id={errId} className="field-error">
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 15 14H1L8 1.5Zm0 4.5v3.5m0 2v.5" /></svg>
           {error}
         </p>
       ) : null}

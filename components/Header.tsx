@@ -140,14 +140,16 @@ export function Header() {
             </ul>
           </nav>
 
+          {/* secundário: a ação principal de cada tela é a do próprio conteúdo; aparece em todas as larguras */}
           <a
             href={site.contactUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-primary header-cta"
+            className="btn header-cta"
+            aria-label={`${cta.whatsapp} (abre em nova aba)`}
           >
-            {cta.whatsapp}
-            <span className="sr-only"> (abre em nova aba)</span>
+            <span className="cta-long" aria-hidden="true">{cta.whatsapp}</span>
+            <span className="cta-short" aria-hidden="true">WhatsApp</span>
           </a>
 
           <details ref={detailsRef} className="mobile-menu">
@@ -159,11 +161,10 @@ export function Header() {
             <div className="mobile-menu-panel">
               <nav className="mobile-nav" aria-label="Navegação móvel">
                 <ol>
-                  {nav.map((item, index) => (
+                  {nav.map((item) => (
                     <li key={item.href}>
                       <Link href={item.href} onClick={closeMobileMenu}>
                         <span>{item.label}</span>
-                        <small>{String(index + 1).padStart(2, "0")}</small>
                       </Link>
                     </li>
                   ))}

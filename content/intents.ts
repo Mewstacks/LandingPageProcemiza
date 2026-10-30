@@ -1,15 +1,14 @@
-import { method } from "./site";
 import { solutions } from "./solutions";
 
 /**
- * Rascunho: só fatos já presentes no site (solutions, method, Conta 200) e a
- * regra da calculadora. Qualquer capacidade nova deve ser confirmada antes de publicar.
+ * Rascunho curto: só fatos já presentes no site e a regra da calculadora.
+ * Qualquer capacidade nova deve ser confirmada antes de publicar.
  */
 export type Qa = { q: string; a: string };
 
 export type IntentContent = {
   h1: string;
-  /** Resposta direta, 2 frases: é o que Google e IAs citam. */
+  /** Resposta direta em uma frase: é o que Google e IAs citam. */
   answer: string;
   whenTitle: string;
   when: readonly string[];
@@ -19,57 +18,57 @@ export type IntentContent = {
   faq: readonly Qa[];
 };
 
-export const methodSteps = method.steps;
+export const steps = [
+  { name: "Diagnóstico", text: "Acompanhamos uma rotina real." },
+  { name: "Construção", text: "Um primeiro recorte entra em uso." },
+  { name: "Evolução", text: "Ajustamos e ampliamos com o uso." },
+] as const;
 
 const preco: Qa = {
   q: "Quanto custa?",
-  a: "Depende da rotina e dos sistemas envolvidos. A primeira conversa define o recorte; o valor vem depois dele.",
+  a: "Depende da rotina. A conversa define o recorte; o valor vem depois.",
 };
 
 const semTrocar: Qa = {
-  q: "Preciso trocar os sistemas que uso hoje?",
-  a: "Não. O ponto de partida é conectar o que já existe, para a informação circular sem copiar e colar entre telas.",
+  q: "Preciso trocar meus sistemas?",
+  a: "Não. Conectamos o que você já usa, sem copiar e colar entre telas.",
 };
 
 export const automacao: IntentContent = {
-  h1: "Automação de processos e rotinas para empresas",
+  h1: "Automação de processos e rotinas",
   answer:
-    "Automação de rotinas transforma tarefas que se repetem em um fluxo com critérios claros: a informação chega, é conferida e segue para a pessoa certa, sem ninguém copiar, digitar ou lembrar. A Procemiza começa por uma rotina real da sua empresa e coloca a automação em uso.",
+    "Transformamos tarefas repetidas em fluxos que andam sozinhos: a informação chega, é conferida e segue para a pessoa certa.",
   whenTitle: "Quando faz sentido",
   when: [
-    "A mesma informação é copiada de um lugar para outro.",
-    "Alguém confere, tela por tela, o que o sistema já sabe.",
-    "O pedido muda de mão, perde contexto e volta para o início.",
-    "Uma tarefa só anda quando alguém lembra de fazer.",
+    "A mesma informação é copiada entre telas.",
+    "Alguém confere o que o sistema já sabe.",
+    "O pedido muda de mão e perde contexto.",
+    "A tarefa só anda quando alguém lembra.",
   ],
   exampleTitle: "Exemplo",
   example: solutions[0].example,
   serviceType: "Automação de processos",
   faq: [
     {
-      q: "Que rotina vale automatizar primeiro?",
-      a: "A que se repete, segue regras claras e toma tempo de mais de uma pessoa. Na calculadora, informe o tempo e veja quanto ela devolve para comparar com as outras.",
+      q: "Que rotina automatizar primeiro?",
+      a: "A que se repete, segue regras claras e toma tempo de várias pessoas.",
     },
     {
-      q: "Quanto tempo a automação devolve?",
-      a: "Depende da rotina. Na calculadora, o cenário esperado considera 80% do tempo devolvido e o otimista 90%, sobre os números que você informa. É estimativa, não promessa.",
+      q: "Quanto tempo devolve?",
+      a: "Depende da rotina. A calculadora estima 80% e, no cenário otimista, 90%. É estimativa.",
     },
     semTrocar,
-    {
-      q: "Como começa o projeto?",
-      a: "Por um diagnóstico: acompanhamos uma rotina real, ouvimos quem faz o trabalho e definimos um primeiro recorte.",
-    },
     preco,
   ],
 };
 
 export const integracao: IntentContent = {
-  h1: "Integração de sistemas: conecte o que sua empresa já usa",
+  h1: "Integração de sistemas",
   answer:
-    "Integração de sistemas conecta as ferramentas que a empresa já usa para que a informação circule com contexto, sem depender de copiar e colar entre telas. Atendimento, operação e gestão passam a trabalhar sobre a mesma informação atualizada.",
+    "Conectamos as ferramentas que sua empresa já usa para a informação circular sem copiar e colar.",
   whenTitle: "Quando faz sentido",
   when: [
-    "Cada sistema funciona sozinho e alguém ainda digita, avisa e atualiza entre eles.",
+    "Cada sistema funciona sozinho e alguém digita entre eles.",
     "Equipes olham versões diferentes da mesma informação.",
     "Mensagens, documentos e planilhas guardam partes da mesma história.",
   ],
@@ -80,25 +79,25 @@ export const integracao: IntentContent = {
     semTrocar,
     {
       q: "O que muda para a equipe?",
-      a: "A informação chega com contexto e a equipe deixa de redigitar. Cada área acompanha a mesma informação atualizada.",
+      a: "Menos digitação. Cada área vê a mesma informação, atualizada.",
     },
     {
       q: "Como saber se vale a pena?",
-      a: "Some o tempo que a equipe gasta copiando e conferindo entre sistemas. A calculadora faz essa conta com os seus números.",
+      a: "Some o tempo gasto copiando e conferindo. A calculadora faz a conta.",
     },
     preco,
   ],
 };
 
 export const sobMedida: IntentContent = {
-  h1: "Sistemas sob medida para a sua operação",
+  h1: "Sistemas sob medida",
   answer:
-    "Um sistema sob medida é uma ferramenta construída em torno do seu jeito de trabalhar, com as regras, as permissões e as etapas que a operação precisa. O sistema nasce do processo, e não o contrário.",
+    "Construímos a ferramenta em torno do seu jeito de trabalhar: regras, permissões e etapas da sua operação.",
   whenTitle: "Quando faz sentido",
   when: [
-    "Solicitações, responsáveis e aprovações ficam espalhados em mensagens e planilhas.",
+    "Pedidos e aprovações vivem em mensagens e planilhas.",
     "A operação tem regras e permissões próprias.",
-    "A equipe precisa de uma visão clara do trabalho em andamento.",
+    "A equipe precisa ver o trabalho em andamento.",
   ],
   exampleTitle: "Exemplo",
   example: solutions[2].example,
@@ -106,55 +105,34 @@ export const sobMedida: IntentContent = {
   faq: [
     {
       q: "Precisa começar grande?",
-      a: "Não. Começamos com um recorte claro e colocamos o sistema em uso; depois acompanhamos o uso real, ajustamos as regras e ampliamos.",
+      a: "Não. Começamos por um recorte, colocamos em uso e ampliamos.",
     },
     semTrocar,
     preco,
   ],
 };
 
-export const conta200Page = {
-  h1: "Conta 200: pedidos de contabilidade pelo WhatsApp",
-  answer:
-    "O Conta 200 é uma aplicação para escritórios de contabilidade. O cliente pede nota, guia ou documento pelo WhatsApp, o pedido ganha contexto e a resposta volta pronta, sem ocupar a equipe do escritório.",
-  faq: [
-    {
-      q: "O que o cliente consegue pedir?",
-      a: "Nota, guia ou documento, pelo WhatsApp.",
-    },
-    {
-      q: "O cliente precisa instalar um app novo?",
-      a: "Não. Ele pede no canal em que já está, sem novo app e sem novo login.",
-    },
-    {
-      q: "Quais dados o Conta 200 consulta?",
-      a: "Apenas dados autorizados. O pedido é identificado por empresa, documento, competência e finalidade antes de seguir para o processo certo.",
-    },
-  ],
-} as const;
-
 export const calculadoraPage = {
   h1: "Calculadora de ganho com automação",
-  answer:
-    "Informe a rotina, o tempo que ela toma e o custo da hora de quem a faz. A calculadora mostra quantas horas e quantos reais a automação devolve por mês, com a conta aberta.",
+  answer: "Informe rotina, tempo e custo. Veja quanto a automação devolve por mês.",
   how: [
-    "Horas por mês = tempo por pessoa × pessoas, com 21 dias úteis e 52/12 semanas por mês.",
-    "Custo da hora = salário × (1 + encargos) ÷ 220. Encargos de 70% (CLT) ou 50% (Simples), regra de bolso editável; ou digite o valor da hora.",
-    "Horas devolvidas = horas por mês × redução. O cenário esperado usa 80% e o otimista 90%; a redução é editável.",
-    "Ganho por mês = horas devolvidas × custo da hora. Ganho por ano = ganho por mês × 12.",
+    "Horas por mês = tempo por pessoa × pessoas (21 dias úteis, 52/12 semanas).",
+    "Custo da hora = salário × 1,7 ÷ 220, ou o valor da hora que você digitar.",
+    "Horas devolvidas = horas por mês × 80% (90% no cenário otimista).",
+    "Ganho = horas devolvidas × custo da hora. Por ano, × 12.",
   ],
   faq: [
     {
       q: "A calculadora guarda meus dados?",
-      a: "Não envia nada a servidor. Os números ficam no navegador, nesta aba, e somem ao fechá-la. O texto da rotina só sai daqui se você abrir o WhatsApp.",
+      a: "Não. Os números ficam no seu navegador. O texto da rotina só sai daqui se você abrir o WhatsApp.",
     },
     {
       q: "Por que 80% e 90%?",
-      a: "São os cenários esperado e otimista para rotinas repetitivas com regras claras. Rotinas com muita exceção devolvem menos: ajuste a redução para o seu caso.",
+      a: "São os cenários esperado e otimista para rotinas repetitivas com regra clara. Rotinas com muita exceção devolvem menos.",
     },
     {
-      q: "O resultado é uma promessa?",
-      a: "Não. É uma estimativa sobre os números que você informa. A primeira conversa com a Procemiza confere a rotina real.",
+      q: "É uma promessa?",
+      a: "Não. É uma estimativa sobre os números que você informa.",
     },
   ],
 } as const;

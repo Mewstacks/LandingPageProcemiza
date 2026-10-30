@@ -1,25 +1,36 @@
+import { FlowScene } from "@/components/hero/FlowScene";
+import { flow } from "@/content/flow";
 import { cta, hero, site } from "@/content/site";
-import { HeroRoutine } from "@/components/calculator/HeroRoutine";
 
+/**
+ * Tinta. A frase do dono à esquerda; à direita, um pedido de WhatsApp virando planilha, nota fiscal
+ * e resposta, em 3D, sobre um disco laranja. É o único gráfico da página fora da calculadora.
+ */
 export function Hero() {
   return (
-    <section id="topo" className="hero" aria-labelledby="hero-title">
+    <section id="topo" className="hero theme-dark" aria-labelledby="hero-title">
       <div className="wrap hero-grid">
         <div className="hero-copy">
           <h1 id="hero-title" className="hero-title">{hero.title}</h1>
           <p className="hero-support">{hero.support}</p>
-          <p className="lede hero-lede">{hero.text}</p>
+          <ul className="hero-services" aria-label="Serviços">
+            {hero.services.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
           <div className="hero-actions">
-            <a href="#calculadora" className="btn btn-primary">
-              {cta.primary}<span className="arrow" aria-hidden="true">↓</span>
-            </a>
-            <a href={site.contactUrl} target="_blank" rel="noopener noreferrer" className="hero-explore">
-              {cta.whatsapp}<span aria-hidden="true">↗</span>
+            <a href="#calculadora" className="btn btn-primary">{cta.primary}</a>
+            <a href={site.contactUrl} target="_blank" rel="noopener noreferrer" className="text-link">
+              {cta.whatsapp}
               <span className="sr-only"> (abre em nova aba)</span>
             </a>
           </div>
         </div>
-        <HeroRoutine />
+        <div className="hero-visual" aria-hidden="true">
+          <div className="hero-disc" />
+          <FlowScene />
+        </div>
+        <p className="sr-only">{flow.alt}</p>
       </div>
     </section>
   );

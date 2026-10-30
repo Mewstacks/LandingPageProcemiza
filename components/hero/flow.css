@@ -1,0 +1,128 @@
+/*
+ * Cena do hero: documentos de papel em 3D (pedido no WhatsApp, planilha, nota fiscal, resposta).
+ * Os documentos têm a cara do que são, então as cores deles (verde do WhatsApp, grade da
+ * planilha) vivem aqui, em variáveis da cena; o resto vem dos tokens da marca.
+ *
+ * Todo comprimento é "px de projeto × --u" (--u = 1px × --k, escala medida pelo JS): nada de
+ * scale() no mundo, então cada documento rasteriza no tamanho final. Texto nunca abaixo de 13px.
+ * A raiz carrega data-ui: é um fragmento de interface, modelo do produto.
+ */
+.flow {
+  --k: 0.85;
+  --u: calc(1px * var(--k));
+  --doc: var(--color-paper);
+  --doc-ink: #1d1c1a;
+  --doc-muted: #55514a;
+  --doc-edge: color-mix(in oklab, var(--color-ink-950) 16%, var(--doc));
+  --doc-head: #e9e8e4;
+  --chat-bg: #efeae2;
+  --chat-in: #fbfaf8;
+  --chat-out: #d9fdd3;
+  --chat-brand: #0b6b57;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  isolation: isolate;
+  color: var(--doc-ink);
+  font-family: var(--font-sans);
+  transition: opacity 600ms var(--ease-out);
+}
+.js .flow:not([data-ready]) { opacity: 0; }
+
+.flow-stage { position: absolute; inset: 0; perspective: calc(1700 * var(--u)); }
+.flow-world {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(7deg) rotateY(-20deg);
+}
+
+/* O cartão é a caixa que se move (tamanho, posição, opacidade); o papel fica dentro dele. */
+.flow-card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--w) * var(--u));
+  height: calc(var(--h) * var(--u));
+  margin: calc(var(--h) * var(--u) / -2) 0 0 calc(var(--w) * var(--u) / -2);
+  transform: translate3d(calc(var(--x) * var(--u)), calc(var(--y) * var(--u)), calc(var(--z) * var(--u)));
+  font-size: max(13px, calc(15 * var(--u)));
+  line-height: 1.3;
+}
+.flow-doc {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--doc-edge);
+  border-radius: calc(10 * var(--u));
+  background: var(--doc);
+}
+
+/* ------------------------------- WhatsApp ------------------------------ */
+
+.wa-head { display: flex; align-items: baseline; justify-content: space-between; gap: calc(8 * var(--u)); margin: 0; padding: calc(9 * var(--u)) calc(14 * var(--u)); background: var(--doc-head); font-weight: 600; }
+.wa-head b { color: var(--chat-brand); font-size: max(13px, calc(13 * var(--u))); font-weight: 700; }
+.wa-body { display: grid; align-content: start; gap: calc(8 * var(--u)); height: 100%; padding: calc(12 * var(--u)); background: var(--chat-bg); }
+.wa-bubble { position: relative; max-width: 88%; margin: 0; padding: calc(7 * var(--u)) calc(10 * var(--u)) calc(19 * var(--u)); border-radius: calc(8 * var(--u)); background: var(--chat-in); }
+.wa-bubble time { position: absolute; right: calc(9 * var(--u)); bottom: calc(3 * var(--u)); color: var(--doc-muted); font-size: max(13px, calc(12 * var(--u))); }
+.wa-bubble--out { margin-left: auto; background: var(--chat-out); }
+
+/* ------------------------------- planilha ------------------------------ */
+
+.sheet-title { margin: 0; padding: calc(8 * var(--u)) calc(10 * var(--u)); font-weight: 700; }
+.sheet { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.sheet th { padding: calc(8 * var(--u)) calc(8 * var(--u)); background: var(--doc-head); color: var(--doc-muted); font-size: max(13px, calc(13 * var(--u))); font-weight: 600; text-align: left; }
+.sheet td { padding: calc(9 * var(--u)) calc(8 * var(--u)); border-top: 1px solid var(--doc-edge); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: max(13px, calc(14 * var(--u))); font-variant-numeric: tabular-nums; }
+.sheet-fresh td { background: color-mix(in oklab, var(--color-accent) 26%, var(--doc)); font-weight: 600; }
+
+/* ----------------------------- nota fiscal ----------------------------- */
+
+.flow-card--invoice .flow-doc { display: grid; align-content: start; gap: calc(3 * var(--u)); padding: calc(14 * var(--u)) calc(16 * var(--u)); }
+.inv-top { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: calc(6 * var(--u)); }
+.inv-top strong { font-size: max(13px, calc(20 * var(--u))); }
+.inv-top span { color: var(--doc-muted); font-size: max(13px, calc(13 * var(--u))); }
+.inv-to { margin: 0; font-weight: 600; }
+.inv-item { margin: 0 0 calc(6 * var(--u)); }
+.inv-total, .inv-status { display: flex; align-items: baseline; justify-content: space-between; gap: calc(8 * var(--u)); }
+.inv-total { padding-top: calc(8 * var(--u)); border-top: 1px solid var(--doc-edge); }
+.inv-total span, .inv-status span { color: var(--doc-muted); font-size: max(13px, calc(13 * var(--u))); }
+.inv-total strong { font-size: max(13px, calc(21 * var(--u))); font-variant-numeric: tabular-nums; }
+.inv-status { align-items: center; margin-top: calc(4 * var(--u)); }
+.inv-stamp {
+  margin: 0;
+  padding: calc(2 * var(--u)) calc(10 * var(--u));
+  border: calc(2 * var(--u)) solid var(--color-rust);
+  border-radius: calc(4 * var(--u));
+  color: var(--color-rust);
+  font-size: max(13px, calc(14 * var(--u)));
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transform: rotate(-8deg);
+}
+
+/* ------------------------------ ficha e fios ---------------------------- */
+
+.flow-wire { position: absolute; left: 0; top: 0; width: calc(100 * var(--u)); height: calc(2 * var(--u)); margin-top: calc(-1 * var(--u)); background: var(--color-paper); opacity: 0.9; transform-origin: 0 50%; }
+.flow-token {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(16 * var(--u));
+  height: calc(16 * var(--u));
+  margin: calc(-8 * var(--u)) 0 0 calc(-8 * var(--u));
+  border: calc(3 * var(--u)) solid var(--color-ink-950);
+  border-radius: 50%;
+  background: var(--color-paper);
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow { transition: none; }
+}
+@media print {
+  .flow { display: none; }
+}

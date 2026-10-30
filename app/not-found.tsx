@@ -17,9 +17,9 @@ export default function NotFound() {
         <div className="wrap page-hero-inner">
           <h1 id="page-title" className="page-title">Página não encontrada.</h1>
           <ul className="notfound-links">
-            {[pages.home, pages.calculadora, pages.automacao, pages.integracao, pages.sobMedida, pages.conta200].map((p) => (
+            {[pages.home, pages.calculadora, pages.automacao, pages.integracao, pages.sobMedida].map((p) => (
               <li key={p.path}>
-                <Link href={p.path}>{p.name}<span aria-hidden="true"> →</span></Link>
+                <Link href={p.path}>{p.name}</Link>
               </li>
             ))}
           </ul>

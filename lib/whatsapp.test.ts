@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { buildMessage, buildWhatsAppUrl, cleanRoutine, MESSAGE_MAX, ROUTINE_MAX } from "./whatsapp";
+import { buildMessage, buildWhatsAppUrl, cleanRoutine, formatPhone, MESSAGE_MAX, ROUTINE_MAX } from "./whatsapp";
 
-const base = "https://wa.me/5554999425740";
+const base = "https://wa.me/555494898181";
 
 describe("cleanRoutine", () => {
   it("tira quebra de linha e controle", () => {
@@ -29,6 +29,18 @@ describe("buildMessage", () => {
   });
   it("respeita o teto", () => {
     expect(buildMessage({ routine: "y".repeat(5000), hoursReturned: 1 }).length).toBeLessThanOrEqual(MESSAGE_MAX);
+  });
+});
+
+describe("formatPhone", () => {
+  it("formata o número da Procemiza", () => {
+    expect(formatPhone("https://wa.me/555494898181")).toBe("+55 54 9489-8181");
+  });
+  it("celular de nove dígitos", () => {
+    expect(formatPhone("https://wa.me/5554994898181")).toBe("+55 54 99489-8181");
+  });
+  it("número de fora do Brasil só ganha o +", () => {
+    expect(formatPhone("https://wa.me/14155550100")).toBe("+14155550100");
   });
 });
 

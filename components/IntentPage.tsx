@@ -1,17 +1,12 @@
 import { JsonLd } from "@/components/JsonLd";
 import { PilotCTA } from "@/components/PilotCTA";
-import { SolutionVisual } from "@/components/Solutions";
 import { FaqList, PageHero, PageSection, Related } from "@/components/page/parts";
-import { methodSteps, type IntentContent } from "@/content/intents";
+import { steps, type IntentContent } from "@/content/intents";
 import { pages, type PageKey } from "@/content/pages";
-import { solutions } from "@/content/solutions";
 import { breadcrumbNode, graph, serviceNode, webPageNode } from "@/lib/seo";
-
-const VISUAL: Partial<Record<PageKey, number>> = { automacao: 0, integracao: 1, sobMedida: 2 };
 
 export function IntentPage({ pageKey, content }: { pageKey: PageKey; content: IntentContent }) {
   const page = pages[pageKey];
-  const visualIndex = VISUAL[pageKey];
 
   return (
     <main id="conteudo">
@@ -26,19 +21,12 @@ export function IntentPage({ pageKey, content }: { pageKey: PageKey; content: In
           </ul>
         </PageSection>
         <PageSection id="exemplo" title={content.exampleTitle}>
-          <div className="page-example">
-            <blockquote>{content.example}</blockquote>
-            {visualIndex !== undefined ? (
-              <div className="page-visual theme-dark">
-                <SolutionVisual solution={solutions[visualIndex]} />
-              </div>
-            ) : null}
-          </div>
+          <blockquote className="page-quote">{content.example}</blockquote>
         </PageSection>
         <PageSection id="como" title="Como começamos">
           <ol className="page-steps">
-            {methodSteps.map((step) => (
-              <li key={step.n}>
+            {steps.map((step) => (
+              <li key={step.name}>
                 <strong>{step.name}</strong>
                 <span>{step.text}</span>
               </li>
