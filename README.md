@@ -71,7 +71,7 @@ Regras que valem para qualquer tela nova:
 | `lib/consent.ts`, `lib/analytics.ts` | Consentimento (LGPD) e eventos do GA4. |
 | `lib/motion.ts` | `useReducedMotion` (lê `prefers-reduced-motion`). |
 | `components/hero/` | Cena 3D: `FlowScene` (componente), `flow.geometry.ts` (geometria pura e testada), `flow.css`. |
-| `components/calculator/` | `RoutineProvider` (estado), `Calculator` (monta a tela), `Steps` e `Adjust` (entrada), `Result` com `Odometer`, `Orb` e `Timeline` (saída) e `Account` (a conta aberta). |
+| `components/calculator/` | `RoutineProvider` (estado), `Calculator` (monta a tela), `Steps` e `Adjust` (entrada), `Result` com `Odometer`, `Orb` e `Timeline` (saída) e `Account` (a conta aberta, em barras). |
 | `components/page/`, `components/IntentPage.tsx` | Páginas internas: título em cartaz, quando faz sentido, exemplo, perguntas e faixa de convite. |
 
 Páginas: `/`, `/calculadora`, `/automacao-de-processos`, `/integracao-de-sistemas`,
@@ -93,11 +93,18 @@ ou juntar, analisar ou decidir, falar com gente) e diz quantas vezes roda por di
   mês (21 dias úteis ou 52/12 semanas). Custo da hora = salário × (1 + encargos) ÷ 220 (70% CLT,
   50% Simples) ou valor da hora digitado. Sem custo informado, só horas.
 - Validação nunca ajusta valor em silêncio: o campo errado (e o passo) mostra a mensagem.
-- Saída: número grande que rola (`Odometer`, dígitos em `content` do CSS para não entrar no HTML),
-  disco laranja de área proporcional à parte que volta (`Orb`), faixa Hoje × Depois com um bloco por
-  passo (`Timeline`; passar o mouse ou focar um passo acende o bloco e a linha da conta) e "A conta"
-  aberta: tabela por passo e uma linha por multiplicação. No celular um número fixo acompanha a
-  rolagem enquanto o cartão está fora da tela.
+- Descrever é tocar: sete modelos de processo (faixa que rola de lado no celular); "Novo passo" tem um
+  botão por tipo de trabalho (Copiar, Conferir, Avisar, Procurar, Analisar, Conversar) que já põe o
+  passo com o tempo de partida do tipo (`STEP_KINDS[].minutes`) e leva o foco ao número; período e
+  unidade do custo são botões (radios nativos), não listas.
+- Saída: o número cresce até 10 rem e encolhe com a quantidade de dígitos (`cqw` sobre o bloco do
+  número, `--chars`), rola (`Odometer`, dígitos em `content` do CSS para não entrar no HTML), ao lado
+  do disco laranja de área proporcional à parte que volta (`Orb`). Faixa Hoje × Depois com um bloco
+  por passo e o nome dentro dos maiores (`Timeline`; passar o mouse ou focar um passo acende o bloco
+  e a linha da conta).
+- "A conta": uma barra por passo (cinza = tempo do passo, laranja = parte que volta) com a
+  multiplicação e o resultado ao lado, a soma, a fórmula e as contas do mês e do dinheiro em colunas.
+  No celular um número fixo acompanha a rolagem enquanto o cartão está fora da tela.
 - O formulário é uma linha por passo (container query: duas linhas quando a coluna é estreita).
 
 Os números vêm do visitante. Nada é enviado a servidor; o estado fica em `sessionStorage`

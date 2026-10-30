@@ -34,13 +34,17 @@ export type Period = "dia" | "semana" | "mes";
  */
 export type StepKind = "dados" | "conferir" | "avisar" | "buscar" | "decidir" | "pessoas";
 
-export const STEP_KINDS: readonly { id: StepKind; label: string; coverage: number }[] = [
-  { id: "dados", label: "Copiar ou digitar", coverage: 0.95 },
-  { id: "conferir", label: "Conferir com regra", coverage: 0.9 },
-  { id: "avisar", label: "Avisar ou enviar", coverage: 0.95 },
-  { id: "buscar", label: "Procurar ou juntar", coverage: 0.75 },
-  { id: "decidir", label: "Analisar ou decidir", coverage: 0.2 },
-  { id: "pessoas", label: "Falar com gente", coverage: 0.1 },
+/**
+ * `short` é o rótulo do botão que adiciona um passo desse tipo; `minutes` é o tempo de partida do
+ * passo novo (um chute razoável que a pessoa troca, nunca entra na conta sem aparecer na tela).
+ */
+export const STEP_KINDS: readonly { id: StepKind; label: string; short: string; coverage: number; minutes: number }[] = [
+  { id: "dados", label: "Copiar ou digitar", short: "Copiar", coverage: 0.95, minutes: 3 },
+  { id: "conferir", label: "Conferir com regra", short: "Conferir", coverage: 0.9, minutes: 3 },
+  { id: "avisar", label: "Avisar ou enviar", short: "Avisar", coverage: 0.95, minutes: 1 },
+  { id: "buscar", label: "Procurar ou juntar", short: "Procurar", coverage: 0.75, minutes: 2 },
+  { id: "decidir", label: "Analisar ou decidir", short: "Analisar", coverage: 0.2, minutes: 5 },
+  { id: "pessoas", label: "Falar com gente", short: "Conversar", coverage: 0.1, minutes: 5 },
 ];
 
 export function defaultCoverage(kind: StepKind): number {

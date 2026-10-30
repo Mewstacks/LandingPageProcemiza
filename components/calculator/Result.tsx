@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { site } from "@/content/site";
 import { formatBRL, formatDays, formatHours, formatPercent } from "@/lib/format";
 import { PRESETS } from "@/lib/routine";
@@ -53,13 +54,16 @@ export function Result({ active, onActive }: Props) {
           </p>
 
           <div className="result-top">
-            <p className="result-big">
-              <span className="sr-only">{formatHours(ok.hoursReturned)} horas por mês devolvidas</span>
-              <Odometer text={formatHours(ok.hoursReturned)} />
-              <span className="result-unit" aria-hidden="true">
-                h/mês devolvidas
-              </span>
-            </p>
+            {/* o número se ajusta à largura do bloco: poucos dígitos ficam enormes, muitos encolhem */}
+            <div className="result-figure" style={{ "--chars": formatHours(ok.hoursReturned).length } as CSSProperties}>
+              <p className="result-big">
+                <span className="sr-only">{formatHours(ok.hoursReturned)} horas por mês devolvidas</span>
+                <Odometer text={formatHours(ok.hoursReturned)} />
+                <span className="result-unit" aria-hidden="true">
+                  h/mês devolvidas
+                </span>
+              </p>
+            </div>
             <Orb share={ok.share} />
           </div>
           <p className="result-sub">

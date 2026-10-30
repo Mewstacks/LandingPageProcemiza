@@ -43,6 +43,32 @@ export function useDebounced<T>(value: T, ms = 600): T {
   return v;
 }
 
+type SegmentedProps<T extends string> = {
+  name: string;
+  label: string;
+  value: T;
+  options: readonly { value: T; label: string }[];
+  onChange: (value: T) => void;
+};
+
+/**
+ * Escolha entre poucas opções, todas à vista, com um toque: radios nativos desenhados como botões
+ * (setas do teclado e leitor de tela funcionam sem código a mais). O rótulo só vale para o leitor.
+ */
+export function Segmented<T extends string>({ name, label, value, options, onChange }: SegmentedProps<T>) {
+  return (
+    <fieldset className="seg">
+      <legend className="sr-only">{label}</legend>
+      {options.map((option) => (
+        <label key={option.value}>
+          <input type="radio" name={name} value={option.value} checked={value === option.value} onChange={() => onChange(option.value)} />
+          <span>{option.label}</span>
+        </label>
+      ))}
+    </fieldset>
+  );
+}
+
 type FieldProps = {
   id: string;
   label: string;

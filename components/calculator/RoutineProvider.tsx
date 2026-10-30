@@ -6,7 +6,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { hoursBucket, track } from "@/lib/analytics";
 import type { StepKind } from "@/lib/calculator";
 import {
-  addStep as addStepTo,
+  addStepOf,
   blankFields,
   deriveView,
   fromPreset,
@@ -33,7 +33,7 @@ type Ctx = {
   blank: boolean;
   set: <K extends keyof RoutineFields>(key: K, value: RoutineFields[K]) => void;
   setStep: (id: string, patch: Partial<Omit<StepFields, "id">>) => void;
-  addStep: () => void;
+  addStep: (kind: StepKind) => void;
   removeStep: (id: string) => void;
   setCoverage: (kind: StepKind, value: string) => void;
   fill: (preset: Preset) => void;
@@ -81,7 +81,7 @@ export function RoutineProvider({ children }: { children: ReactNode }) {
 
   const set = useCallback<Ctx["set"]>((key, value) => edit((f) => ({ ...f, [key]: value })), [edit]);
   const setStep = useCallback<Ctx["setStep"]>((id, patch) => edit((f) => patchStep(f, id, patch)), [edit]);
-  const addStep = useCallback(() => edit(addStepTo), [edit]);
+  const addStep = useCallback((kind: StepKind) => edit((f) => addStepOf(f, kind)), [edit]);
   const removeStep = useCallback((id: string) => edit((f) => removeStepFrom(f, id)), [edit]);
   const setCoverage = useCallback<Ctx["setCoverage"]>((kind, value) => edit((f) => ({ ...f, coverage: { ...f.coverage, [kind]: value } })), [edit]);
   const fill = useCallback((preset: Preset) => setState({ fields: fromPreset(preset), edited: false }), []);

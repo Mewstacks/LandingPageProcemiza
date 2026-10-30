@@ -106,6 +106,42 @@ export const PRESETS: readonly Preset[] = [
       step(5, "Enviar", "20", "avisar"),
     ],
   },
+  {
+    label: "Cadastros",
+    routine: "Cadastrar clientes novos",
+    runs: "15",
+    period: "dia",
+    steps: [
+      step(1, "Receber os dados", "2", "buscar"),
+      step(2, "Digitar no cadastro", "4", "dados"),
+      step(3, "Conferir os documentos", "3", "conferir"),
+      step(4, "Avisar o cliente", "1", "avisar"),
+    ],
+  },
+  {
+    label: "Conciliação",
+    routine: "Conciliar o extrato do banco",
+    runs: "1",
+    period: "dia",
+    steps: [
+      step(1, "Baixar o extrato", "5", "buscar"),
+      step(2, "Comparar com o sistema", "25", "conferir"),
+      step(3, "Lançar as diferenças", "15", "dados"),
+      step(4, "Resolver o que não bate", "15", "decidir"),
+    ],
+  },
+  {
+    label: "Orçamentos",
+    routine: "Montar orçamentos",
+    runs: "12",
+    period: "semana",
+    steps: [
+      step(1, "Entender o pedido", "5", "decidir"),
+      step(2, "Buscar os preços", "8", "buscar"),
+      step(3, "Montar a proposta", "12", "dados"),
+      step(4, "Enviar ao cliente", "2", "avisar"),
+    ],
+  },
 ];
 
 export function fromPreset(p: Preset): RoutineFields {
@@ -138,9 +174,11 @@ export function nextStepId(steps: readonly StepFields[]): string {
   return `s${max + 1}`;
 }
 
-export function addStep(f: RoutineFields): RoutineFields {
+/** Passo novo de um tipo, já com o tempo de partida do tipo (a pessoa só ajusta). */
+export function addStepOf(f: RoutineFields, kind: StepKind): RoutineFields {
   if (f.steps.length >= K.MAX_STEPS) return f;
-  return { ...f, steps: [...f.steps, blankStep(nextStepId(f.steps))] };
+  const minutes = String(STEP_KINDS.find((k) => k.id === kind)?.minutes ?? 2);
+  return { ...f, steps: [...f.steps, { id: nextStepId(f.steps), name: "", minutes, kind }] };
 }
 
 /** Nunca zera a lista: o último passo volta em branco. */

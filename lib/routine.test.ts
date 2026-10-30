@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { K } from "./calculator";
 import {
   PRESETS,
-  addStep,
+  addStepOf,
   blankFields,
   deriveView,
   fromPreset,
@@ -65,15 +65,15 @@ describe("texto digitado vira conta", () => {
   });
 
   it("passo em branco é ignorado; nome vazio usa o tipo", () => {
-    let f = addStep({ ...base, steps: base.steps.map((s) => ({ ...s, name: "" })) });
-    f = patchStep(f, "s5", { kind: "pessoas" });
+    let f = addStepOf({ ...base, steps: base.steps.map((s) => ({ ...s, name: "" })) }, "pessoas");
+    f = patchStep(f, "s5", { minutes: "" });
     const { result, view } = okView(f);
     expect(result.steps).toHaveLength(4);
     expect(view.stepNames).toEqual(["Procurar ou juntar", "Conferir com regra", "Copiar ou digitar", "Avisar ou enviar"]);
   });
 
   it("nomes seguem a ordem dos passos preenchidos mesmo com linha em branco no meio", () => {
-    let f = addStep(base);
+    let f = addStepOf(base, "dados");
     f = patchStep(f, "s2", { minutes: "" });
     f = patchStep(f, "s5", { name: "Último", minutes: "2" });
     const { view } = okView(f);
@@ -81,8 +81,9 @@ describe("texto digitado vira conta", () => {
   });
 
   it("cada linha sabe qual segmento do resultado é o seu", () => {
-    let f = addStep(base);
+    let f = addStepOf(base, "dados");
     f = patchStep(f, "s2", { minutes: "" });
+    f = patchStep(f, "s5", { minutes: "" });
     expect(deriveView(f, true).slots).toEqual([0, null, 1, 2, null]);
   });
 
@@ -158,7 +159,7 @@ describe("lista de passos", () => {
   it("ids novos nunca repetem, mesmo depois de remover do meio", () => {
     let f = initialFields();
     f = removeStep(f, "s2");
-    f = addStep(f);
+    f = addStepOf(f, "avisar");
     const ids = f.steps.map((s) => s.id);
     expect(new Set(ids).size).toBe(ids.length);
     expect(ids.at(-1)).toBe("s5");
@@ -167,12 +168,36 @@ describe("lista de passos", () => {
 
   it("para no máximo de passos e nunca zera a lista", () => {
     let f = blankFields();
-    for (let i = 0; i < 20; i++) f = addStep(f);
+    for (let i = 0; i < 20; i++) f = addStepOf(f, "dados");
     expect(f.steps).toHaveLength(K.MAX_STEPS);
     let g = blankFields();
     g = removeStep(g, "s1");
     expect(g.steps).toHaveLength(1);
     expect(isBlank(g)).toBe(true);
+  });
+});
+
+describe("passo novo por tipo", () => {
+  it("entra no fim, com o tipo escolhido e o tempo de partida do tipo", () => {
+    const f = addStepOf(initialFields(), "decidir");
+    const added = f.steps.at(-1);
+    expect(added).toEqual({ id: "s5", name: "", minutes: "5", kind: "decidir" });
+    expect(f.steps).toHaveLength(5);
+  });
+
+  it("o passo novo já entra na conta, sem a pessoa digitar nada", () => {
+    const before = okView(initialFields()).result;
+    const after = okView(addStepOf(initialFields(), "pessoas")).result;
+    expect(after.perRunMinutes).toBe(before.perRunMinutes + 5);
+    expect(after.steps.at(-1)?.coverage).toBe(0.1);
+    expect(after.share).toBeLessThan(before.share);
+  });
+
+  it("os atalhos novos têm nome, passos e conta válida", () => {
+    const labels = PRESETS.map((p) => p.label);
+    expect(new Set(labels).size).toBe(labels.length);
+    expect(labels).toEqual(expect.arrayContaining(["Cadastros", "Conciliação", "Orçamentos"]));
+    for (const preset of PRESETS) expect(preset.steps.length).toBeGreaterThanOrEqual(3);
   });
 });
 

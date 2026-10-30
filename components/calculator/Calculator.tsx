@@ -5,18 +5,26 @@ import type { Period } from "@/lib/calculator";
 import { LIMIT, PRESETS, type CostMode } from "@/lib/routine";
 import { Account } from "./Account";
 import { Adjust } from "./Adjust";
-import { Field, errorText } from "./fields";
+import { Field, Segmented, errorText } from "./fields";
 import { Live, Result } from "./Result";
 import { useRoutine } from "./RoutineProvider";
 import { Steps } from "./Steps";
 import { useInView } from "./useSeen";
 
-const COST_LABEL: Record<CostMode, string> = { hora: "R$/hora", salario: "R$/mês" };
-const PERIOD_LABEL: Record<Period, string> = { dia: "por dia", semana: "por semana", mes: "por mês" };
+const PERIODS = [
+  { value: "dia", label: "Dia" },
+  { value: "semana", label: "Semana" },
+  { value: "mes", label: "Mês" },
+] as const satisfies readonly { value: Period; label: string }[];
+
+const COST_MODES = [
+  { value: "salario", label: "R$/mês" },
+  { value: "hora", label: "R$/hora" },
+] as const satisfies readonly { value: CostMode; label: string }[];
 
 /**
- * Uma conta só, montada a partir do processo da pessoa: nome, frequência, passos e custo. O cartão
- * ao lado refaz o resultado a cada tecla; embaixo fica a conta aberta, linha por linha.
+ * Uma conta só, montada a partir do processo da pessoa: modelo, frequência, passos e custo. O cartão
+ * ao lado refaz o resultado a cada toque; embaixo fica a conta aberta, passo a passo.
  */
 export function Calculator({ titled = true }: { titled?: boolean }) {
   const uid = useId();
@@ -52,7 +60,7 @@ export function Calculator({ titled = true }: { titled?: boolean }) {
             />
           </div>
 
-          <ul className="chips" aria-label="Exemplos">
+          <ul className="chips chips--scroll" aria-label="Modelos">
             {PRESETS.map((preset) => (
               <li key={preset.label}>
                 <button type="button" className="chip" onClick={() => fill(preset)}>
@@ -63,9 +71,9 @@ export function Calculator({ titled = true }: { titled?: boolean }) {
           </ul>
 
           <div className="calc-pair">
-            <Field id={`${uid}-freq`} label="Frequência" error={errorText(errors, "runs")}>
+            <Field id={`${uid}-freq`} label="Quantas vezes" error={errorText(errors, "runs")}>
               {(a) => (
-                <div className="input-unit">
+                <div className="field-seg">
                   <input
                     {...a}
                     type="text"
@@ -75,20 +83,14 @@ export function Calculator({ titled = true }: { titled?: boolean }) {
                     value={fields.runs}
                     onChange={(e) => set("runs", e.target.value)}
                   />
-                  <select aria-label="Período" value={fields.period} onChange={(e) => set("period", e.target.value as Period)}>
-                    {(Object.keys(PERIOD_LABEL) as Period[]).map((period) => (
-                      <option key={period} value={period}>
-                        {PERIOD_LABEL[period]}
-                      </option>
-                    ))}
-                  </select>
+                  <Segmented name={`${uid}-periodo`} label="Período" value={fields.period} options={PERIODS} onChange={(value) => set("period", value)} />
                 </div>
               )}
             </Field>
 
             <Field id={`${uid}-custo`} label="Custo da pessoa (opcional)" error={errorText(errors, "cost")}>
               {(a) => (
-                <div className="input-unit">
+                <div className="field-seg">
                   <input
                     {...a}
                     type="text"
@@ -98,13 +100,7 @@ export function Calculator({ titled = true }: { titled?: boolean }) {
                     value={fields.cost}
                     onChange={(e) => set("cost", e.target.value)}
                   />
-                  <select aria-label="Unidade do custo" value={fields.costMode} onChange={(e) => set("costMode", e.target.value as CostMode)}>
-                    {(Object.keys(COST_LABEL) as CostMode[]).map((mode) => (
-                      <option key={mode} value={mode}>
-                        {COST_LABEL[mode]}
-                      </option>
-                    ))}
-                  </select>
+                  <Segmented name={`${uid}-custo-un`} label="Unidade do custo" value={fields.costMode} options={COST_MODES} onChange={(value) => set("costMode", value)} />
                 </div>
               )}
             </Field>

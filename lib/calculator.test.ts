@@ -142,6 +142,16 @@ describe("calculate", () => {
       expect(r.hoursReturned).toBeCloseTo(23.14, 6);
     });
 
+    it("todo tipo de passo tem rótulo curto único e tempo de partida positivo", () => {
+      expect(new Set(STEP_KINDS.map((kind) => kind.short)).size).toBe(STEP_KINDS.length);
+      expect(new Set(STEP_KINDS.map((kind) => kind.id)).size).toBe(STEP_KINDS.length);
+      for (const kind of STEP_KINDS) {
+        expect(kind.minutes).toBeGreaterThan(0);
+        expect(kind.minutes).toBeLessThanOrEqual(K.MAX_MINUTES_STEP);
+        expect(kind.short.length).toBeLessThanOrEqual(10);
+      }
+    });
+
     it("todo tipo de passo tem uma cobertura entre 0 e 1", () => {
       for (const kind of STEP_KINDS) {
         expect(kind.coverage).toBeGreaterThanOrEqual(0);

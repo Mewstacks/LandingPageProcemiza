@@ -14,7 +14,7 @@
   border-radius: 1rem;
   background: var(--color-ink-850);
   color: var(--color-paper);
-  box-shadow: 0 1rem 3rem rgb(0 0 0 / 0.45);
+  box-shadow: 0 1rem 3rem rgb(0 0 0 / 0.45); /* taste-skill-ignore: aviso que flutua sobre a página */
 }
 .consent p { margin: 0; flex: 1 1 14rem; font-size: var(--fs-small); line-height: 1.5; }
 .consent div { display: flex; gap: 0.5rem; }

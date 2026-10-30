@@ -239,7 +239,7 @@ button { cursor: pointer; }
 
 /* -------------------------------- header --------------------------------- */
 
-.header-sentinel { position: absolute; top: 4.5rem; left: 0; width: 1px; height: 1px; pointer-events: none; }
+.header-sentinel { position: absolute; top: 4.5rem; left: 0; width: 1px; height: 1px; pointer-events: none; } /* taste-skill-ignore: ponto invisível do IntersectionObserver, não é uma linha */
 
 /* Sobre o hero é transparente; depois do sentinela vira barra de tinta sólida,
    legível sobre qualquer capítulo (inclusive papel e laranja). Só cor anima. */
