@@ -50,8 +50,7 @@ Regras que valem para qualquer tela nova:
 
 - Um só gráfico fora da calculadora: a cena do hero. Soluções, clientes e fecho são tipografia.
 - Sem ícone, sem seta (`→ ↗ ↓`), sem bolinha decorativa. Botão e link são texto.
-- Sem acordeão. As perguntas das páginas internas ficam sempre abertas (`<dl class="qa">`);
-  a home não tem FAQ.
+- Sem FAQ em nenhuma página, nem acordeão: a decisão se apoia em "Quando faz sentido" e no exemplo.
 - Texto curto: rótulo é substantivo, botão é verbo, nenhuma frase que explique a tela.
 - Laranja nunca como texto sobre papel (2,77:1): destaque em texto é o rust (5,1:1).
 

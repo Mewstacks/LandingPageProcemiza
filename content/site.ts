@@ -40,7 +40,7 @@ export const nav = [
 ] as const;
 
 export const cta = {
-  primary: "Ver quanto devolve",
+  primary: "Calcular ganho",
   whatsapp: "Falar no WhatsApp",
   final: "Falar no WhatsApp",
 } as const;

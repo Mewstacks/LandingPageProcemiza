@@ -4,8 +4,6 @@ import { solutions } from "./solutions";
  * Rascunho curto: só fatos já presentes no site e a regra da calculadora.
  * Qualquer capacidade nova deve ser confirmada antes de publicar.
  */
-export type Qa = { q: string; a: string };
-
 export type IntentContent = {
   h1: string;
   /** Resposta direta em uma frase: é o que Google e IAs citam. */
@@ -15,17 +13,6 @@ export type IntentContent = {
   exampleTitle: string;
   example: string;
   serviceType: string;
-  faq: readonly Qa[];
-};
-
-const preco: Qa = {
-  q: "Quanto custa?",
-  a: "Depende da rotina. A conversa define o recorte; o valor vem depois.",
-};
-
-const semTrocar: Qa = {
-  q: "Preciso trocar meus sistemas?",
-  a: "Não. Conectamos o que você já usa, sem copiar e colar entre telas.",
 };
 
 export const automacao: IntentContent = {
@@ -42,14 +29,6 @@ export const automacao: IntentContent = {
   exampleTitle: "Exemplo",
   example: solutions[0].example,
   serviceType: "Automação de processos",
-  faq: [
-    {
-      q: "Que rotina automatizar primeiro?",
-      a: "A que se repete, segue regras claras e toma tempo de várias pessoas.",
-    },
-    semTrocar,
-    preco,
-  ],
 };
 
 export const integracao: IntentContent = {
@@ -65,14 +44,6 @@ export const integracao: IntentContent = {
   exampleTitle: "Exemplo",
   example: solutions[1].example,
   serviceType: "Integração de sistemas",
-  faq: [
-    semTrocar,
-    {
-      q: "O que muda para a equipe?",
-      a: "Menos digitação. Cada área vê a mesma informação, atualizada.",
-    },
-    preco,
-  ],
 };
 
 export const sobMedida: IntentContent = {
@@ -88,14 +59,6 @@ export const sobMedida: IntentContent = {
   exampleTitle: "Exemplo",
   example: solutions[2].example,
   serviceType: "Desenvolvimento de sistemas sob medida",
-  faq: [
-    {
-      q: "Precisa começar grande?",
-      a: "Não. Começamos por um recorte, colocamos em uso e ampliamos.",
-    },
-    semTrocar,
-    preco,
-  ],
 };
 
 export const calculadoraPage = {

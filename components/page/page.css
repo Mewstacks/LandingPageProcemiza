@@ -33,21 +33,12 @@
 .example-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 2rem clamp(2rem, 5vw, 5rem); align-items: end; }
 .example-text { margin: 0; max-width: 26ch; color: var(--text); font-family: var(--font-display); font-weight: 380; font-size: clamp(1.5rem, 3vw, 2.25rem); line-height: 1.15; letter-spacing: -0.01em; text-wrap: balance; }
 
-/* papel: perguntas em colunas */
-.page-faq { padding-block: var(--section-y); }
-.qa { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1.75rem clamp(2rem, 4vw, 4rem); margin: 0; }
-.qa-item { display: grid; align-content: start; gap: 0.5rem; }
-.qa dt { margin: 0; color: var(--text); font-size: var(--fs-body); font-weight: 600; line-height: 1.35; }
-.qa dd { margin: 0; color: var(--text); font-size: var(--fs-body); line-height: 1.55; }
-
 .related { display: grid; gap: 0.25rem; }
 .related-title { margin: 0; color: var(--text-muted); font-family: var(--font-sans); font-size: var(--fs-small); font-weight: 500; }
 .related ul { display: grid; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
 .related a { display: inline-flex; align-items: center; min-height: 2.75rem; color: var(--text); text-decoration: underline; text-decoration-thickness: 2px; text-decoration-color: var(--accent-text); text-underline-offset: 0.35em; }
 /* no laranja os caminhos ganham o tamanho de um título pequeno */
 .page-example .related a { font-family: var(--font-display); font-weight: 350; font-size: var(--fs-h3); line-height: 1.15; text-decoration-color: var(--text); }
-.page-faq .related { margin-top: clamp(2rem, 4vw, 3rem); }
-.page-faq .related ul { display: flex; flex-wrap: wrap; gap: 0 1.5rem; }
 
 /* privacidade: texto corrido, rótulo à esquerda */
 .page-body { padding-block: clamp(0.5rem, 1.5vw, 1.5rem); }

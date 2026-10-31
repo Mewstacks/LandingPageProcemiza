@@ -1,14 +1,14 @@
 import type { CSSProperties } from "react";
 import { JsonLd } from "@/components/JsonLd";
 import { PilotCTA } from "@/components/PilotCTA";
-import { FaqList, PageHero, Related } from "@/components/page/parts";
+import { PageHero, Related } from "@/components/page/parts";
 import type { IntentContent } from "@/content/intents";
 import { pages, type PageKey } from "@/content/pages";
 import { breadcrumbNode, graph, serviceNode, webPageNode } from "@/lib/seo";
 
 /**
- * Página de solução em quatro capítulos de cor: título em cartaz (tinta), quando faz sentido (papel),
- * o exemplo com os outros caminhos (laranja) e as perguntas (papel). Só o que ajuda a decidir.
+ * Página de solução em três capítulos de cor: título em cartaz (tinta), quando faz sentido (papel)
+ * e o exemplo com os outros caminhos (laranja), fechando no convite. Só o que ajuda a decidir.
  */
 export function IntentPage({ pageKey, content }: { pageKey: PageKey; content: IntentContent }) {
   const page = pages[pageKey];
@@ -38,13 +38,6 @@ export function IntentPage({ pageKey, content }: { pageKey: PageKey; content: In
           <div data-reveal="2">
             <Related current={pageKey} />
           </div>
-        </div>
-      </section>
-
-      <section className="page-faq theme-light" aria-labelledby="perguntas-title">
-        <div className="wrap">
-          <h2 id="perguntas-title" className="page-h2" data-reveal>Perguntas</h2>
-          <FaqList items={content.faq} />
         </div>
       </section>
 

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { cta, site } from "@/content/site";
 import { pages, type PageKey } from "@/content/pages";
-import type { Qa } from "@/content/intents";
 import "./page.css";
 
 export function PageHero({
@@ -59,20 +58,6 @@ export function PageSection({ id, title, children }: { id: string; title: string
         <div className="page-section-body">{children}</div>
       </div>
     </section>
-  );
-}
-
-/** Perguntas sempre abertas, em colunas: lista de definição, legível sem JavaScript e sem clique. */
-export function FaqList({ items }: { items: readonly Qa[] }) {
-  return (
-    <dl className="qa">
-      {items.map((item, index) => (
-        <div key={item.q} className="qa-item" data-reveal={Math.min(index + 1, 4)}>
-          <dt>{item.q}</dt>
-          <dd>{item.a}</dd>
-        </div>
-      ))}
-    </dl>
   );
 }
 
