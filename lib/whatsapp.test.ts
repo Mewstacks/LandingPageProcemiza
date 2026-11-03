@@ -22,26 +22,39 @@ describe("buildMessage", () => {
     expect(buildMessage({ routine: "Conferir notas" })).toContain('"Conferir notas"');
   });
   it("com números", () => {
-    const m = buildMessage({ routine: "Conferir notas", steps: 4, hoursReturned: 25.2, brlMonth: 1008, share: 0.8 });
+    const m = buildMessage({
+      routine: "Conferir notas",
+      steps: 4,
+      hours: { low: 19.6, high: 26.9 },
+      brlMonth: { low: 518.8, high: 709.5 },
+      share: { low: 0.68, high: 0.93 },
+    });
     expect(m).toContain('"Conferir notas" (4 passos)');
-    expect(m).toContain("25 h/mês, 80% do tempo e R$ 1.008/mês");
+    expect(m).toContain("20 a 27 h/mês, 68% a 93% do tempo e R$ 519 a R$ 710/mês");
   });
   it("só horas: sem parte do tempo e sem dinheiro", () => {
-    const m = buildMessage({ routine: "Conferir notas", hoursReturned: 25.2 });
-    expect(m).toContain("cerca de 25 h/mês.");
+    const m = buildMessage({ routine: "Conferir notas", hours: { low: 19.6, high: 26.9 } });
+    expect(m).toContain("devolve 20 a 27 h/mês.");
     expect(m).not.toContain("%");
     expect(m).not.toContain("passos");
   });
+  it("faixa que arredonda igual vira um número só", () => {
+    const m = buildMessage({ routine: "x", hours: { low: 25.1, high: 25.4 } });
+    expect(m).toContain("cerca de 25 h/mês.");
+  });
   it("sem nome do processo ainda leva os números", () => {
-    const m = buildMessage({ steps: 3, hoursReturned: 12, share: 0.7 });
+    const m = buildMessage({ steps: 3, hours: { low: 12, high: 15 }, share: { low: 0.69, high: 0.93 } });
     expect(m).toContain("Simulei no site um processo (3 passos)");
-    expect(m).toContain("12 h/mês e 70% do tempo");
+    expect(m).toContain("12 a 15 h/mês e 69% a 93% do tempo");
   });
   it("um passo só não vira '1 passos'", () => {
-    expect(buildMessage({ routine: "x", steps: 1, hoursReturned: 3 })).not.toContain("passo");
+    expect(buildMessage({ routine: "x", steps: 1, hours: { low: 3, high: 4 } })).not.toContain("passo");
+  });
+  it("sem horas devolvidas cai na mensagem genérica", () => {
+    expect(buildMessage({ routine: "x", hours: { low: 0, high: 0 } })).toContain('esta rotina: "x"');
   });
   it("respeita o teto", () => {
-    expect(buildMessage({ routine: "y".repeat(5000), hoursReturned: 1 }).length).toBeLessThanOrEqual(MESSAGE_MAX);
+    expect(buildMessage({ routine: "y".repeat(5000), hours: { low: 1, high: 2 } }).length).toBeLessThanOrEqual(MESSAGE_MAX);
   });
 });
 
@@ -60,7 +73,7 @@ describe("formatPhone", () => {
 describe("buildWhatsAppUrl", () => {
   it("codifica & # ? % aspas emoji e quebra de linha e volta idêntico", () => {
     const routine = 'Notas & "recibos" #1 100% ok? 😀';
-    const url = buildWhatsAppUrl(base, { routine, hoursReturned: 10 });
+    const url = buildWhatsAppUrl(base, { routine, hours: { low: 10, high: 12 } });
     expect(url.startsWith(`${base}?text=`)).toBe(true);
     expect(url.slice(base.length + 6)).not.toMatch(/[ &#"\n]/);
     const decoded = decodeURIComponent(url.split("?text=")[1]);

@@ -1,19 +1,54 @@
 /*
- * Calculadora. Só consome tokens semânticos (--surface, --text, --control-border, --focus…):
- * o capítulo é papel e o cartão de resultado é tinta (.theme-dark), sem cor literal aqui.
- * Compacta de propósito: cada passo é uma linha, o resultado fica ao lado e a conta embaixo.
+ * Calculadora em conversa. Só consome tokens semânticos (--surface, --text, --control-border, --focus…):
+ * o capítulo é papel, os balões são tons do papel e o cartão de resultado é tinta (.theme-dark).
+ * A conversa fica numa coluna estreita; o resultado abre na largura toda, com a conta ao lado.
  */
 
-/* --------------------------------- campos --------------------------------- */
+.calc-section { padding-block: var(--section-y); }
+.calc-title { margin: 0 0 clamp(1.5rem, 3vw, 2.25rem); font-family: var(--font-display); font-weight: 350; font-size: var(--fs-display); line-height: 1.04; letter-spacing: -0.02em; text-wrap: balance; }
 
-.field { display: grid; gap: 0.375rem; min-width: 0; align-content: start; }
-.field > label,
-.field-head > label { color: var(--text); font-size: var(--fs-small); font-weight: 500; line-height: 1.3; padding: 0; }
-.field-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; min-height: 1.5rem; }
+.chat { display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); min-width: 0; }
+.chat-flow { display: grid; gap: 1rem; min-width: 0; max-width: 40rem; }
 
-/* um só desenho de controle para o formulário todo (campos e linhas de passo) */
-:is(.field, .step) :is(input, select) {
-  width: 100%;
+/* ---------------------------------- balões --------------------------------- */
+
+.chat-log { display: grid; gap: 1rem; min-width: 0; }
+.turn { display: grid; gap: 0.5rem; min-width: 0; }
+.bubble { max-width: min(88%, 30rem); margin: 0; padding: 0.75rem 1rem; border: 0; border-radius: 1.125rem; font: inherit; font-size: var(--fs-body); line-height: 1.4; overflow-wrap: anywhere; }
+.bubble--bot { justify-self: start; border-bottom-left-radius: 0.375rem; background: var(--surface-sunken); color: var(--text); }
+.bubble--error { color: var(--danger-text); font-weight: 500; }
+/* a resposta da pessoa é um botão: tocar nela volta àquela pergunta */
+.bubble--me { justify-self: end; min-height: 2.75rem; border-bottom-right-radius: 0.375rem; background: var(--btn-bg); color: var(--btn-fg); text-align: left; cursor: pointer; transition: transform 160ms var(--ease-out), opacity var(--duration-fast) ease; }
+.bubble--me:active { transform: scale(0.98); }
+.bubble--me:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) {
+  .bubble--me:hover { opacity: 0.88; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .turn[data-fresh="true"] > *,
+  .bubble--error { animation: bubble-in 160ms var(--ease-out) both; }
+  @keyframes bubble-in { from { opacity: 0; transform: translateY(0.5rem); } }
+}
+
+/* ---------------------- respostas de um toque e caixa de texto --------------------- */
+
+.chat-controls { display: grid; gap: 0.75rem; min-width: 0; scroll-margin-bottom: 1rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.chip { min-height: 2.75rem; padding: 0 1.125rem; border: 0; border-radius: 999px; background: var(--surface-sunken); color: var(--text); font: inherit; font-size: var(--fs-small); font-weight: 500; cursor: pointer; transition: background-color var(--duration-fast) ease, color var(--duration-fast) ease, transform 160ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .chip:hover { background: color-mix(in oklab, var(--text) 12%, var(--surface-sunken)); }
+}
+.chip:active { transform: scale(0.97); }
+.chip:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+/* marcado: tom invertido e peso maior, para não depender só da cor */
+.chip[aria-pressed="true"] { background: var(--btn-bg); color: var(--btn-fg); font-weight: 650; }
+.chat-done { justify-self: start; }
+.chat-done:disabled { cursor: not-allowed; opacity: 0.5; }
+
+.composer { display: flex; gap: 0.5rem; min-width: 0; }
+.composer input {
+  flex: 1 1 auto;
+  min-width: 0;
   min-height: 3rem;
   padding: 0 0.875rem;
   border: 1px solid var(--control-border);
@@ -24,144 +59,50 @@
   font-size: 1rem; /* 16px: evita zoom automático no iOS */
   transition: border-color var(--duration-fast) ease;
 }
-:is(.field, .step) input::placeholder { color: var(--text-subtle); opacity: 1; }
+.composer input::placeholder { color: var(--text-subtle); opacity: 1; }
 @media (hover: hover) and (pointer: fine) {
-  :is(.field, .step) :is(input, select):hover { border-color: var(--text-subtle); }
+  .composer input:hover { border-color: var(--text-subtle); }
 }
-:is(.field, .step) :is(input, select):focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.field[data-invalid="true"] :is(input, select),
-.step[data-invalid="true"] .step-min input { border-color: var(--danger-text); }
-.field-error { margin: 0; color: var(--danger-text); font-size: var(--fs-small); font-weight: 500; line-height: 1.35; }
-
-.input-unit { display: grid; grid-template-columns: minmax(0, 1fr) auto; min-width: 0; }
-.input-unit input { border-top-right-radius: 0; border-bottom-right-radius: 0; border-right-width: 0; }
-.input-unit select { width: auto; min-width: 6.25rem; border-top-left-radius: 0; border-bottom-left-radius: 0; }
-/* número + unidade na mesma caixa: com 7,5rem sobram ~60px para os dígitos (até "1.200") */
-.step .step-min input { padding-inline: 0.625rem; }
-.step .step-min .unit { padding-inline: 0.625rem; }
-.input-unit .unit { display: flex; align-items: center; padding: 0 0.875rem; border: 1px solid var(--control-border); border-left-width: 0; border-radius: 0 0.5rem 0.5rem 0; background: var(--surface-sunken); color: var(--text-muted); font-size: var(--fs-small); }
-
-/* atalhos: pílula cheia, sem contorno */
-.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
-.chip { min-height: 2.75rem; padding: 0 1.125rem; border: 0; border-radius: 999px; background: var(--surface-sunken); color: var(--text); font: inherit; font-size: var(--fs-small); font-weight: 500; transition: background-color var(--duration-fast) ease, transform 160ms var(--ease-out); }
-@media (hover: hover) and (pointer: fine) {
-  .chip:hover { background: color-mix(in oklab, var(--text) 14%, var(--surface-sunken)); }
-}
-.chip:active:not(:disabled) { transform: scale(0.97); }
-.chip:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.chip:disabled { color: var(--text-subtle); cursor: not-allowed; }
-
-/* modelos: no celular viram uma faixa que rola de lado (sete botões em quatro linhas empurrariam tudo) */
-@media (max-width: 899px) {
-  .chips--scroll { flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x proximity; scroll-padding-inline: clamp(1.25rem, 4vw, 3rem); margin-inline: calc(-1 * clamp(1.25rem, 4vw, 3rem)); padding-inline: clamp(1.25rem, 4vw, 3rem); scrollbar-width: none; }
-  .chips--scroll::-webkit-scrollbar { display: none; }
-  .chips--scroll .chip { white-space: nowrap; scroll-snap-align: start; }
-}
-
-/* escolha entre poucas opções, todas à vista: radios nativos desenhados como botões */
-.field-seg { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); gap: 0.5rem; min-width: 0; }
-/* a altura fica no rótulo: num fieldset o min-height do próprio fieldset não estica os filhos */
-.seg { display: flex; align-items: stretch; gap: 0.125rem; min-width: 0; margin: 0; padding: 0.1875rem; border: 0; border-radius: 0.625rem; background: var(--surface-sunken); }
-.seg label { position: relative; display: flex; flex: 1 1 0; align-items: center; justify-content: center; min-height: 2.625rem; padding: 0 0.625rem; border-radius: 0.5rem; color: var(--text); font-size: var(--fs-small); font-weight: 500; white-space: nowrap; cursor: pointer; transition: background-color var(--duration-fast) ease, color var(--duration-fast) ease; }
-.seg input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
-.seg label:has(input:checked) { background: var(--btn-bg); color: var(--btn-fg); }
-.seg label:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
-@media (hover: hover) and (pointer: fine) {
-  .seg label:not(:has(input:checked)):hover { background: color-mix(in oklab, var(--text) 10%, var(--surface-sunken)); }
-}
-
-/* "Novo passo": um botão por tipo de trabalho */
-.step-add { display: grid; gap: 0.5rem; margin-top: 0.5rem; }
-.step-add-label { color: var(--text-muted); font-size: var(--fs-small); font-weight: 500; }
-
-.flow-tag { display: inline-block; margin-right: 0.625rem; padding: 0.125rem 0.625rem; border: 1px solid currentColor; border-radius: 999px; color: var(--accent-text); font-size: var(--fs-tiny); font-weight: 500; vertical-align: 0.1em; }
+.composer input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.composer .btn { flex: none; }
 
 .link-btn { min-height: 2.75rem; margin-block: -0.5rem; padding: 0 0.25rem; border: 0; background: transparent; color: var(--text-muted); font: inherit; font-size: var(--fs-small); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .link-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 0.25rem; }
 @media (hover: hover) and (pointer: fine) {
   .link-btn:hover { color: var(--text); }
 }
+.flow-tag { display: inline-block; margin-right: 0.625rem; padding: 0.125rem 0.625rem; border: 1px solid currentColor; border-radius: 999px; color: var(--accent-text); font-size: var(--fs-tiny); font-weight: 500; vertical-align: 0.1em; }
 
-/* --------------------------------- passos --------------------------------- */
-
-.steps { display: grid; gap: 0.5rem; min-width: 0; margin: 0; padding: 0; border: 0; }
-.steps > legend { margin: 0 0 0.5rem; padding: 0; color: var(--text); font-size: var(--fs-small); font-weight: 500; line-height: 1.3; }
-.step-cols { display: none; }
-.step-list { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
-
-/* celular e coluna estreita: nome e remover em cima; minutos e tipo embaixo (o tipo ganha a largura toda) */
-.step {
-  display: grid;
-  grid-template-columns: 7.5rem minmax(0, 1fr) auto;
-  grid-template-areas: "name name remove" "min kind kind" "err err err";
-  gap: 0.5rem;
-  align-items: center;
-  min-width: 0;
-  margin-inline: -0.375rem;
-  padding: 0.375rem;
-  border-radius: 0.75rem;
-  transition: background-color var(--duration-fast) ease;
-}
-.step[data-active="true"],
-.step:focus-within { background: var(--surface-sunken); }
-.step-name { grid-area: name; }
-.step-min { grid-area: min; }
-.step-kind { grid-area: kind; }
-/* "Remover" repetido em cada linha: sem sublinhado até o mouse ou o foco chegarem */
-.step .link-btn { grid-area: remove; text-decoration-color: transparent; }
-.step .link-btn:hover,
-.step .link-btn:focus-visible { text-decoration-color: currentColor; }
-.step-error { grid-area: err; }
-
-/* coluna larga: uma linha por passo */
-@container builder (min-width: 34rem) {
-  .step-cols { display: grid; grid-template-columns: minmax(0, 1fr) 7.5rem 11.5rem 4rem; gap: 0.5rem; color: var(--text-muted); font-size: var(--fs-tiny); font-weight: 500; }
-  .step-list { gap: 0; }
-  .step { grid-template-columns: minmax(0, 1fr) 7.5rem 11.5rem 4rem; grid-template-areas: "name min kind remove" "err err err err"; padding-block: 0.25rem; }
-}
-
-/* -------------------------------- ajustes --------------------------------- */
-
-.adjust { padding: 0.125rem 1rem; border-radius: 0.75rem; background: var(--surface-sunken); }
-.adjust > summary { display: flex; align-items: center; min-height: 2.75rem; color: var(--text); font-size: var(--fs-small); font-weight: 500; cursor: pointer; list-style: none; text-decoration: underline; text-decoration-thickness: 2px; text-decoration-color: var(--accent-text); text-underline-offset: 0.4em; }
-.adjust > summary::-webkit-details-marker { display: none; }
-.adjust > summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 0.25rem; }
-@media (hover: hover) and (pointer: fine) { .adjust > summary:hover { color: var(--accent-text); } }
-.adjust-body { display: grid; gap: 1.25rem; padding: 0.25rem 0 1rem; }
-.adjust-group { display: grid; gap: 0.75rem; min-width: 0; margin: 0; padding: 0; border: 0; }
-.adjust-group > legend { margin: 0 0 0.5rem; padding: 0; color: var(--text); font-size: var(--fs-small); font-weight: 500; }
-.adjust-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; align-items: start; }
-
-/* ------------------------------ capítulo 2: conta ----------------------------- */
-
-.calc-section { padding-block: var(--section-y); }
-.calc-title { margin: 0 0 clamp(1.5rem, 3vw, 2.25rem); font-family: var(--font-display); font-weight: 350; font-size: var(--fs-display); line-height: 1.04; letter-spacing: -0.02em; text-wrap: balance; }
-.calc { display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); align-items: start; }
-.calc-left { display: grid; gap: 1.25rem; min-width: 0; align-content: start; container: builder / inline-size; }
-.calc-form { display: grid; gap: 1.25rem; min-width: 0; }
-.calc-pair { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem 1rem; }
-@container builder (min-width: 34rem) {
-  .calc-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
+/* --------------------------------- resultado --------------------------------- */
 
 /* Cartão do resultado (data-ui: fragmento do produto): tinta sobre o papel. O número é o foco. */
-.calc-result { display: grid; gap: 1.125rem; min-width: 0; padding: clamp(1.25rem, 3vw, 2rem); border-radius: 1.5rem; background: var(--surface); color: var(--text); }
+.chat-result { display: grid; gap: 1.75rem; min-width: 0; padding: clamp(1.25rem, 3vw, 2.25rem); border-radius: 1.5rem; background: var(--surface); color: var(--text); scroll-margin-top: 1rem; }
+.chat-result:focus { outline: none; }
+.result-main { display: grid; gap: 1.125rem; align-content: start; min-width: 0; }
+.result-side { display: grid; gap: 1.25rem; align-content: start; min-width: 0; }
 .result-echo { margin: 0; color: var(--text-muted); font-size: var(--fs-body); line-height: 1.4; overflow-wrap: anywhere; }
 .result-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.25rem 1.5rem; }
 
-/* O tempo de hoje é o anel; o disco laranja é a parte que volta (área proporcional, ver Orb.tsx). */
+/* O tempo de hoje é o anel; o disco laranja é a parte que volta no piso (área proporcional, ver Orb.tsx). */
 .orb { --orb: clamp(7.5rem, 15vw, 11rem); position: relative; flex: none; width: var(--orb); aspect-ratio: 1; border: 1.5px solid color-mix(in oklab, var(--color-paper) 42%, transparent); border-radius: 50%; }
 .orb::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--color-accent); transform: scale(var(--s)); transition: transform 760ms var(--ease-out); }
 .js .orb[data-armed="false"]::before { transition: none; transform: scale(0.15); }
 /* o número é o cartaz do cartão: ocupa a largura que o disco deixa e encolhe com a quantidade de dígitos */
 .result-figure { flex: 1 1 8rem; min-width: 0; container-type: inline-size; }
 .result-big { display: grid; gap: 0.5rem; margin: 0; color: var(--text); font-family: var(--font-display); font-weight: 340; font-size: clamp(3.25rem, calc(135cqw / var(--chars, 3)), 10rem); line-height: 1; letter-spacing: -0.03em; }
+.result-big--text { font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.05; text-wrap: balance; }
 .result-unit { color: var(--text-muted); font-family: var(--font-sans); font-size: var(--fs-lead); font-weight: 400; letter-spacing: 0; line-height: 1.2; }
 .result-sub { margin: 0; color: var(--text); font-size: var(--fs-body); }
-.result-money { display: flex; flex-wrap: wrap; gap: 0.25rem 1.5rem; margin: 0; color: var(--accent-text); font-size: clamp(1.375rem, 2.2vw, 1.875rem); font-weight: 500; line-height: 1.2; }
+.result-money { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 1.5rem; margin: 0; color: var(--accent-text); font-size: clamp(1.375rem, 2.2vw, 1.875rem); font-weight: 500; line-height: 1.2; }
 .result-money > span { display: inline-flex; align-items: baseline; }
-.result-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin-top: 0.25rem; }
-.result-note { color: var(--text-subtle); font-size: var(--fs-small); }
+.result-money > span + span { color: var(--text-muted); font-size: 0.75em; font-weight: 400; }
+.result-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; }
+.result-sources { margin: 0; color: var(--text-subtle); font-size: var(--fs-small); line-height: 1.5; }
+.result-sources a { color: var(--text-muted); text-decoration: underline; text-underline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) {
+  .result-sources a:hover { color: var(--text); }
+}
+.result-sources a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 0.25rem; }
 
 /* odômetro: cada dígito é uma pilha 0-9 no CSS (fora do HTML) deslocada por transform */
 .odo { --lh: 1.12; display: inline-flex; height: calc(var(--lh) * 1em); line-height: var(--lh); font-variant-numeric: tabular-nums lining-nums; white-space: pre; }
@@ -177,110 +118,42 @@
 /* antes de entrar na tela os dígitos esperam no zero (sem JS, o número já aparece certo) */
 .js .odo[data-armed="false"] .odo-col::before { transition: none; transform: none; }
 
-/* uma execução em duas faixas, mesma escala */
-.tl { display: grid; gap: 0.875rem; }
-.tl-row { display: grid; grid-template-columns: 1fr auto; gap: 0.375rem 1rem; align-items: baseline; }
-.tl-label { color: var(--text-muted); font-size: var(--fs-small); }
-.tl-value { color: var(--text); font-size: var(--fs-body); font-weight: 500; font-variant-numeric: tabular-nums; }
-.tl-track { grid-column: 1 / -1; display: flex; gap: 2px; height: 2.25rem; overflow: hidden; border-radius: 0.5rem; background: color-mix(in oklab, var(--color-paper) 10%, var(--surface)); contain: layout paint; }
-.tl-seg { display: flex; align-items: center; flex: 0 1 0%; min-width: 0; overflow: hidden; font-style: normal; transition: flex-grow 480ms var(--ease-out), opacity var(--duration-fast) ease, background-color var(--duration-fast) ease; }
-.tl-seg--today { min-width: 3px; background: color-mix(in oklab, var(--color-paper) 58%, var(--surface)); }
-/* o nome dentro do bloco: tinta sobre cinza e sobre laranja (contraste acima de 5,5:1) */
-.tl-name { padding-inline: 0.625rem; color: var(--color-ink-950); font-size: var(--fs-tiny); font-weight: 600; line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.tl-seg--after { background: var(--color-accent); }
-.tl-track[data-focus="true"] .tl-seg:not([data-active="true"]):not(.tl-seg--gap) { opacity: 0.35; }
-.tl-seg--today[data-active="true"] { background: var(--color-paper); }
-.tl-seg--after[data-active="true"] { background: color-mix(in oklab, var(--color-accent) 72%, var(--color-paper)); }
-
-/* conta aberta: uma barra por passo (cinza = o tempo do passo, laranja = a parte que volta), a
-   multiplicação ao lado e, embaixo, as contas do mês e do dinheiro em colunas */
-.calc-account { display: grid; gap: 1.25rem; min-width: 0; }
+/* a conta aberta: uma barra por passo (cinza = o tempo do passo, laranja claro = até o teto, laranja cheio = o piso) */
+.ledger { display: grid; gap: 0.75rem; min-width: 0; }
 .account-title { margin: 0; color: var(--text); font-family: var(--font-display); font-weight: 350; font-size: var(--fs-h3); line-height: 1.1; letter-spacing: -0.01em; }
-.ledger { display: grid; gap: 0.5rem; min-width: 0; }
 .ledger-list { display: grid; margin: 0; padding: 0; list-style: none; }
-.ledger-row,
-.ledger-sum { display: grid; grid-template-columns: minmax(0, 13rem) minmax(4rem, 1fr) 7.5rem 8rem; gap: 0.25rem 1.25rem; align-items: center; margin-inline: -0.625rem; padding: 0.75rem 0.625rem; border-radius: 0.75rem; }
-.ledger-row { transition: background-color var(--duration-fast) ease; }
-.ledger-row[data-active="true"] { background: var(--surface-sunken); }
+.ledger-row { display: grid; grid-template-columns: minmax(0, 11rem) minmax(4rem, 1fr) 8.5rem 7.5rem; gap: 0.25rem 1rem; align-items: center; padding: 0.625rem 0; border-top: 1px solid color-mix(in oklab, var(--text) 14%, transparent); }
 .ledger-name { color: var(--text); font-size: var(--fs-body); font-weight: 500; line-height: 1.25; overflow-wrap: anywhere; }
 .ledger-name small { display: block; margin-top: 0.125rem; color: var(--text-subtle); font-size: var(--fs-tiny); font-weight: 400; }
 .ledger-bar { display: block; height: 1.125rem; }
-.ledger-min { display: block; height: 100%; min-width: 0.25rem; overflow: hidden; border-radius: 0.375rem; background: color-mix(in oklab, var(--text) 45%, var(--surface)); transition: width 480ms var(--ease-out); }
-.ledger-min b { display: block; height: 100%; background: var(--color-accent); transition: width 480ms var(--ease-out); }
+.ledger-min { display: block; height: 100%; min-width: 0.25rem; overflow: hidden; border-radius: 0.375rem; background: color-mix(in oklab, var(--text) 45%, var(--surface)); }
+.ledger-high { display: block; height: 100%; background: color-mix(in oklab, var(--color-accent) 50%, var(--color-paper)); }
+.ledger-high i { display: block; height: 100%; background: var(--color-accent); }
 .ledger-calc { color: var(--text-muted); font-size: var(--fs-small); font-variant-numeric: tabular-nums; text-align: right; }
-.ledger-out { color: var(--text); font-size: var(--fs-small); font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
-/* a soma: um passo de tom, sem linha */
-.ledger-sum { margin-block: 0.25rem 0; background: var(--surface-sunken); color: var(--text); font-size: var(--fs-body); font-weight: 600; font-variant-numeric: tabular-nums; }
-.ledger-sum span:nth-child(2) { grid-column: 3; text-align: right; }
-.ledger-sum span:nth-child(3) { grid-column: 4; text-align: right; }
-.account-formula { margin: 0; color: var(--text-muted); font-size: var(--fs-small); }
-.account-lines { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1rem 2rem; margin: 0.5rem 0 0; }
-.account-lines > div { display: grid; align-content: start; gap: 0.25rem; }
-.account-lines dt { color: var(--text-muted); font-size: var(--fs-small); font-weight: 500; }
-.account-lines dd { margin: 0; color: var(--text); font-size: var(--fs-body); line-height: 1.45; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.ledger-out { color: var(--text); font-size: var(--fs-small); font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.account-formula { margin: 0; color: var(--text-muted); font-size: var(--fs-small); line-height: 1.45; font-variant-numeric: tabular-nums; }
 
-/* celular: o número fica à vista enquanto os passos rolam */
-.calc-live { display: none; }
-
-/* Sticky só vale dentro do contêiner de bloco: o cartão precisa de uma coluna esticada só dele,
-   senão ele passaria por cima da conta (que fica na linha de baixo da grade). */
 @media (min-width: 900px) {
-  .calc { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
-  .calc-side { align-self: stretch; min-width: 0; }
-  .calc-result { position: sticky; top: 6rem; }
-  .calc-account { grid-column: 1 / -1; }
-}
-/* com 6fr o campo do nome ganha ~250px e cada passo cabe numa linha */
-@media (min-width: 1200px) {
-  .calc { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); }
-}
-
-@media (max-width: 899px) {
-  .calc-live {
-    position: sticky;
-    bottom: 0.75rem;
-    z-index: 4;
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.625rem 1.25rem;
-    border-radius: 999px;
-    background: var(--surface);
-    color: var(--text);
-    box-shadow: 0 0.5rem 1.5rem color-mix(in oklab, var(--color-ink-950) 38%, transparent); /* taste-skill-ignore: barra que flutua sobre o conteúdo */
-    pointer-events: none;
-    transition: opacity var(--duration-med) var(--ease-out), transform var(--duration-med) var(--ease-out);
-  }
-  .calc-live[data-hidden="true"] { opacity: 0; transform: translateY(0.75rem); }
-  .live-num { display: inline-flex; align-items: baseline; gap: 0.25rem; font-family: var(--font-display); font-size: 1.75rem; font-weight: 340; line-height: 1; letter-spacing: -0.02em; }
-  .live-num > span:last-child { color: var(--text-muted); font-family: var(--font-sans); font-size: var(--fs-small); letter-spacing: 0; }
-  .live-share { color: var(--text-muted); font-size: var(--fs-small); }
+  .chat-result { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2rem, 4vw, 3.5rem); }
 }
 
 @media (max-width: 599px) {
   .orb { --orb: 6.5rem; }
   .result-unit { font-size: var(--fs-body); }
-  /* na faixa estreita o nome não cabe nem nos blocos maiores; a conta embaixo já traz os nomes */
-  .tl-name { display: none; }
-  .step-list { gap: 0.5rem; }
+  .bubble { max-width: 92%; }
   /* a linha da conta vira um cartão pequeno: nome e resultado em cima, a barra e a multiplicação embaixo */
   .ledger-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "name out" "bar bar" "calc calc"; gap: 0.5rem 1rem; }
   .ledger-name { grid-area: name; }
   .ledger-out { grid-area: out; }
   .ledger-bar { grid-area: bar; }
   .ledger-calc { grid-area: calc; text-align: left; }
-  .ledger-sum { grid-template-columns: minmax(0, 1fr) auto auto; gap: 0 0.75rem; }
-  .ledger-sum span:nth-child(2),
-  .ledger-sum span:nth-child(3) { grid-column: auto; }
-  .account-lines { gap: 0.75rem; }
 }
 
-@media (max-width: 420px) {
-  .input-unit select { min-width: 5.75rem; padding-inline: 0.5rem; }
-  .adjust-grid { gap: 0.625rem; }
+@media (max-width: 380px) {
+  .composer { flex-wrap: wrap; }
+  .composer .btn { flex: 1 1 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tl-seg, .chip, .seg label, .step, .ledger-row, .ledger-min, .ledger-min b, .odo-col::before, .orb::before, .calc-live { transition: none; }
+  .chip, .bubble--me, .odo-col::before, .orb::before { transition: none; }
 }

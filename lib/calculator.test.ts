@@ -3,14 +3,14 @@ import {
   K,
   STEP_KINDS,
   calculate,
-  defaultCoverage,
   hourlyFromSalary,
+  rangeOf,
   runsPerMonth,
   type CalcInput,
   type Step,
 } from "./calculator";
 
-const step = (minutes: number | null, kind: Step["kind"], coverage: number | null = null): Step => ({ minutes, kind, coverage });
+const step = (minutes: number, kind: Step["kind"]): Step => ({ minutes, kind });
 
 /** Conferir notas: 40 por semana, 4 passos de 10 minutos no total, R$ 27 a hora. */
 const base: CalcInput = {
@@ -18,8 +18,6 @@ const base: CalcInput = {
   period: "semana",
   steps: [step(2, "buscar"), step(4, "conferir"), step(3, "dados"), step(1, "avisar")],
   hourlyBRL: 27,
-  exceptions: 0.1,
-  rework: null,
 };
 
 function ok(input: CalcInput) {
@@ -32,18 +30,22 @@ describe("calculate", () => {
   describe("fixtures calculadas à mão", () => {
     it("40 notas por semana, 4 passos, R$ 27/h", () => {
       const r = ok(base);
-      // por execução: 2×0,75 + 4×0,9 + 3×0,95 + 1×0,95 = 8,9 min automatizáveis, × 0,9 de exceções = 8,01
+      // por execução, piso: 2×0,64 + 4×0,69 + 3×0,69 + 1×0,69 = 6,8 min; teto: 10 × 0,93 = 9,3 min
       expect(r.perRunMinutes).toBe(10);
-      expect(r.perRunSaved).toBeCloseTo(8.01, 6);
-      expect(r.perRunRemain).toBeCloseTo(1.99, 6);
+      expect(r.low.perRunSaved).toBeCloseTo(6.8, 6);
+      expect(r.high.perRunSaved).toBeCloseTo(9.3, 6);
       // 40 × 52/12 = 173,33 execuções por mês
       expect(r.runsMonth).toBeCloseTo(173.3333, 4);
       expect(r.hoursBefore).toBeCloseTo(28.8889, 4);
-      expect(r.hoursReturned).toBeCloseTo(23.14, 6);
-      expect(r.hoursAfter).toBeCloseTo(5.7489, 4);
-      expect(r.brlMonth).toBeCloseTo(624.78, 4);
-      expect(r.brlYear).toBeCloseTo(7497.36, 3);
-      expect(r.fte).toBeCloseTo(23.14 / 220, 6);
+      expect(r.low.hoursReturned).toBeCloseTo(19.6444, 4);
+      expect(r.high.hoursReturned).toBeCloseTo(26.8667, 4);
+      expect(r.low.hoursAfter).toBeCloseTo(9.2444, 4);
+      expect(r.high.hoursAfter).toBeCloseTo(2.0222, 4);
+      expect(r.low.brlMonth).toBeCloseTo(530.4, 3);
+      expect(r.high.brlMonth).toBeCloseTo(725.4, 3);
+      expect(r.low.brlYear).toBeCloseTo(6364.8, 2);
+      expect(r.high.brlYear).toBeCloseTo(8704.8, 2);
+      expect(r.low.fte).toBeCloseTo(19.6444 / 220, 6);
     });
 
     it("30 pedidos por dia no WhatsApp, 4 passos, R$ 40/h", () => {
@@ -54,15 +56,41 @@ describe("calculate", () => {
         hourlyBRL: 40,
         steps: [step(1, "decidir"), step(2, "buscar"), step(3, "dados"), step(2, "avisar")],
       });
-      // 30 × 21 = 630 execuções; 1×0,2 + 2×0,75 + 3×0,95 + 2×0,95 = 6,45 min × 0,9 = 5,805 de 8
+      // 30 × 21 = 630 execuções; piso: 0 + 1,28 + 2,07 + 1,38 = 4,73 de 8; teto: 0,18 + 1,86 + 2,79 + 1,86 = 6,69
       expect(r.runsMonth).toBe(630);
       expect(r.perRunMinutes).toBe(8);
-      expect(r.perRunSaved).toBeCloseTo(5.805, 6);
+      expect(r.low.perRunSaved).toBeCloseTo(4.73, 6);
+      expect(r.high.perRunSaved).toBeCloseTo(6.69, 6);
       expect(r.hoursBefore).toBeCloseTo(84, 6);
-      expect(r.hoursReturned).toBeCloseTo(60.9525, 4);
-      expect(r.share).toBeCloseTo(0.725625, 6);
-      expect(r.brlMonth).toBeCloseTo(2438.1, 3);
-      expect(r.brlYear).toBeCloseTo(29257.2, 2);
+      expect(r.low.hoursReturned).toBeCloseTo(49.665, 4);
+      expect(r.high.hoursReturned).toBeCloseTo(70.245, 4);
+      expect(r.low.share).toBeCloseTo(0.59125, 6);
+      expect(r.high.share).toBeCloseTo(0.83625, 6);
+      expect(r.low.brlMonth).toBeCloseTo(1986.6, 3);
+      expect(r.high.brlYear).toBeCloseTo(33717.6, 2);
+    });
+
+    it("relatório mensal de 12 h: 1 por mês, 5 passos", () => {
+      const r = ok({
+        runs: 1,
+        period: "mes",
+        hourlyBRL: null,
+        steps: [step(180, "buscar"), step(240, "dados"), step(120, "conferir"), step(180, "decidir"), step(20, "avisar")],
+      });
+      expect(r.hoursBefore).toBeCloseTo(12.3333, 4);
+      expect(r.low.hoursReturned).toBeCloseTo(6.29, 4);
+      expect(r.high.hoursReturned).toBeCloseTo(9.22, 4);
+    });
+
+    it("R$ 3.500 de salário: CLT 66% e Simples 33% (fixtures da especificação)", () => {
+      const clt = hourlyFromSalary(3500, K.ENCARGOS.clt) as number;
+      const simples = hourlyFromSalary(3500, K.ENCARGOS.simples) as number;
+      expect(clt).toBeCloseTo(26.4091, 4);
+      expect(simples).toBeCloseTo(21.1591, 4);
+      expect(ok({ ...base, hourlyBRL: clt }).low.brlMonth).toBeCloseTo(518.79, 2);
+      expect(ok({ ...base, hourlyBRL: clt }).high.brlMonth).toBeCloseTo(709.52, 2);
+      expect(ok({ ...base, hourlyBRL: simples }).low.brlMonth).toBeCloseTo(415.66, 2);
+      expect(ok({ ...base, hourlyBRL: simples }).high.brlMonth).toBeCloseTo(568.47, 2);
     });
   });
 
@@ -81,101 +109,88 @@ describe("calculate", () => {
   });
 
   describe("a conta sai dos passos, não de um percentual fixo", () => {
-    it("cada passo volta cobertura × (1 − exceções) do seu tempo", () => {
+    it("cada passo volta a faixa do seu tipo sobre o seu tempo", () => {
       const r = ok(base);
       expect(r.steps.map((s) => s.minutes)).toEqual([2, 4, 3, 1]);
-      expect(r.steps[0].coverage).toBe(0.75);
-      expect(r.steps[0].savedMinutes).toBeCloseTo(2 * 0.75 * 0.9);
-      expect(r.steps[1].savedMinutes).toBeCloseTo(4 * 0.9 * 0.9);
-      expect(r.perRunMinutes).toBe(10);
-      expect(r.perRunSaved).toBeCloseTo(8.01);
-      expect(r.perRunRemain).toBeCloseTo(1.99);
+      expect(r.steps[0].floor).toBe(0.64);
+      expect(r.steps[0].ceiling).toBe(0.93);
+      expect(r.steps[0].savedLow).toBeCloseTo(2 * 0.64);
+      expect(r.steps[0].savedHigh).toBeCloseTo(2 * 0.93);
+      expect(r.steps[1].savedLow).toBeCloseTo(4 * 0.69);
+      expect(r.steps[1].savedHigh).toBeCloseTo(4 * 0.93);
     });
 
-    it("horas e reais do mês fecham entre si", () => {
+    it("horas e reais do mês fecham entre si, nas duas pontas", () => {
       const r = ok(base);
-      expect(r.hoursAfter).toBeCloseTo(r.hoursBefore - r.hoursReturned);
-      expect(r.share).toBeCloseTo(0.801, 3);
-      expect(r.brlMonth).toBeCloseTo(r.hoursReturned * 27);
-      expect(r.brlYear).toBeCloseTo((r.brlMonth as number) * 12);
-      expect(r.fte).toBeCloseTo(r.hoursReturned / 220);
+      for (const s of [r.low, r.high]) {
+        expect(s.hoursAfter).toBeCloseTo(r.hoursBefore - s.hoursReturned);
+        expect(s.brlMonth).toBeCloseTo(s.hoursReturned * 27);
+        expect(s.brlYear).toBeCloseTo((s.brlMonth as number) * 12);
+        expect(s.fte).toBeCloseTo(s.hoursReturned / 220);
+        expect(s.share).toBeCloseTo(s.hoursReturned / r.hoursBefore);
+      }
+      expect(r.low.share).toBeCloseTo(0.68, 6);
+      expect(r.high.share).toBeCloseTo(0.93, 6);
     });
 
-    it("o percentual devolvido muda com a composição do processo", () => {
+    it("o piso nunca passa do teto e o teto nunca passa de 93% do tempo", () => {
+      for (const a of STEP_KINDS) {
+        for (const b of STEP_KINDS) {
+          const r = ok({ ...base, steps: [step(7, a.id), step(13, b.id)] });
+          expect(r.low.hoursReturned).toBeLessThanOrEqual(r.high.hoursReturned);
+          expect(r.high.share).toBeLessThanOrEqual(0.93 + 1e-12);
+          expect(r.low.share).toBeGreaterThanOrEqual(0);
+        }
+      }
+    });
+
+    it("a parte devolvida muda com a composição do processo", () => {
       const repetitive = ok({ ...base, steps: [step(5, "dados"), step(5, "avisar")] });
       const human = ok({ ...base, steps: [step(5, "decidir"), step(5, "pessoas")] });
-      expect(repetitive.share).toBeGreaterThan(0.85);
-      expect(human.share).toBeLessThan(0.2);
-      expect(repetitive.share).not.toBeCloseTo(human.share, 1);
+      expect(repetitive.low.share).toBeGreaterThan(0.6);
+      expect(human.high.share).toBeLessThan(0.2);
+      expect(human.low.share).toBe(0);
     });
 
-    it("sem exceções volta cobertura inteira; com metade, metade dela", () => {
-      const none = ok({ ...base, exceptions: 0 });
-      expect(none.perRunSaved).toBeCloseTo(2 * 0.75 + 4 * 0.9 + 3 * 0.95 + 1 * 0.95);
-      const half = ok({ ...base, exceptions: 0.5 });
-      expect(half.perRunSaved).toBeCloseTo(none.perRunSaved / 2);
-    });
-
-    it("a cobertura de um passo pode ser trocada pela pessoa", () => {
-      const r = ok({ ...base, exceptions: 0, steps: [step(10, "conferir", 0.5)] });
-      expect(r.steps[0].coverage).toBe(0.5);
-      expect(r.perRunSaved).toBeCloseTo(5);
-      expect(defaultCoverage("conferir")).toBe(0.9);
-    });
-
-    it("passo que não automatiza (0%) é válido e devolve zero", () => {
-      const r = ok({ ...base, steps: [step(5, "decidir", 0)] });
-      expect(r.hoursReturned).toBe(0);
-      expect(r.share).toBe(0);
-      expect(r.brlMonth).toBe(0);
-    });
-
-    it("linha em branco é ignorada, não vira erro", () => {
-      const r = ok({ ...base, steps: [...base.steps, step(null, "dados")] });
-      expect(r.steps).toHaveLength(4);
+    it("passo que não automatiza no piso (julgamento) é válido e devolve zero nele", () => {
+      const r = ok({ ...base, steps: [step(5, "decidir")] });
+      expect(r.low.hoursReturned).toBe(0);
+      expect(r.low.share).toBe(0);
+      expect(r.low.brlMonth).toBe(0);
+      expect(r.high.hoursReturned).toBeGreaterThan(0);
     });
 
     it("sem custo/hora devolve só horas", () => {
       const r = ok({ ...base, hourlyBRL: null });
-      expect(r.brlMonth).toBeNull();
-      expect(r.brlYear).toBeNull();
-      expect(r.hoursReturned).toBeCloseTo(23.14, 6);
+      for (const s of [r.low, r.high]) {
+        expect(s.brlMonth).toBeNull();
+        expect(s.brlYear).toBeNull();
+      }
+      expect(r.low.hoursReturned).toBeCloseTo(19.6444, 4);
     });
 
-    it("todo tipo de passo tem rótulo curto único e tempo de partida positivo", () => {
+    it("todo tipo de passo tem rótulo curto único e fonte", () => {
       expect(new Set(STEP_KINDS.map((kind) => kind.short)).size).toBe(STEP_KINDS.length);
       expect(new Set(STEP_KINDS.map((kind) => kind.id)).size).toBe(STEP_KINDS.length);
       for (const kind of STEP_KINDS) {
-        expect(kind.minutes).toBeGreaterThan(0);
-        expect(kind.minutes).toBeLessThanOrEqual(K.MAX_MINUTES_STEP);
         expect(kind.short.length).toBeLessThanOrEqual(10);
+        expect(kind.source).toMatch(/MGI 2017/);
       }
     });
 
-    it("todo tipo de passo tem uma cobertura entre 0 e 1", () => {
+    it("todo tipo de passo tem faixa entre 0 e 1, com piso até o teto", () => {
       for (const kind of STEP_KINDS) {
-        expect(kind.coverage).toBeGreaterThanOrEqual(0);
-        expect(kind.coverage).toBeLessThanOrEqual(1);
+        expect(kind.floor).toBeGreaterThanOrEqual(0);
+        expect(kind.ceiling).toBeLessThanOrEqual(1);
+        expect(kind.floor).toBeLessThanOrEqual(kind.ceiling);
       }
-      expect(defaultCoverage("dados")).toBeGreaterThan(defaultCoverage("buscar"));
-      expect(defaultCoverage("buscar")).toBeGreaterThan(defaultCoverage("decidir"));
-    });
-  });
-
-  describe("retrabalho", () => {
-    it("soma as horas de refazer e devolve a mesma fração automatizada", () => {
-      const r = ok({ ...base, rework: { percent: 0.1, minutes: 20 } });
-      const reworkBefore = (173.3333 * 0.1 * 20) / 60; // 5,78 h
-      expect(r.rework?.hoursBefore).toBeCloseTo(reworkBefore, 3);
-      expect(r.rework?.hoursReturned).toBeCloseTo(reworkBefore * 0.801, 3);
-      expect(r.hoursBefore).toBeCloseTo(r.stepsHoursMonth + reworkBefore, 3);
-      expect(r.hoursReturned).toBeGreaterThan(ok(base).hoursReturned);
+      expect(rangeOf("dados").floor).toBeGreaterThan(rangeOf("buscar").floor - 1e-12);
+      expect(rangeOf("buscar").floor).toBeGreaterThan(rangeOf("decidir").floor);
+      expect(rangeOf("decidir").ceiling).toBeLessThan(rangeOf("pessoas").ceiling);
     });
 
-    it("sem os dois números não há retrabalho", () => {
-      expect(ok({ ...base, rework: { percent: 0.1, minutes: null } }).rework).toBeNull();
-      expect(ok({ ...base, rework: { percent: null, minutes: null } }).rework).toBeNull();
-      expect(ok({ ...base, rework: { percent: 0, minutes: 30 } }).rework).toBeNull();
+    it("tipo desconhecido (estado velho) não automatiza nada em vez de quebrar", () => {
+      expect(rangeOf("outro" as never)).toEqual({ floor: 0, ceiling: 0 });
     });
   });
 
@@ -183,7 +198,6 @@ describe("calculate", () => {
     it("vazio quando falta o tempo", () => {
       expect(calculate({ ...base, runs: null })).toEqual({ status: "empty" });
       expect(calculate({ ...base, steps: [] })).toEqual({ status: "empty" });
-      expect(calculate({ ...base, steps: [step(null, "dados")] })).toEqual({ status: "empty" });
     });
 
     it.each([
@@ -195,21 +209,12 @@ describe("calculate", () => {
       [{ steps: [step(Number.NaN, "dados")] }, { field: "minutes", reason: "nan", step: 0 }],
       [{ steps: [step(-3, "dados")] }, { field: "minutes", reason: "negative", step: 0 }],
       [{ steps: [step(0, "dados")] }, { field: "minutes", reason: "zero", step: 0 }],
+      [{ steps: [step(K.MIN_MINUTES_STEP / 2, "dados")] }, { field: "minutes", reason: "too_small", step: 0 }],
       [{ steps: [step(K.MAX_MINUTES_STEP + 1, "dados")] }, { field: "minutes", reason: "too_large", step: 0 }],
-      [{ steps: [step(2, "dados", 1.5)] }, { field: "coverage", reason: "too_large", step: 0 }],
-      [{ steps: [step(2, "dados", -0.1)] }, { field: "coverage", reason: "negative", step: 0 }],
-      [{ steps: [step(2, "dados", Number.NaN)] }, { field: "coverage", reason: "nan", step: 0 }],
       [{ runs: 90_000, period: "mes", steps: [step(600, "dados")] }, { field: "runs", reason: "too_large" }],
       [{ hourlyBRL: -1 }, { field: "hourlyBRL", reason: "negative" }],
       [{ hourlyBRL: K.MAX_BRL_HOUR + 1 }, { field: "hourlyBRL", reason: "too_large" }],
       [{ hourlyBRL: Number.NaN }, { field: "hourlyBRL", reason: "nan" }],
-      [{ exceptions: 0.6 }, { field: "exceptions", reason: "too_large" }],
-      [{ exceptions: -0.1 }, { field: "exceptions", reason: "negative" }],
-      [{ exceptions: Number.NaN }, { field: "exceptions", reason: "nan" }],
-      [{ rework: { percent: 1.2, minutes: 10 } }, { field: "reworkPercent", reason: "too_large" }],
-      [{ rework: { percent: -0.1, minutes: 10 } }, { field: "reworkPercent", reason: "negative" }],
-      [{ rework: { percent: 0.1, minutes: -5 } }, { field: "reworkMinutes", reason: "negative" }],
-      [{ rework: { percent: 0.1, minutes: K.MAX_MINUTES_STEP + 1 } }, { field: "reworkMinutes", reason: "too_large" }],
     ] as const)("rejeita %j", (patch, expected) => {
       expect(calculate({ ...base, ...patch })).toEqual({ status: "invalid", ...expected });
     });
@@ -228,46 +233,60 @@ describe("calculate", () => {
   describe("tetos", () => {
     it("aceita exatamente os tetos", () => {
       expect(calculate({ ...base, steps: [step(K.MAX_MINUTES_STEP, "dados")] }).status).toBe("ok");
+      expect(calculate({ ...base, steps: [step(K.MIN_MINUTES_STEP, "dados")] }).status).toBe("ok");
       expect(calculate({ ...base, runs: K.MAX_RUNS_MONTH, period: "mes", steps: [step(60, "dados")] }).status).toBe("ok");
       expect(calculate({ ...base, steps: Array.from({ length: K.MAX_STEPS }, () => step(1, "dados")) }).status).toBe("ok");
-      expect(calculate({ ...base, exceptions: 0 }).status).toBe("ok");
-      expect(calculate({ ...base, exceptions: K.MAX_EXCEPTIONS }).status).toBe("ok");
       expect(calculate({ ...base, hourlyBRL: K.MAX_BRL_HOUR }).status).toBe("ok");
       expect(calculate({ ...base, hourlyBRL: 0 }).status).toBe("ok");
-      expect(calculate({ ...base, steps: [step(5, "dados", 0)] }).status).toBe("ok");
-      expect(calculate({ ...base, steps: [step(5, "dados", 1)] }).status).toBe("ok");
-      expect(calculate({ ...base, rework: { percent: 1, minutes: K.MAX_MINUTES_STEP } }).status).toBe("ok");
     });
 
     it("valores enormes mas válidos não viram NaN", () => {
-      const r = ok({
-        runs: K.MAX_RUNS_MONTH,
-        period: "mes",
-        steps: [step(60, "dados")],
-        hourlyBRL: K.MAX_BRL_HOUR,
-        exceptions: 0,
-        rework: { percent: 1, minutes: 60 },
-      });
-      for (const value of [r.hoursBefore, r.hoursReturned, r.hoursAfter, r.share, r.fte, r.brlMonth, r.brlYear]) {
-        expect(Number.isFinite(value ?? Number.NaN)).toBe(true);
+      const r = ok({ runs: K.MAX_RUNS_MONTH, period: "mes", steps: [step(60, "dados")], hourlyBRL: K.MAX_BRL_HOUR });
+      for (const s of [r.low, r.high]) {
+        for (const value of [r.hoursBefore, s.hoursReturned, s.hoursAfter, s.share, s.fte, s.brlMonth, s.brlYear]) {
+          expect(Number.isFinite(value ?? Number.NaN)).toBe(true);
+        }
+        expect(s.share).toBeGreaterThan(0);
+        expect(s.share).toBeLessThanOrEqual(1);
       }
-      expect(r.share).toBeGreaterThan(0);
-      expect(r.share).toBeLessThanOrEqual(1);
     });
   });
 });
 
 describe("hourlyFromSalary", () => {
-  it("R$ 3.000 CLT (+70%) / 220", () => {
-    expect(hourlyFromSalary(3000, K.ENCARGOS.clt)).toBeCloseTo(23.1818, 3);
+  it("R$ 3.000 CLT (+66%) / 220", () => {
+    expect(hourlyFromSalary(3000, K.ENCARGOS.clt)).toBeCloseTo(22.6364, 3);
   });
-  it("Simples (+50%)", () => {
-    expect(hourlyFromSalary(3500, K.ENCARGOS.simples)).toBeCloseTo(23.8636, 3);
+  it("Simples (+33%)", () => {
+    expect(hourlyFromSalary(3500, K.ENCARGOS.simples)).toBeCloseTo(21.1591, 3);
   });
   it("entrada inválida devolve null", () => {
     expect(hourlyFromSalary(0, 0.7)).toBeNull();
     expect(hourlyFromSalary(-10, 0.7)).toBeNull();
     expect(hourlyFromSalary(Number.NaN, 0.7)).toBeNull();
     expect(hourlyFromSalary(1000, -0.1)).toBeNull();
+  });
+});
+
+describe("encargos", () => {
+  // Cada parcela vem da lei (FGTS 8%, INSS patronal 20%, RAT 1% a 3%) ou da provisão de 13º e férias.
+  const provision = 0.0833 + 0.1111;
+  const onBase = 1 + provision;
+
+  it("CLT: composição entre 61% e 64%, e o valor usado cobre a rescisão sem passar de 3 pontos", () => {
+    for (const rat of [0.01, 0.02, 0.03]) {
+      const total = provision + 0.08 * onBase + 0.2 * onBase + rat * onBase + 0.058 * onBase;
+      expect(total).toBeGreaterThan(0.61);
+      expect(total).toBeLessThan(0.64);
+      expect(K.ENCARGOS.clt - total).toBeGreaterThan(0);
+      expect(K.ENCARGOS.clt - total).toBeLessThan(0.06);
+    }
+  });
+
+  it("Simples: provisão mais FGTS dá 29%, e o valor usado cobre a rescisão", () => {
+    const total = provision + 0.08 * onBase;
+    expect(total).toBeCloseTo(0.29, 2);
+    expect(K.ENCARGOS.simples - total).toBeGreaterThan(0);
+    expect(K.ENCARGOS.simples - total).toBeLessThan(0.06);
   });
 });

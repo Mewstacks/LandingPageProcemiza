@@ -1,10 +1,10 @@
-import { Calculator } from "@/components/calculator/Calculator";
-import { RoutineProvider } from "@/components/calculator/RoutineProvider";
+import { CalculatorChat } from "@/components/calculator/CalculatorChat";
 import { calculator } from "@/content/site";
 
 /**
- * A única calculadora do site: home e /calculadora usam este bloco. Na /calculadora o título da
- * página já é o H1, então a seção não repete um segundo título (`withTitle={false}`).
+ * A única calculadora do site: home e /calculadora usam este bloco, com o mesmo estado (a conversa
+ * guarda as respostas no sessionStorage). Na /calculadora o título da página já é o H1, então a
+ * seção não repete um segundo título (`withTitle={false}`).
  */
 export function CalculatorSection({ withTitle = true }: { withTitle?: boolean }) {
   return (
@@ -20,9 +20,7 @@ export function CalculatorSection({ withTitle = true }: { withTitle?: boolean })
             {calculator.title}
           </h2>
         ) : null}
-        <RoutineProvider>
-          <Calculator titled={withTitle} />
-        </RoutineProvider>
+        <CalculatorChat titled={withTitle} />
       </div>
     </section>
   );

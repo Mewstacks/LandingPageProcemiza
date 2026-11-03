@@ -65,12 +65,12 @@ Regras que valem para qualquer tela nova:
 | `content/pages.ts` | Registro único das páginas indexáveis (título, descrição, data de modificação). Alimenta metadata, sitemap e breadcrumb. |
 | `content/intents.ts`, `content/solutions.ts` | Texto das páginas de solução, da calculadora e das linhas de soluções da home. |
 | `content/clients.ts` | Logos: arquivo, tamanho intrínseco e altura de exibição. Só o logo, sem legenda; origem de cada arquivo em `public/media/procemiza/clients/provenance.json`. |
-| `lib/calculator.ts`, `lib/routine.ts` | Conta pura, sem React: `calculator` faz a conta por passo; `routine` leva o texto digitado até ela, guarda os atalhos e valida o que vem do `sessionStorage`. Testadas em `lib/*.test.ts`. |
+| `lib/calculator.ts`, `lib/chat.ts`, `lib/parse.ts`, `lib/presets.ts` | Sem React: `calculator` faz a conta por passo, em faixa; `chat` é a conversa (estado, perguntas, validação, `sessionStorage`); `parse` lê o texto digitado; `presets` guarda os modelos. Testadas em `lib/*.test.ts`. |
 | `lib/seo.ts` | `buildMetadata`, nós de JSON-LD e serialização segura. |
 | `lib/consent.ts`, `lib/analytics.ts` | Consentimento (LGPD) e eventos do GA4. |
 | `lib/motion.ts` | `useReducedMotion` (lê `prefers-reduced-motion`). |
 | `components/hero/` | Cena 3D: `FlowScene` (componente), `flow.geometry.ts` (geometria pura e testada), `flow.css`. |
-| `components/calculator/` | `RoutineProvider` (estado), `Calculator` (monta a tela), `Steps` e `Adjust` (entrada), `Result` com `Odometer`, `Orb` e `Timeline` (saída) e `Account` (a conta aberta, em barras). |
+| `components/calculator/` | `CalculatorChat` (a conversa), `ChatResult` (cartão com `Odometer`, `Orb` e a conta em barras), `useChat` (estado e storage). |
 | `components/page/`, `components/IntentPage.tsx` | Páginas internas: título em cartaz, quando faz sentido, exemplo, perguntas e faixa de convite. |
 
 Páginas: `/`, `/calculadora`, `/automacao-de-processos`, `/integracao-de-sistemas`,
@@ -80,35 +80,39 @@ sitemap e metadata saem do registro.
 ## Calculadora
 
 Uma só (`CalculatorSection`), na home e em `/calculadora` (lá o título da página já é o H1, então a
-seção não repete outro). Serve para qualquer processo: a pessoa lista os passos, cada um com
-minutos por execução e um tipo (copiar ou digitar, conferir com regra, avisar ou enviar, procurar
-ou juntar, analisar ou decidir, falar com gente) e diz quantas vezes roda por dia, semana ou mês.
+seção não repete outro). É uma conversa roteirizada, sem IA e sem servidor: balões, uma pergunta por
+vez, respostas de um toque ou texto. Perguntas: o que se repete (nome ou um dos 7 modelos), com que
+frequência, o que você faz nela (copiar, conferir, avisar, procurar, analisar, conversar), quanto leva
+cada tipo e a hora de quem faz (valor da hora ou salário e regime). Método, fontes e roteiro completos
+em `docs/specs/calculadora-chat.md`.
 
-- Cada tipo tem um percentual automatizável de partida (95% a 10%, `STEP_KINDS`). São premissas, não
-  medições, e todas são editáveis em "Ajustes". Nenhum estudo é citado: os percentuais de consultorias
-  não foram verificados.
-- Volta por passo = minutos × automatizável × (1 − exceções). Exceções: 10% por padrão (editável).
-  Retrabalho é opcional e devolve a mesma fração automatizada. Horas por mês = soma × execuções por
-  mês (21 dias úteis ou 52/12 semanas). Custo da hora = salário × (1 + encargos) ÷ 220 (70% CLT,
-  50% Simples) ou valor da hora digitado. Sem custo informado, só horas.
-- Validação nunca ajusta valor em silêncio: o campo errado (e o passo) mostra a mensagem.
-- Descrever é tocar: sete modelos de processo (faixa que rola de lado no celular); "Novo passo" tem um
-  botão por tipo de trabalho (Copiar, Conferir, Avisar, Procurar, Analisar, Conversar) que já põe o
-  passo com o tempo de partida do tipo (`STEP_KINDS[].minutes`) e leva o foco ao número; período e
-  unidade do custo são botões (radios nativos), não listas.
-- Saída: o número cresce até 10 rem e encolhe com a quantidade de dígitos (`cqw` sobre o bloco do
-  número, `--chars`), rola (`Odometer`, dígitos em `content` do CSS para não entrar no HTML), ao lado
-  do disco laranja de área proporcional à parte que volta (`Orb`). Faixa Hoje × Depois com um bloco
-  por passo e o nome dentro dos maiores (`Timeline`; passar o mouse ou focar um passo acende o bloco
-  e a linha da conta).
-- "A conta": uma barra por passo (cinza = tempo do passo, laranja = parte que volta) com a
-  multiplicação e o resultado ao lado, a soma, a fórmula e as contas do mês e do dinheiro em colunas.
-  No celular um número fixo acompanha a rolagem enquanto o cartão está fora da tela.
-- O formulário é uma linha por passo (container query: duas linhas quando a coluna é estreita).
+- A conta devolve sempre uma faixa. Cada tipo tem piso e teto (`STEP_KINDS`): piso = potencial técnico
+  médio da categoria (McKinsey Global Institute, jan/2017, Exhibit 8: processar dados 69%, coletar
+  dados 64%); teto = o que um processo estruturado entregou sem humano depois de melhoria contínua
+  (Xchanging, LSE 2015: 93%). Analisar e conversar: piso 0, teto 18% e 20% (MGI). As fontes aparecem
+  no rodapé do cartão. Nenhuma premissa é editável na tela.
+- Volta por passo = minutos × piso (ou teto). Horas por mês = soma × execuções por mês (21 dias úteis ou
+  52/12 semanas). Custo da hora = salário × (1 + encargos) ÷ 220, com encargos de 66% (CLT, lucro
+  presumido ou real) ou 33% (Simples); composição aberta em `K.ENCARGOS`. Sem custo, só horas.
+- Fora da conta e dito na tela: custo de implantar e manter a automação. Também ficam fora o custo de
+  interrupção e os ganhos de qualidade.
+- Entrada ruim nunca ajusta valor em silêncio: `lib/parse.ts` lê "1h30", "meia hora", "3x ao dia",
+  "3,5 mil" e recusa na dúvida ("a cada 2 dias" não vira "2 por dia"); a conversa responde com a saída.
+- Corrigir é tocar na resposta: a conversa volta àquela pergunta e mantém as respostas seguintes que
+  ainda valem. Com tudo respondido, os balões viram uma lista curta de respostas tocáveis.
+- Saída: o piso é o número grande (até 10 rem, encolhe com os dígitos, `Odometer`) com "até o teto" ao
+  lado do disco laranja (`Orb`); "A conta" com uma barra por passo (cinza = tempo, laranja claro = até
+  o teto, laranja cheio = piso). Só analisar e conversar: "Esses passos pedem gente", sem CTA.
+- Caixa de texto no fluxo da página (não fixa no rodapé: o Safari do iPhone ainda não aceita
+  `interactive-widget=resizes-content`). Nada anima, ganha foco ou rola antes da primeira resposta.
 
-Os números vêm do visitante. Nada é enviado a servidor; o estado fica em `sessionStorage`
-(`procemiza:rotina:v2`, validado ao ler). O link do WhatsApp (`?text=`) leva o processo, o número de
-passos e o que volta. Sem número digitado (exemplo na tela) a mensagem é genérica.
+Arquivos: `lib/parse.ts` (leitura de texto), `lib/calculator.ts` (a conta), `lib/chat.ts` (máquina de
+estados pura: respostas, perguntas, chips, validação, persistência), `lib/presets.ts` (modelos) e
+`components/calculator/` (`CalculatorChat`, `ChatResult`, `useChat`).
+
+Os números vêm do visitante. Nada é enviado a servidor; só as respostas ficam em `sessionStorage`
+(`procemiza:rotina:v3`, validado ao ler; home e `/calculadora` compartilham). O link do WhatsApp
+(`?text=`) leva o nome da tarefa, o número de passos e as faixas.
 
 ## Cena do hero e movimento
 
@@ -139,7 +143,7 @@ passos e o que volta. Sem número digitado (exemplo na tela) a mensagem é gené
   seção é texto, então menos. A faixa de clientes e os convites compactos ficam um passo abaixo.
 - Nada de texto que explique a tela. Cada seção diz uma coisa; o que já aparece em outro lugar não
   se repete (o rodapé não repete o que o hero diz; a página da calculadora não repete o título e não
-  tem perguntas nem "como calculamos", porque a conta aberta já mostra a conta; o que a calculadora
+  tem perguntas nem "como calculamos", porque a conta aberta e as fontes já estão no cartão; o que a calculadora
   faz com os dados está em `/privacidade`).
 - Páginas de solução: título em cartaz (tinta), "quando faz sentido" em colunas (papel), exemplo e
   outros caminhos (laranja), perguntas em colunas (papel) e uma faixa só com o convite. O cartaz de
