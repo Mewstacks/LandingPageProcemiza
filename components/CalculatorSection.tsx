@@ -1,9 +1,9 @@
-import { CalculatorChat } from "@/components/calculator/CalculatorChat";
+import { Calculator } from "@/components/calculator/Calculator";
 import { calculator } from "@/content/site";
 
 /**
- * A única calculadora do site: home e /calculadora usam este bloco, com o mesmo estado (a conversa
- * guarda as respostas no sessionStorage). Na /calculadora o título da página já é o H1, então a
+ * A única calculadora do site: home e /calculadora usam este bloco, com o mesmo estado (os controles
+ * guardam as escolhas no sessionStorage). Na /calculadora o título da página já é o H1, então a
  * seção não repete um segundo título (`withTitle={false}`).
  */
 export function CalculatorSection({ withTitle = true }: { withTitle?: boolean }) {
@@ -20,7 +20,7 @@ export function CalculatorSection({ withTitle = true }: { withTitle?: boolean })
             {calculator.title}
           </h2>
         ) : null}
-        <CalculatorChat titled={withTitle} />
+        <Calculator titled={withTitle} />
       </div>
     </section>
   );

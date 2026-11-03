@@ -27,7 +27,7 @@ export const pages = {
     name: "Calculadora",
     title: "Calculadora de ganho com automação",
     description:
-      "Responda poucas perguntas sobre a tarefa e veja a faixa de horas e reais que a automação devolve por mês. A conta e as fontes ficam abertas.",
+      "Escolha o trabalho, o tempo e a frequência e veja a faixa de horas e reais que a automação devolve por mês. A conta e as fontes ficam abertas.",
     modified: "2026-10-30",
     priority: 0.9,
   },

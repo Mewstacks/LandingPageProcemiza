@@ -1,5 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { formatBRL, formatDays, formatHours, formatMinutes, formatPercent, parseDecimalPtBR } from "./format";
+import { formatBRL, formatDays, formatHours, formatMinutes, formatPercent, formatPercentRange, formatRuns, parseDecimalPtBR } from "./format";
+
+describe("formatPercentRange e formatRuns", () => {
+  it.each([
+    [0.69, 0.93, "69 a 93%"],
+    [0.69, 0.69, "69%"],
+    [0, 0.18, "0 a 18%"],
+    [0.694, 0.696, "69 a 70%"],
+  ])("faixa %d a %d → %s", (lo, hi, out) => expect(formatPercentRange(lo, hi)).toBe(out));
+
+  it.each([
+    [1, "1"],
+    [21.6667, "21,7"],
+    [9.96, "10"],
+    [2100, "2.100"],
+  ])("execuções %d → %s", (n, out) => expect(formatRuns(n)).toBe(out));
+});
 
 describe("parseDecimalPtBR", () => {
   it.each([

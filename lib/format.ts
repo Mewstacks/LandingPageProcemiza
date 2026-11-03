@@ -50,6 +50,18 @@ export function formatPercent(share: number): string {
   return plain(`${int.format(Math.round(share * 100))}%`);
 }
 
+/** "69%" quando piso e teto arredondam igual; senão "69 a 93%". */
+export function formatPercentRange(floor: number, ceiling: number): string {
+  const lo = Math.round(floor * 100);
+  const hi = Math.round(ceiling * 100);
+  return lo === hi ? plain(`${int.format(lo)}%`) : plain(`${int.format(lo)} a ${int.format(hi)}%`);
+}
+
+/** Execuções por mês: 1 casa abaixo de 100 ("21,7", para a conta bater com o resultado), inteiro depois ("2.100"). */
+export function formatRuns(runs: number): string {
+  return plain(runs < 100 ? dec1loose.format(runs) : int.format(runs));
+}
+
 /**
  * "1.234,56" → 1234.56; "12,5" → 12.5; "1.234" → 1234; "12.5" → 12.5.
  * Lixo → null. Vazio → null.

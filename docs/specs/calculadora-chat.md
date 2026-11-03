@@ -1,5 +1,8 @@
 # Calculadora em conversa: método e roteiro
 
+> A interface em conversa (seções 3 a 6) foi substituída em 03/11/2026 por `calculadora-simples.md`. A
+> seção 2 (a conta, as faixas e as fontes) continua valendo, menos o regime CLT/Simples, que saiu da tela.
+
 Aprovado em 03/11/2026 e implementado (sem commit nem deploy até a ordem). Desvios do rascunho, todos
 decididos na implementação: a pergunta de frequência é sempre "Com que frequência?" (os chips mudam
 conforme o que já foi respondido); com a conversa completa os balões viram uma lista curta de respostas

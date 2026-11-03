@@ -65,12 +65,12 @@ Regras que valem para qualquer tela nova:
 | `content/pages.ts` | Registro único das páginas indexáveis (título, descrição, data de modificação). Alimenta metadata, sitemap e breadcrumb. |
 | `content/intents.ts`, `content/solutions.ts` | Texto das páginas de solução, da calculadora e das linhas de soluções da home. |
 | `content/clients.ts` | Logos: arquivo, tamanho intrínseco e altura de exibição. Só o logo, sem legenda; origem de cada arquivo em `public/media/procemiza/clients/provenance.json`. |
-| `lib/calculator.ts`, `lib/chat.ts`, `lib/parse.ts`, `lib/presets.ts` | Sem React: `calculator` faz a conta por passo, em faixa; `chat` é a conversa (estado, perguntas, validação, `sessionStorage`); `parse` lê o texto digitado; `presets` guarda os modelos. Testadas em `lib/*.test.ts`. |
+| `lib/calculator.ts`, `lib/estimate.ts` | Sem React: `calculator` faz a conta em faixa; `estimate` guarda os degraus dos controles, valida o estado do `sessionStorage` e monta a frase falada. Testadas em `lib/*.test.ts`. |
 | `lib/seo.ts` | `buildMetadata`, nós de JSON-LD e serialização segura. |
 | `lib/consent.ts`, `lib/analytics.ts` | Consentimento (LGPD) e eventos do GA4. |
 | `lib/motion.ts` | `useReducedMotion` (lê `prefers-reduced-motion`). |
 | `components/hero/` | Cena 3D: `FlowScene` (componente), `flow.geometry.ts` (geometria pura e testada), `flow.css`. |
-| `components/calculator/` | `CalculatorChat` (a conversa), `ChatResult` (cartão com `Odometer`, `Orb` e a conta em barras), `useChat` (estado e storage). |
+| `components/calculator/` | `Calculator` (controles, número e conta), `Live` (número com `Odometer`), `Slider`, `Choice`, `useEstimate` (estado e storage). |
 | `components/page/`, `components/IntentPage.tsx` | Páginas internas: título em cartaz, quando faz sentido, exemplo, perguntas e faixa de convite. |
 
 Páginas: `/`, `/calculadora`, `/automacao-de-processos`, `/integracao-de-sistemas`,
@@ -80,39 +80,37 @@ sitemap e metadata saem do registro.
 ## Calculadora
 
 Uma só (`CalculatorSection`), na home e em `/calculadora` (lá o título da página já é o H1, então a
-seção não repete outro). É uma conversa roteirizada, sem IA e sem servidor: balões, uma pergunta por
-vez, respostas de um toque ou texto. Perguntas: o que se repete (nome ou um dos 7 modelos), com que
-frequência, o que você faz nela (copiar, conferir, avisar, procurar, analisar, conversar), quanto leva
-cada tipo e a hora de quem faz (valor da hora ou salário e regime). Método, fontes e roteiro completos
-em `docs/specs/calculadora-chat.md`.
+seção não repete outro). Três controles e um número vivo, sem IA e sem servidor: **Trabalho** (copiar,
+conferir, avisar, procurar, analisar ou conversar), **Duração** (slider por degraus, 1 min a 8 h) e
+**Frequência** (slider de 1 a 100 mais Dia, Semana ou Mês), e **Custo** opcional (só horas ou R$ 20, 40,
+60, 100 por hora). Nasce preenchida (copiar, 30 min, 5 por semana) e o painel de tinta mexe junto.
+Spec, pesquisa e critérios em `docs/specs/calculadora-simples.md`; método e fontes da conta em
+`docs/specs/calculadora-chat.md` (seção 2).
 
 - A conta devolve sempre uma faixa. Cada tipo tem piso e teto (`STEP_KINDS`): piso = potencial técnico
   médio da categoria (McKinsey Global Institute, jan/2017, Exhibit 8: processar dados 69%, coletar
   dados 64%); teto = o que um processo estruturado entregou sem humano depois de melhoria contínua
   (Xchanging, LSE 2015: 93%). Analisar e conversar: piso 0, teto 18% e 20% (MGI). As fontes aparecem
-  no rodapé do cartão. Nenhuma premissa é editável na tela.
-- Volta por passo = minutos × piso (ou teto). Horas por mês = soma × execuções por mês (21 dias úteis ou
-  52/12 semanas). Custo da hora = salário × (1 + encargos) ÷ 220, com encargos de 66% (CLT, lucro
-  presumido ou real) ou 33% (Simples); composição aberta em `K.ENCARGOS`. Sem custo, só horas.
-- Fora da conta e dito na tela: custo de implantar e manter a automação. Também ficam fora o custo de
-  interrupção e os ganhos de qualidade.
-- Entrada ruim nunca ajusta valor em silêncio: `lib/parse.ts` lê "1h30", "meia hora", "3x ao dia",
-  "3,5 mil" e recusa na dúvida ("a cada 2 dias" não vira "2 por dia"); a conversa responde com a saída.
-- Corrigir é tocar na resposta: a conversa volta àquela pergunta e mantém as respostas seguintes que
-  ainda valem. Com tudo respondido, os balões viram uma lista curta de respostas tocáveis.
-- Saída: o piso é o número grande (até 10 rem, encolhe com os dígitos, `Odometer`) com "até o teto" ao
-  lado do disco laranja (`Orb`); "A conta" com uma barra por passo (cinza = tempo, laranja claro = até
-  o teto, laranja cheio = piso). Só analisar e conversar: "Esses passos pedem gente", sem CTA.
-- Caixa de texto no fluxo da página (não fixa no rodapé: o Safari do iPhone ainda não aceita
-  `interactive-widget=resizes-content`). Nada anima, ganha foco ou rola antes da primeira resposta.
+  no painel. Nenhuma premissa é editável na tela.
+- Horas por mês = minutos × percentual × execuções por mês (21 dias úteis ou 52/12 semanas). Reais =
+  horas × custo da hora escolhido. Fora da conta e dito na tela: custo de implantar e manter a
+  automação, custo de interrupção e ganhos de qualidade.
+- Toda entrada é um degrau (`MINUTE_STOPS`, `RUN_STOPS`, `HOURLY_STOPS` em `lib/estimate.ts`): não há
+  texto para ler nem valor impossível, e toda combinação dá resultado (testado nas 20.160 combinações).
+- Saída: o piso é o número grande (até 9 rem, encolhe com os dígitos, `Odometer`) e a conta aberta em
+  barra (cinza = hoje, laranja suave = até o teto, laranja cheio = piso) com a multiplicação e as
+  fontes. Só analisar e conversar: "Isso pede gente".
+- Desktop: tinta e papel viram um objeto só (número e conta à esquerda, controles à direita). Celular:
+  o cartão do número fica fixo sob o cabeçalho enquanto se mexe nos controles.
+- Acessibilidade: sliders e rádios nativos (setas, Tab, foco visível); o resultado vai para uma região
+  `aria-live` educada, que só muda depois de 700 ms sem mexer.
 
-Arquivos: `lib/parse.ts` (leitura de texto), `lib/calculator.ts` (a conta), `lib/chat.ts` (máquina de
-estados pura: respostas, perguntas, chips, validação, persistência), `lib/presets.ts` (modelos) e
-`components/calculator/` (`CalculatorChat`, `ChatResult`, `useChat`).
+Arquivos: `lib/calculator.ts` (a conta), `lib/estimate.ts` (degraus, estado guardado e frase falada) e
+`components/calculator/` (`Calculator`, `Live`, `Slider`, `Choice`, `Odometer`, `useEstimate`).
 
-Os números vêm do visitante. Nada é enviado a servidor; só as respostas ficam em `sessionStorage`
-(`procemiza:rotina:v3`, validado ao ler; home e `/calculadora` compartilham). O link do WhatsApp
-(`?text=`) leva o nome da tarefa, o número de passos e as faixas.
+Os números vêm do visitante. Nada é enviado a servidor; só as escolhas ficam em `sessionStorage`
+(`procemiza:rotina:v4`, validado ao ler; home e `/calculadora` compartilham). O link do WhatsApp
+(`?text=`) leva o tipo, a duração, a frequência e as faixas.
 
 ## Cena do hero e movimento
 

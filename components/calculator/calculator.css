@@ -1,108 +1,84 @@
 /*
- * Calculadora em conversa. Só consome tokens semânticos (--surface, --text, --control-border, --focus…):
- * o capítulo é papel, os balões são tons do papel e o cartão de resultado é tinta (.theme-dark).
- * A conversa fica numa coluna estreita; o resultado abre na largura toda, com a conta ao lado.
+ * Calculadora: três controles e um número vivo. Só consome tokens semânticos (--surface, --text,
+ * --control-border, --focus…): o capítulo é papel, o painel do resultado é tinta (.theme-dark).
+ * Desktop: um objeto só, tinta à esquerda (número e conta) e papel à direita (controles), da mesma
+ * altura. Celular: três cartões, e o do número fica fixo sob o cabeçalho enquanto se mexe nos controles.
  */
 
 .calc-section { padding-block: var(--section-y); }
 .calc-title { margin: 0 0 clamp(1.5rem, 3vw, 2.25rem); font-family: var(--font-display); font-weight: 350; font-size: var(--fs-display); line-height: 1.04; letter-spacing: -0.02em; text-wrap: balance; }
 
-.chat { display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); min-width: 0; }
-.chat-flow { display: grid; gap: 1rem; min-width: 0; max-width: 40rem; }
+.calc { display: grid; gap: 0.75rem; min-width: 0; }
+/* o cartão do número só gruda enquanto os controles estão na tela: a conta abaixo fica fora deste bloco */
+.calc-main { display: flex; flex-direction: column; gap: 0.75rem; min-width: 0; }
 
-/* ---------------------------------- balões --------------------------------- */
+/* ---------------------------------- controles ------------------------------ */
 
-.chat-log { display: grid; gap: 1rem; min-width: 0; }
-.turn { display: grid; gap: 0.5rem; min-width: 0; }
-.bubble { max-width: min(88%, 30rem); margin: 0; padding: 0.75rem 1rem; border: 0; border-radius: 1.125rem; font: inherit; font-size: var(--fs-body); line-height: 1.4; overflow-wrap: anywhere; }
-.bubble--bot { justify-self: start; border-bottom-left-radius: 0.375rem; background: var(--surface-sunken); color: var(--text); }
-.bubble--error { color: var(--danger-text); font-weight: 500; }
-/* a resposta da pessoa é um botão: tocar nela volta àquela pergunta */
-.bubble--me { justify-self: end; min-height: 2.75rem; border-bottom-right-radius: 0.375rem; background: var(--btn-bg); color: var(--btn-fg); text-align: left; cursor: pointer; transition: transform 160ms var(--ease-out), opacity var(--duration-fast) ease; }
-.bubble--me:active { transform: scale(0.98); }
-.bubble--me:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.calc-controls { display: grid; align-content: start; min-width: 0; padding: 0 1.25rem; border: 1px solid var(--border); border-radius: 1.25rem; background: var(--surface-raised); }
+.field, .field-group { display: grid; gap: 0.25rem; min-width: 0; margin: 0; padding: 0; border: 0; }
+.field-group { gap: 0.5rem; }
+/* uma linha fina entre os controles, sem caixa em volta de cada um */
+.calc-controls > * { padding-block: 1.25rem; border-top: 1px solid var(--border); }
+.calc-controls > :first-child { border-top: 0; }
+.field-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.field-label { display: block; padding: 0; margin-bottom: 0.75rem; color: var(--text-muted); font-size: var(--fs-small); font-weight: 500; line-height: 1.3; }
+.field-head .field-label { margin-bottom: 0; }
+/* o valor escolhido é o cartaz do campo: serifa, como o título e o número do resultado */
+.field-value { color: var(--text); font-family: var(--font-display); font-size: var(--fs-h3); font-weight: 350; font-variant-numeric: lining-nums tabular-nums; line-height: 1; letter-spacing: -0.01em; text-align: right; }
+
+/* ---------------------------------- slider --------------------------------- */
+
+/* trilho fino cinza (borda de campo, 3,4:1 no papel), parte andada em tinta; o polegar é tinta com anel claro */
+.slider {
+  --thumb: 1.625rem;
+  --track: 0.25rem;
+  --fill: calc(var(--thumb) / 2 + (100% - var(--thumb)) * var(--p));
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 2.75rem;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y; /* arrastar de lado mexe no slider; de cima para baixo continua rolando a página */
+}
+.slider::-webkit-slider-runnable-track { height: var(--track); border-radius: 999px; background: linear-gradient(to right, var(--text) var(--fill), var(--control-border) var(--fill)); }
+.slider::-moz-range-track { height: var(--track); border-radius: 999px; background: linear-gradient(to right, var(--text) var(--fill), var(--control-border) var(--fill)); }
+.slider::-webkit-slider-thumb { -webkit-appearance: none; width: var(--thumb); height: var(--thumb); margin-top: calc((var(--track) - var(--thumb)) / 2); box-sizing: border-box; border: 4px solid var(--surface-raised); border-radius: 50%; background: var(--text); box-shadow: 0 0 0 1px var(--text); transition: transform 140ms var(--ease-out); }
+.slider::-moz-range-thumb { width: var(--thumb); height: var(--thumb); box-sizing: border-box; border: 4px solid var(--surface-raised); border-radius: 50%; background: var(--text); box-shadow: 0 0 0 1px var(--text); transition: transform 140ms var(--ease-out); }
+.slider:active::-webkit-slider-thumb { transform: scale(1.14); }
+.slider:active::-moz-range-thumb { transform: scale(1.14); }
+.slider:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 0.5rem; }
+
+/* ---------------------------------- escolhas ------------------------------- */
+
+.choices { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+.choice { position: relative; display: inline-flex; }
+/* o rádio nativo cobre o chip inteiro: recebe o toque e o foco, e fica invisível */
+.choice input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.choice span { display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0 0.875rem; border: 1px solid var(--control-border); border-radius: 999px; background: transparent; color: var(--text); font-size: var(--fs-small); font-weight: 500; transition: background-color var(--duration-fast) ease, border-color var(--duration-fast) ease, color var(--duration-fast) ease, transform 160ms var(--ease-out); }
 @media (hover: hover) and (pointer: fine) {
-  .bubble--me:hover { opacity: 0.88; }
+  .choice:hover input:not(:checked) + span { background: var(--surface-sunken); }
 }
-@media (prefers-reduced-motion: no-preference) {
-  .turn[data-fresh="true"] > *,
-  .bubble--error { animation: bubble-in 160ms var(--ease-out) both; }
-  @keyframes bubble-in { from { opacity: 0; transform: translateY(0.5rem); } }
-}
+/* marcado: tom invertido, para não depender só da cor */
+.choice input:checked + span { border-color: var(--btn-bg); background: var(--btn-bg); color: var(--btn-fg); }
+.choice input:active + span { transform: scale(0.97); }
+.choice input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 2px; }
 
-/* ---------------------- respostas de um toque e caixa de texto --------------------- */
+/* ---------------------------------- painel de tinta ------------------------ */
 
-.chat-controls { display: grid; gap: 0.75rem; min-width: 0; scroll-margin-bottom: 1rem; }
-.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
-.chip { min-height: 2.75rem; padding: 0 1.125rem; border: 0; border-radius: 999px; background: var(--surface-sunken); color: var(--text); font: inherit; font-size: var(--fs-small); font-weight: 500; cursor: pointer; transition: background-color var(--duration-fast) ease, color var(--duration-fast) ease, transform 160ms var(--ease-out); }
-@media (hover: hover) and (pointer: fine) {
-  .chip:hover { background: color-mix(in oklab, var(--text) 12%, var(--surface-sunken)); }
-}
-.chip:active { transform: scale(0.97); }
-.chip:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-/* marcado: tom invertido e peso maior, para não depender só da cor */
-.chip[aria-pressed="true"] { background: var(--btn-bg); color: var(--btn-fg); font-weight: 650; }
-.chat-done { justify-self: start; }
-.chat-done:disabled { cursor: not-allowed; opacity: 0.5; }
-
-.composer { display: flex; gap: 0.5rem; min-width: 0; }
-.composer input {
-  flex: 1 1 auto;
-  min-width: 0;
-  min-height: 3rem;
-  padding: 0 0.875rem;
-  border: 1px solid var(--control-border);
-  border-radius: 0.5rem;
-  background: var(--surface-raised);
-  color: var(--text);
-  font: inherit;
-  font-size: 1rem; /* 16px: evita zoom automático no iOS */
-  transition: border-color var(--duration-fast) ease;
-}
-.composer input::placeholder { color: var(--text-subtle); opacity: 1; }
-@media (hover: hover) and (pointer: fine) {
-  .composer input:hover { border-color: var(--text-subtle); }
-}
-.composer input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.composer .btn { flex: none; }
-
-.link-btn { min-height: 2.75rem; margin-block: -0.5rem; padding: 0 0.25rem; border: 0; background: transparent; color: var(--text-muted); font: inherit; font-size: var(--fs-small); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
-.link-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 0.25rem; }
-@media (hover: hover) and (pointer: fine) {
-  .link-btn:hover { color: var(--text); }
-}
-.flow-tag { display: inline-block; margin-right: 0.625rem; padding: 0.125rem 0.625rem; border: 1px solid currentColor; border-radius: 999px; color: var(--accent-text); font-size: var(--fs-tiny); font-weight: 500; vertical-align: 0.1em; }
-
-/* --------------------------------- resultado --------------------------------- */
-
-/* Cartão do resultado (data-ui: fragmento do produto): tinta sobre o papel. O número é o foco. */
-.chat-result { display: grid; gap: 1.75rem; min-width: 0; padding: clamp(1.25rem, 3vw, 2.25rem); border-radius: 1.5rem; background: var(--surface); color: var(--text); scroll-margin-top: 1rem; }
-.chat-result:focus { outline: none; }
-.result-main { display: grid; gap: 1.125rem; align-content: start; min-width: 0; }
-.result-side { display: grid; gap: 1.25rem; align-content: start; min-width: 0; }
-.result-echo { margin: 0; color: var(--text-muted); font-size: var(--fs-body); line-height: 1.4; overflow-wrap: anywhere; }
-.result-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.25rem 1.5rem; }
-
-/* O tempo de hoje é o anel; o disco laranja é a parte que volta no piso (área proporcional, ver Orb.tsx). */
-.orb { --orb: clamp(7.5rem, 15vw, 11rem); position: relative; flex: none; width: var(--orb); aspect-ratio: 1; border: 1.5px solid color-mix(in oklab, var(--color-paper) 42%, transparent); border-radius: 50%; }
-.orb::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--color-accent); transform: scale(var(--s)); transition: transform 760ms var(--ease-out); }
-.js .orb[data-armed="false"]::before { transition: none; transform: scale(0.15); }
-/* o número é o cartaz do cartão: ocupa a largura que o disco deixa e encolhe com a quantidade de dígitos */
-.result-figure { flex: 1 1 8rem; min-width: 0; container-type: inline-size; }
-.result-big { display: grid; gap: 0.5rem; margin: 0; color: var(--text); font-family: var(--font-display); font-weight: 340; font-size: clamp(3.25rem, calc(135cqw / var(--chars, 3)), 10rem); line-height: 1; letter-spacing: -0.03em; }
-.result-big--text { font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.05; text-wrap: balance; }
-.result-unit { color: var(--text-muted); font-family: var(--font-sans); font-size: var(--fs-lead); font-weight: 400; letter-spacing: 0; line-height: 1.2; }
-.result-sub { margin: 0; color: var(--text); font-size: var(--fs-body); }
-.result-money { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 1.5rem; margin: 0; color: var(--accent-text); font-size: clamp(1.375rem, 2.2vw, 1.875rem); font-weight: 500; line-height: 1.2; }
-.result-money > span { display: inline-flex; align-items: baseline; }
-.result-money > span + span { color: var(--text-muted); font-size: 0.75em; font-weight: 400; }
-.result-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; }
-.result-sources { margin: 0; color: var(--text-subtle); font-size: var(--fs-small); line-height: 1.5; }
-.result-sources a { color: var(--text-muted); text-decoration: underline; text-underline-offset: 3px; }
-@media (hover: hover) and (pointer: fine) {
-  .result-sources a:hover { color: var(--text); }
-}
-.result-sources a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 0.25rem; }
+.live { z-index: 2; min-width: 0; padding: 1rem 1.25rem; border-radius: 1.25rem; }
+.live-body { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "big unit" "big sub" "money money"; align-items: center; gap: 0 1rem; }
+.live-body--text { grid-template-areas: "text" "sub"; grid-template-columns: minmax(0, 1fr); gap: 0.25rem; }
+.live-figure { grid-area: big; }
+.live-big { margin: 0; color: var(--text); font-family: var(--font-display); font-weight: 340; font-size: 3.5rem; line-height: 1; letter-spacing: -0.03em; }
+.live-unit { grid-area: unit; align-self: end; margin: 0; color: var(--text-muted); font-size: var(--fs-small); line-height: 1.25; }
+.live-sub { grid-area: sub; align-self: start; margin: 0; color: var(--text); font-size: var(--fs-small); font-variant-numeric: tabular-nums; line-height: 1.3; }
+.live-text { grid-area: text; margin: 0; color: var(--text); font-family: var(--font-display); font-weight: 340; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.05; text-wrap: balance; }
+.live-money { grid-area: money; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.125rem 1rem; margin: 0.375rem 0 0; color: var(--accent-text); font-size: var(--fs-lead); font-weight: 500; line-height: 1.2; }
+.live-money > span { display: inline-flex; align-items: baseline; }
+.live-money > span + span { color: var(--text-muted); font-size: var(--fs-small); font-weight: 400; }
 
 /* odômetro: cada dígito é uma pilha 0-9 no CSS (fora do HTML) deslocada por transform */
 .odo { --lh: 1.12; display: inline-flex; height: calc(var(--lh) * 1em); line-height: var(--lh); font-variant-numeric: tabular-nums lining-nums; white-space: pre; }
@@ -112,48 +88,73 @@
   display: block;
   white-space: pre;
   transform: translateY(calc(var(--d) * var(--lh) * -1em));
-  transition: transform 700ms var(--ease-out);
+  transition: transform 520ms var(--ease-out);
 }
 .odo-sep { display: block; height: calc(var(--lh) * 1em); }
 /* antes de entrar na tela os dígitos esperam no zero (sem JS, o número já aparece certo) */
 .js .odo[data-armed="false"] .odo-col::before { transition: none; transform: none; }
 
-/* a conta aberta: uma barra por passo (cinza = o tempo do passo, laranja claro = até o teto, laranja cheio = o piso) */
-.ledger { display: grid; gap: 0.75rem; min-width: 0; }
-.account-title { margin: 0; color: var(--text); font-family: var(--font-display); font-weight: 350; font-size: var(--fs-h3); line-height: 1.1; letter-spacing: -0.01em; }
-.ledger-list { display: grid; margin: 0; padding: 0; list-style: none; }
-.ledger-row { display: grid; grid-template-columns: minmax(0, 11rem) minmax(4rem, 1fr) 8.5rem 7.5rem; gap: 0.25rem 1rem; align-items: center; padding: 0.625rem 0; border-top: 1px solid color-mix(in oklab, var(--text) 14%, transparent); }
-.ledger-name { color: var(--text); font-size: var(--fs-body); font-weight: 500; line-height: 1.25; overflow-wrap: anywhere; }
-.ledger-name small { display: block; margin-top: 0.125rem; color: var(--text-subtle); font-size: var(--fs-tiny); font-weight: 400; }
-.ledger-bar { display: block; height: 1.125rem; }
-.ledger-min { display: block; height: 100%; min-width: 0.25rem; overflow: hidden; border-radius: 0.375rem; background: color-mix(in oklab, var(--text) 45%, var(--surface)); }
-.ledger-high { display: block; height: 100%; background: color-mix(in oklab, var(--color-accent) 50%, var(--color-paper)); }
-.ledger-high i { display: block; height: 100%; background: var(--color-accent); }
-.ledger-calc { color: var(--text-muted); font-size: var(--fs-small); font-variant-numeric: tabular-nums; text-align: right; }
-.ledger-out { color: var(--text); font-size: var(--fs-small); font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
-.account-formula { margin: 0; color: var(--text-muted); font-size: var(--fs-small); line-height: 1.45; font-variant-numeric: tabular-nums; }
+/* ------------------------------------ conta -------------------------------- */
 
-@media (min-width: 900px) {
-  .chat-result { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2rem, 4vw, 3.5rem); }
+.account { display: flex; flex-direction: column; gap: 0.75rem; min-width: 0; padding: 1.25rem; border-radius: 1.25rem; }
+/* cinza = o tempo de hoje, laranja suave = até o teto, laranja cheio = o piso (as três faixas também estão escritas) */
+.bar { position: relative; height: 1.25rem; flex: none; overflow: hidden; border-radius: 0.5rem; background: color-mix(in oklab, var(--text) 16%, var(--surface)); }
+.bar > span { position: absolute; inset: 0; transform-origin: left center; transition: transform 520ms var(--ease-out); }
+.bar-high { background: color-mix(in oklab, var(--color-accent) 55%, var(--surface)); transform: scaleX(var(--high)); }
+.bar-low { background: var(--color-accent); transform: scaleX(var(--low)); }
+.bar-legend { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.125rem 1rem; margin: 0; color: var(--text-muted); font-size: var(--fs-small); font-variant-numeric: tabular-nums; }
+.bar-legend b { color: var(--text); font-weight: 600; }
+.account-formula { margin: 0; color: var(--text); font-size: var(--fs-small); font-variant-numeric: tabular-nums; line-height: 1.45; }
+.calc-cta { align-self: flex-start; margin-top: 0.5rem; }
+.result-sources { margin: 0; color: var(--text-subtle); font-size: var(--fs-small); line-height: 1.5; }
+.result-sources a { color: var(--text-muted); text-decoration: underline; text-underline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) {
+  .result-sources a:hover { color: var(--text); }
+}
+.result-sources a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 0.25rem; }
+
+/* --------------------------------- larguras -------------------------------- */
+
+/* Celular em pé: o cartão do número fica fixo sob o cabeçalho (4,5 rem) enquanto se mexe nos controles.
+   A sombra de papel tapa a fresta entre o cabeçalho e o cartão, por onde os controles apareceriam. */
+@media (max-width: 599px) and (min-height: 560px) {
+  .live { position: sticky; top: 4.75rem; box-shadow: 0 -1rem 0 0 var(--color-paper); }
 }
 
-@media (max-width: 599px) {
-  .orb { --orb: 6.5rem; }
-  .result-unit { font-size: var(--fs-body); }
-  .bubble { max-width: 92%; }
-  /* a linha da conta vira um cartão pequeno: nome e resultado em cima, a barra e a multiplicação embaixo */
-  .ledger-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "name out" "bar bar" "calc calc"; gap: 0.5rem 1rem; }
-  .ledger-name { grid-area: name; }
-  .ledger-out { grid-area: out; }
-  .ledger-bar { grid-area: bar; }
-  .ledger-calc { grid-area: calc; text-align: left; }
+/* Tablet: o cartão do número continua baixo (número ao lado da unidade), só com mais respiro. */
+@media (min-width: 600px) {
+  .live { padding: 1.5rem; }
+  .live-body { gap: 0 1.5rem; }
+  .live-big { font-size: 4.5rem; }
+  .live-unit { font-size: var(--fs-lead); }
+  .live-sub { font-size: var(--fs-body); }
+  .live-money { font-size: clamp(1.375rem, 2.2vw, 1.875rem); }
+  .calc-controls { padding-inline: 1.75rem; }
+  .account { padding: 1.5rem; }
+}
+
+/* Desktop: tinta e papel viram um objeto só, da mesma altura. O botão desce para o pé do painel. */
+@media (min-width: 900px) {
+  .calc { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); grid-template-areas: "live controls" "account controls"; grid-template-rows: auto 1fr; gap: 0; }
+  .calc-main { display: contents; }
+  .calc .live { grid-area: live; padding: 2.5rem 2.5rem 0.5rem; border-radius: 2rem 0 0 0; }
+  .calc .account { grid-area: account; margin-top: -1px; padding: 0.5rem 2.5rem 2.5rem; border-radius: 0 0 0 2rem; }
+  .calc .calc-controls { grid-area: controls; padding: 0.5rem 2.5rem; border-left: 0; border-radius: 0 2rem 2rem 0; }
+  .calc-cta { margin-top: auto; }
+  .result-sources { margin-top: 0.5rem; }
+  /* o número vira cartaz: ocupa a largura do painel e encolhe com a quantidade de dígitos */
+  .live-body { grid-template-columns: minmax(0, 1fr); grid-template-areas: "big" "unit" "money"; align-items: start; gap: 0.25rem; }
+  .live-body--text { grid-template-areas: "text" "sub"; }
+  .live-figure { container-type: inline-size; }
+  .live-big { font-size: clamp(3.5rem, calc(135cqw / var(--chars, 3)), 9rem); }
+  .live-sub { display: none; }
+  .live-body--text .live-sub { display: block; }
 }
 
 @media (max-width: 380px) {
-  .composer { flex-wrap: wrap; }
-  .composer .btn { flex: 1 1 100%; }
+  .calc-cta { align-self: stretch; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .chip, .bubble--me, .odo-col::before, .orb::before { transition: none; }
+  .choice span, .odo-col::before, .slider::-webkit-slider-thumb, .slider::-moz-range-thumb, .bar > span { transition: none; }
 }

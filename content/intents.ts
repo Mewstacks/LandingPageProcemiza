@@ -63,5 +63,5 @@ export const sobMedida: IntentContent = {
 
 export const calculadoraPage = {
   h1: "Calculadora de ganho com automação",
-  answer: "Veja quanto a automação devolve por mês, em poucas perguntas.",
+  answer: "Escolha o trabalho, o tempo e a frequência. A faixa de horas que a automação devolve por mês aparece na hora.",
 } as const;
