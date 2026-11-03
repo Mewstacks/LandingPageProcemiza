@@ -9,7 +9,7 @@ export function Footer() {
     <footer className="site-footer" aria-label="Rodapé">
       <div className="wrap footer-main">
         <div className="footer-brand">
-          <Image src="/media/procemiza/brand/logo-header.png" alt="Procemiza" width={2100} height={356} sizes="168px" />
+          <Image src="/media/procemiza/brand/logo-header.png" alt="Procemiza" width={2112} height={412} sizes="168px" />
         </div>
         <nav aria-label="Navegação do rodapé">
           <ul>{nav.map((item) => <li key={item.href}><Link href={item.href}>{item.label}</Link></li>)}</ul>

@@ -113,8 +113,8 @@ export function Header() {
               <Image
                 src="/media/procemiza/brand/logo-header.png"
                 alt="Procemiza"
-                width={2100}
-                height={356}
+                width={2112}
+                height={412}
                 priority
                 sizes="168px"
                 className="header-wordmark"

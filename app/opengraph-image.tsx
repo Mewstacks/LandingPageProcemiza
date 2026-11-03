@@ -46,7 +46,7 @@ export default async function OpengraphImage() {
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} width={330} height={56} alt="" />
+        <img src={src} width={330} height={64} alt="" />
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div style={{ fontSize: 80, lineHeight: 1.04, letterSpacing: -2, maxWidth: 1000 }}>{hero.title}</div>
           <div style={{ fontSize: 40, color: "#fc5f02" }}>{hero.support}</div>
