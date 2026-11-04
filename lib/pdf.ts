@@ -59,7 +59,7 @@ export function reportDocument(r: ReportModel) {
     { title: `Relatório ${r.id}`, author: "Procemiza", subject: "Ganho com automação" },
     h(Page, { size: "A4", style: s.page }, [
       T({ ...s.brand }, "Procemiza"),
-      T(s.meta, `Relatório nº ${r.id} · ${r.dateLabel} · ${r.company}`),
+      T(s.meta, `Relatório nº ${r.id} · ${r.dateLabel}`),
       h(View, { key: "hero", style: s.hero }, [
         T(s.heroLabel, "Devolvidos por ano, até"),
         T(s.heroNum, r.headline.ceiling),
@@ -68,7 +68,7 @@ export function reportDocument(r: ReportModel) {
         T(s.heroSub, `${r.headline.share} · Em 3 anos: ${r.headline.threeYears}`),
       ]),
       T(s.h2, "Em uma frase"),
-      T(s.p, `Para ${r.company}, as rotinas informadas devolvem de ${r.headline.prudent} a ${r.headline.ceiling} por ano, contando só o tempo de quem faz. É uma faixa: o Prudente vem de casos e experimentos medidos; o Teto é o potencial técnico.`),
+      T(s.p, `As rotinas informadas devolvem de ${r.headline.prudent} a ${r.headline.ceiling} por ano, contando só o tempo de quem faz. É uma faixa: o Prudente vem de casos e experimentos medidos; o Teto é o potencial técnico.`),
       footer(r, 1),
     ]),
     h(Page, { size: "A4", style: s.page }, [

@@ -46,3 +46,26 @@ describe("robô", () => {
     expect(looksLikeBot({ website: "", elapsedMs: 9000 })).toBe(false);
   });
 });
+
+describe("simulação refeita de primitivos", () => {
+  const b = {
+    routines: [{ kind: "dados", minutes: 30, runs: 5, period: "semana" }],
+    pay: { mode: "bruto", salary: 4500, regime: "simples", benefits: 0 },
+    lead: { name: "Ana Souza", email: "ana@miolo.com.br", company: "Miolo", wantsContact: false },
+    trap: { website: "", elapsedMs: 9000 },
+    turnstile: "",
+  };
+  it.each([
+    ["modo desconhecido", { ...b, pay: { mode: "x", salary: 1 } }],
+    ["regime fora da lista", { ...b, pay: { ...b.pay, regime: "lucro" } }],
+    ["salário como texto", { ...b, pay: { ...b.pay, salary: "4500" } }],
+    ["salário infinito", { ...b, pay: { ...b.pay, salary: Infinity } }],
+    ["rotinas demais", { ...b, routines: Array.from({ length: 6 }, () => b.routines[0]) }],
+  ])("%s", (_n, body) => {
+    expect(parseLeadRequest(body)).toEqual({ ok: false, field: "plan" });
+  });
+  it("campo extra no pay não passa adiante", () => {
+    const r = parseLeadRequest({ ...b, pay: { ...b.pay, extra: "x" } });
+    expect(r.ok && Object.keys(r.value.plan.pay)).toEqual(["mode", "salary", "regime", "benefits"]);
+  });
+});

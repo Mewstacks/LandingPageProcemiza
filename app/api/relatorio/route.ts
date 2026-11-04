@@ -6,6 +6,7 @@ import { reportPdf } from "@/lib/pdf";
 import { buildReport } from "@/lib/report";
 import { DEFAULT_FROM_EMAIL, getResend } from "@/lib/resend";
 import { site } from "@/content/site";
+import { allow } from "@/lib/ratelimit";
 
 /**
  * Único trecho dinâmico do site: recebe a simulação e o lead, recalcula tudo no servidor, manda o
@@ -32,7 +33,7 @@ function originAllowed(req: Request): boolean {
 
 async function turnstileOk(token: string, ip: string | null): Promise<boolean> {
   const secret = process.env.TURNSTILE_SECRET_KEY;
-  if (!secret) return true;
+  if (!secret) return process.env.NODE_ENV !== "production";
   if (!token) return false;
   try {
     const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
@@ -66,6 +67,7 @@ export async function POST(req: Request) {
   // Robô recebe "ok" e nada acontece: não ensina o que o barrou.
   if (looksLikeBot(trap)) return json(200, { ok: true });
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
+  if (!allow(`ip:${ip ?? "?"}`, 20, 3_600_000) || !allow(`mail:${lead.email}`, 3, 3_600_000)) return json(429, { error: "rate" });
   if (!(await turnstileOk(turnstile, ip))) return json(400, { error: "challenge" });
 
   const resend = getResend();

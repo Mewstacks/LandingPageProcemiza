@@ -1,4 +1,6 @@
-import { evaluate, type Plan } from "./plan";
+import type { Pay } from "./cost";
+import { evidenceOf, type Kind } from "./evidence";
+import { evaluate, type Period, type Plan } from "./plan";
 import type { Lead } from "./report";
 
 /** Corpo do POST /api/relatorio, validado à mão: nada que veio do navegador é confiado. */
@@ -18,6 +20,26 @@ const EMAIL = /^[^\s@<>"]{1,64}@[^\s@<>"]{1,255}\.[^\s@<>"]{2,}$/;
 const clean = (v: unknown, max: number): string =>
   typeof v === "string" ? v.replace(/[\u0000-\u001f\u007f]+/g, " ").replace(/\s+/g, " ").trim().slice(0, max) : "";
 
+/** Refaz a simulação só com primitivos conferidos: nada do corpo original segue adiante. */
+function rebuildPlan(routines: unknown, pay: unknown): Plan | null {
+  if (!Array.isArray(routines) || routines.length > 5 || typeof pay !== "object" || pay === null) return null;
+  const out: Plan["routines"][number][] = [];
+  for (const item of routines) {
+    const r = (typeof item === "object" && item !== null ? item : {}) as Record<string, unknown>;
+    const kind = evidenceOf(r.kind as Kind)?.id;
+    const period = (["dia", "semana", "mes"] as const).find((p) => p === r.period) as Period | undefined;
+    if (!kind || !period || typeof r.minutes !== "number" || typeof r.runs !== "number") return null;
+    out.push({ kind, period, minutes: r.minutes, runs: r.runs });
+  }
+  const p = pay as Record<string, unknown>;
+  let clean: Pay;
+  if (p.mode === "custo" && typeof p.monthly === "number") clean = { mode: "custo", monthly: p.monthly };
+  else if (p.mode === "bruto" && typeof p.salary === "number" && typeof p.benefits === "number" && (p.regime === "simples" || p.regime === "presumido"))
+    clean = { mode: "bruto", salary: p.salary, regime: p.regime, benefits: p.benefits };
+  else return null;
+  return { routines: out, pay: clean };
+}
+
 export function parseLeadRequest(body: unknown): Parsed {
   if (typeof body !== "object" || body === null) return { ok: false, field: "body" };
   const b = body as Record<string, unknown>;
@@ -35,10 +57,8 @@ export function parseLeadRequest(body: unknown): Parsed {
   const digits = whatsapp.replace(/\D/g, "");
   if (wantsContact && (digits.length < 10 || digits.length > 13)) return { ok: false, field: "whatsapp" };
 
-  const plan = { routines: b.routines, pay: b.pay } as unknown as Plan;
-  if (!Array.isArray(plan.routines) || typeof plan.pay !== "object" || plan.pay === null) return { ok: false, field: "plan" };
-  const checked = evaluate(plan);
-  if (checked.status !== "ok") return { ok: false, field: "plan" };
+  const plan = rebuildPlan(b.routines, b.pay);
+  if (!plan || evaluate(plan).status !== "ok") return { ok: false, field: "plan" };
 
   const trap = (typeof b.trap === "object" && b.trap !== null ? b.trap : {}) as Record<string, unknown>;
   return {

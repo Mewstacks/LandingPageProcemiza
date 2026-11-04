@@ -67,7 +67,7 @@ export function evaluate(plan: Plan): Outcome | Invalid {
   if (routines.length < 1 || routines.length > LIMITS.MAX_ROUTINES) return { status: "invalid", field: "routines" };
 
   const hourly = hourlyCost(pay);
-  if (hourly === null) return { status: "invalid", field: "pay" };
+  if (hourly === null || !Number.isFinite(hourly)) return { status: "invalid", field: "pay" };
 
   const lines: Line[] = [];
   for (const [index, r] of routines.entries()) {

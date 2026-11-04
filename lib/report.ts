@@ -56,7 +56,7 @@ function fnv(s: string): number {
 
 export function reportId(plan: Plan, email: string, now: Date): string {
   const day = now.toISOString().slice(0, 10).replace(/-/g, "");
-  const tag = fnv(`${encodePlan(plan)}|${email.toLowerCase()}|${now.toISOString()}`).toString(36).toUpperCase().padStart(4, "0").slice(-4);
+  const tag = fnv(`${encodePlan(plan)}|${email.toLowerCase()}|${day}`).toString(36).toUpperCase().padStart(4, "0").slice(-4);
   return `PRC-${day}-${tag}`;
 }
 
@@ -70,7 +70,7 @@ export function buildReport(plan: Plan, lead: Lead, now: Date, origin: string, w
 
 function model(plan: Plan, o: Outcome, lead: Lead, now: Date, origin: string, whatsappBase: string): ReportModel {
   const id = reportId(plan, lead.email, now);
-  const firstName = lead.name.trim().split(/\s+/)[0] ?? lead.name;
+  const firstName = (lead.name.trim().split(/\s+/)[0] ?? "").replace(/[^\p{L}'-]/gu, "").slice(0, 30) || "você";
   const ceiling = formatBRL(o.ceiling.brlYear);
   const prudent = formatBRL(o.prudent.brlYear);
 
