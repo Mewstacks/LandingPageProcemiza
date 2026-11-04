@@ -34,8 +34,23 @@ export default function Page() {
         </PageSection>
         <PageSection id="calculadora" title="Calculadora">
           <p>
-            Os números e o texto da rotina que você digita ficam só no seu navegador, nesta aba, e somem ao fechá-la. Nada é enviado
-            a servidor.
+            As rotinas, o salário e as escolhas que você faz ficam no seu navegador, nesta aba, e somem ao fechá-la. Para ver só o
+            número, nada é enviado a servidor.
+          </p>
+        </PageSection>
+        <PageSection id="relatorio" title="Relatório por e-mail">
+          <p>
+            Se você pedir o relatório completo, enviamos nome, e-mail, empresa e a simulação (rotinas, salário ou custo informado,
+            regime e benefícios) ao nosso servidor. Usamos esses dados para gerar e enviar o relatório e a Procemiza recebe um aviso
+            com a simulação inteira. Base legal: procedimentos preliminares a pedido do titular (LGPD, art. 7º, V).
+          </p>
+          <p>
+            Se você marcar “Falar com a Procemiza”, informamos também o seu WhatsApp e entramos em contato. Essa é uma autorização
+            separada, que você pode retirar a qualquer momento.
+          </p>
+          <p>
+            Os dados passam por prestadores que operam fora do Brasil (envio de e-mail e hospedagem do site) e ficam registrados no
+            sistema interno da Procemiza (CRMew). Prazo de guarda: a definir com a assessoria jurídica. Para apagar, fale com {contact}.
           </p>
         </PageSection>
         <PageSection id="whatsapp" title="WhatsApp">

@@ -27,7 +27,7 @@ export const pages = {
     name: "Calculadora",
     title: "Calculadora de ganho com automação",
     description:
-      "Escolha o trabalho, o tempo e a frequência e veja a faixa de horas e reais que a automação devolve por mês. A conta e as fontes ficam abertas.",
+      "Informe rotinas, tempo e salário e veja o ganho por ano em faixa, com fontes. Relatório completo por e-mail.",
     modified: "2026-10-30",
     priority: 0.9,
   },
@@ -63,7 +63,7 @@ export const pages = {
     name: "Privacidade",
     title: "Política de privacidade",
     description: "Que dados o site trata, para quê e como exercer seus direitos pela LGPD.",
-    modified: "2026-10-30",
+    modified: "2026-11-04",
     priority: 0.2,
   },
 } as const satisfies Record<string, PageMeta>;

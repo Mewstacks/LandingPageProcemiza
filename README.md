@@ -7,7 +7,7 @@ do visitante.
 
 - Next.js 15 (App Router), React 19, TypeScript, Tailwind v4 (tokens em `@theme static`) e CSS próprio.
 - Fraunces nos títulos, Archivo na leitura.
-- Site 100% estático (todas as rotas pré-renderizadas).
+- Site estático (todas as rotas pré-renderizadas), exceto `POST /api/relatorio` (relatório por e-mail). Variáveis em `.env.example`; sem elas o endpoint responde 503 e o resto do site funciona.
 
 ```bash
 npm install

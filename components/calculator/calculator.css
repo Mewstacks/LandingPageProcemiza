@@ -1,23 +1,23 @@
 /*
- * Calculadora: três controles e um número vivo. Só consome tokens semânticos (--surface, --text,
- * --control-border, --focus…): o capítulo é papel, o painel do resultado é tinta (.theme-dark).
- * Desktop: um objeto só, tinta à esquerda (número e conta) e papel à direita (controles), da mesma
- * altura. Celular: três cartões, e o do número fica fixo sob o cabeçalho enquanto se mexe nos controles.
+ * Calculadora: rotinas, quem faz e um resultado que só aparece no clique. Só consome tokens
+ * semânticos (--surface, --text, --control-border, --focus…): o capítulo é papel, o painel do
+ * resultado é tinta (.theme-dark). Desktop: um objeto só, tinta à esquerda e papel à direita, da mesma
+ * altura. Celular: os controles primeiro e o cartão de tinta embaixo, com o botão.
  */
 
 .calc-section { padding-block: var(--section-y); }
 .calc-title { margin: 0 0 clamp(1.5rem, 3vw, 2.25rem); font-family: var(--font-display); font-weight: 350; font-size: var(--fs-display); line-height: 1.04; letter-spacing: -0.02em; text-wrap: balance; }
 
 .calc { display: grid; gap: 0.75rem; min-width: 0; }
-/* o cartão do número só gruda enquanto os controles estão na tela: a conta abaixo fica fora deste bloco */
-.calc-main { display: flex; flex-direction: column; gap: 0.75rem; min-width: 0; }
+.calc > .live { order: 2; }
+.calc > .calc-controls { order: 1; }
 
 /* ---------------------------------- controles ------------------------------ */
 
 .calc-controls { display: grid; align-content: start; min-width: 0; padding: 0 1.25rem; border: 1px solid var(--border); border-radius: 1.25rem; background: var(--surface-raised); }
 .field, .field-group { display: grid; gap: 0.25rem; min-width: 0; margin: 0; padding: 0; border: 0; }
 .field-group { gap: 0.5rem; }
-/* uma linha fina entre os controles, sem caixa em volta de cada um */
+/* uma linha fina entre os blocos, sem caixa em volta de cada um */
 .calc-controls > * { padding-block: 1.25rem; border-top: 1px solid var(--border); }
 .calc-controls > :first-child { border-top: 0; }
 .field-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
@@ -25,6 +25,33 @@
 .field-head .field-label { margin-bottom: 0; }
 /* o valor escolhido é o cartaz do campo: serifa, como o título e o número do resultado */
 .field-value { color: var(--text); font-family: var(--font-display); font-size: var(--fs-h3); font-weight: 350; font-variant-numeric: lining-nums tabular-nums; line-height: 1; letter-spacing: -0.01em; text-align: right; }
+
+/* rotinas: a aberta mostra os controles; as outras viram uma linha */
+.routines { display: grid; gap: 0.5rem; min-width: 0; }
+.routine--open { display: grid; gap: 0; }
+.routine--open > .field, .routine--open > .field-group { padding-block: 0.875rem; border-top: 1px solid var(--border); }
+.routine--open > :first-child { padding-top: 0; border-top: 0; }
+.routine--row { display: flex; align-items: center; gap: 0.875rem; width: 100%; min-height: 2.75rem; padding: 0.5rem 0.875rem; border: 1px solid var(--control-border); border-radius: 0.875rem; background: transparent; color: var(--text); font: inherit; font-size: var(--fs-small); text-align: left; cursor: pointer; transition: background-color var(--duration-fast) ease; }
+.routine-n { display: inline-grid; place-items: center; flex: none; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--text); color: var(--surface-raised); font-size: var(--fs-tiny); font-weight: 600; }
+.routine-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.routine-edit { color: var(--text-muted); font-size: var(--fs-tiny); }
+.routine-add, .text-btn { justify-self: start; }
+.btn-ghost { min-height: 2.75rem; padding-block: 0.5rem; border-color: var(--control-border); background: transparent; color: var(--text); }
+.text-btn { min-height: 2.75rem; padding: 0; border: 0; background: transparent; color: var(--text-muted); font: inherit; font-size: var(--fs-small); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+@media (hover: hover) and (pointer: fine) {
+  .routine--row:hover { background: var(--surface-sunken); }
+  .btn-ghost:hover { background: var(--surface-sunken); }
+  .text-btn:hover { color: var(--text); }
+}
+.routine--row:focus-visible, .btn-ghost:focus-visible, .text-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* quem faz */
+.who { display: grid; gap: 1rem; min-width: 0; }
+.money { display: flex; align-items: baseline; gap: 0.5rem; min-height: 3.5rem; padding: 0 0.25rem; border-bottom: 2px solid var(--control-border); }
+.money:focus-within { border-bottom-color: var(--focus); }
+.money[data-invalid] { border-bottom-color: var(--danger-text); }
+.money-unit { color: var(--text-muted); font-size: var(--fs-lead); }
+.money-input { flex: 1; min-width: 0; padding: 0.5rem 0; border: 0; outline: 0; background: transparent; color: var(--text); font-family: var(--font-display); font-size: var(--fs-h3); font-weight: 350; font-variant-numeric: lining-nums tabular-nums; }
 
 /* ---------------------------------- slider --------------------------------- */
 
@@ -68,17 +95,21 @@
 
 /* ---------------------------------- painel de tinta ------------------------ */
 
-.live { z-index: 2; min-width: 0; padding: 1rem 1.25rem; border-radius: 1.25rem; }
-.live-body { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "big unit" "big sub" "money money"; align-items: center; gap: 0 1rem; }
-.live-body--text { grid-template-areas: "text" "sub"; grid-template-columns: minmax(0, 1fr); gap: 0.25rem; }
-.live-figure { grid-area: big; }
-.live-big { margin: 0; color: var(--text); font-family: var(--font-display); font-weight: 340; font-size: 3.5rem; line-height: 1; letter-spacing: -0.03em; }
-.live-unit { grid-area: unit; align-self: end; margin: 0; color: var(--text-muted); font-size: var(--fs-small); line-height: 1.25; }
-.live-sub { grid-area: sub; align-self: start; margin: 0; color: var(--text); font-size: var(--fs-small); font-variant-numeric: tabular-nums; line-height: 1.3; }
-.live-text { grid-area: text; margin: 0; color: var(--text); font-family: var(--font-display); font-weight: 340; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.05; text-wrap: balance; }
-.live-money { grid-area: money; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.125rem 1rem; margin: 0.375rem 0 0; color: var(--accent-text); font-size: var(--fs-lead); font-weight: 500; line-height: 1.2; }
-.live-money > span { display: inline-flex; align-items: baseline; }
-.live-money > span + span { color: var(--text-muted); font-size: var(--fs-small); font-weight: 400; }
+.live { z-index: 2; display: flex; flex-direction: column; gap: 1.25rem; min-width: 0; padding: 1.5rem 1.25rem; border-radius: 1.25rem; }
+.live-body { display: grid; gap: 0.5rem; min-width: 0; }
+.live-label { margin: 0; color: var(--text-muted); font-size: var(--fs-small); }
+.live-figure { container-type: inline-size; min-width: 0; }
+.live-big { margin: 0; color: var(--text); font-family: var(--font-display); font-weight: 340; font-size: clamp(2.5rem, calc(150cqw / var(--chars, 9)), 8rem); line-height: 1; letter-spacing: -0.03em; white-space: nowrap; }
+.live-big--empty { font-size: clamp(2.5rem, 12vw, 5rem); color: var(--text-subtle); }
+.live-sub { margin: 0; color: var(--text); font-size: var(--fs-lead); font-variant-numeric: tabular-nums; }
+.live-sub b { font-weight: 600; }
+.live-sources { margin: 0.25rem 0 0; color: var(--text-subtle); font-size: var(--fs-tiny); line-height: 1.5; }
+.live-sticky { display: grid; gap: 1.25rem; align-content: start; min-width: 0; }
+.live-actions { display: grid; gap: 0.5rem; }
+.live-action { width: 100%; }
+.live-sub--empty, .live-sub--empty b { color: var(--text-subtle); }
+.live-sent { margin: 0; color: var(--text); font-size: var(--fs-small); overflow-wrap: anywhere; }
+.live .btn-ghost { border-color: var(--control-border); color: var(--text); }
 
 /* odômetro: cada dígito é uma pilha 0-9 no CSS (fora do HTML) deslocada por transform */
 .odo { --lh: 1.12; display: inline-flex; height: calc(var(--lh) * 1em); line-height: var(--lh); font-variant-numeric: tabular-nums lining-nums; white-space: pre; }
@@ -94,67 +125,55 @@
 /* antes de entrar na tela os dígitos esperam no zero (sem JS, o número já aparece certo) */
 .js .odo[data-armed="false"] .odo-col::before { transition: none; transform: none; }
 
-/* ------------------------------------ conta -------------------------------- */
-
-.account { display: flex; flex-direction: column; gap: 0.75rem; min-width: 0; padding: 1.25rem; border-radius: 1.25rem; }
-/* cinza = o tempo de hoje, laranja suave = até o teto, laranja cheio = o piso (as três faixas também estão escritas) */
-.bar { position: relative; height: 1.25rem; flex: none; overflow: hidden; border-radius: 0.5rem; background: color-mix(in oklab, var(--text) 16%, var(--surface)); }
+/* cinza = o tempo de hoje, laranja suave = até o teto, laranja cheio = o prudente (as faixas também estão escritas) */
+.bar { position: relative; height: 1.25rem; margin-top: 0.5rem; overflow: hidden; border-radius: 0.5rem; background: color-mix(in oklab, var(--text) 16%, var(--surface)); }
 .bar > span { position: absolute; inset: 0; transform-origin: left center; transition: transform 520ms var(--ease-out); }
 .bar-high { background: color-mix(in oklab, var(--color-accent) 55%, var(--surface)); transform: scaleX(var(--high)); }
 .bar-low { background: var(--color-accent); transform: scaleX(var(--low)); }
 .bar-legend { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.125rem 1rem; margin: 0; color: var(--text-muted); font-size: var(--fs-small); font-variant-numeric: tabular-nums; }
 .bar-legend b { color: var(--text); font-weight: 600; }
-.account-formula { margin: 0; color: var(--text); font-size: var(--fs-small); font-variant-numeric: tabular-nums; line-height: 1.45; }
-.calc-cta { align-self: flex-start; margin-top: 0.5rem; }
-.result-sources { margin: 0; color: var(--text-subtle); font-size: var(--fs-small); line-height: 1.5; }
-.result-sources a { color: var(--text-muted); text-decoration: underline; text-underline-offset: 3px; }
-@media (hover: hover) and (pointer: fine) {
-  .result-sources a:hover { color: var(--text); }
-}
-.result-sources a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 0.25rem; }
+
+/* ---------------------------------- diálogo -------------------------------- */
+
+.sheet { margin: auto; width: min(32rem, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); padding: 0; border: 0; border-radius: 1.5rem; background: var(--surface); color: var(--text); overflow: auto; overscroll-behavior: contain; }
+.sheet::backdrop { background: color-mix(in oklab, var(--color-ink-950) 72%, transparent); }
+.sheet-body { display: grid; gap: 1.25rem; padding: 1.75rem 1.5rem 1.5rem; }
+.sheet-title { margin: 0; font-family: var(--font-display); font-weight: 350; font-size: var(--fs-h3); line-height: 1.1; }
+.sheet-report { display: grid; gap: 1rem; padding: 1.25rem; border: 1px solid var(--border); border-radius: 1.25rem; background: var(--surface-raised); }
+.sheet-h { margin: 0; font-size: var(--fs-body); font-weight: 600; }
+.sheet-list { margin: -0.5rem 0 0; color: var(--text-muted); font-size: var(--fs-small); }
+.sheet-send { width: 100%; }
+.sheet-fine { margin: 0; color: var(--text-muted); font-size: var(--fs-tiny); line-height: 1.5; }
+.sheet-fine a, .field-error a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.sheet-number { display: flex; align-items: center; gap: 0.875rem; }
+.text-input { width: 100%; min-height: 2.75rem; padding: 0 0.875rem; border: 1px solid var(--control-border); border-radius: 0.75rem; background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-body); }
+.text-input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.text-input[aria-invalid="true"] { border-color: var(--danger-text); }
+.field-error { margin: 0.25rem 0 0; color: var(--danger-text); font-size: var(--fs-small); }
+.check { display: flex; align-items: center; gap: 0.75rem; min-height: 2.75rem; font-size: var(--fs-small); font-weight: 500; cursor: pointer; }
+.check input { width: 1.375rem; height: 1.375rem; margin: 0; accent-color: var(--btn-bg); }
+.check input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+/* armadilha para robô: fora da tela, sem tomar espaço */
+.trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
 /* --------------------------------- larguras -------------------------------- */
 
-/* Celular em pé: o cartão do número fica fixo sob o cabeçalho (4,5 rem) enquanto se mexe nos controles.
-   A sombra de papel tapa a fresta entre o cabeçalho e o cartão, por onde os controles apareceriam. */
-@media (max-width: 599px) and (min-height: 560px) {
-  .live { position: sticky; top: 4.75rem; box-shadow: 0 -1rem 0 0 var(--color-paper); }
-}
-
-/* Tablet: o cartão do número continua baixo (número ao lado da unidade), só com mais respiro. */
 @media (min-width: 600px) {
-  .live { padding: 1.5rem; }
-  .live-body { gap: 0 1.5rem; }
-  .live-big { font-size: 4.5rem; }
-  .live-unit { font-size: var(--fs-lead); }
-  .live-sub { font-size: var(--fs-body); }
-  .live-money { font-size: clamp(1.375rem, 2.2vw, 1.875rem); }
+  .live { padding: 2rem; }
   .calc-controls { padding-inline: 1.75rem; }
-  .account { padding: 1.5rem; }
+  .sheet-body { padding: 2rem; }
 }
 
 /* Desktop: tinta e papel viram um objeto só, da mesma altura. O botão desce para o pé do painel. */
 @media (min-width: 900px) {
-  .calc { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); grid-template-areas: "live controls" "account controls"; grid-template-rows: auto 1fr; gap: 0; }
-  .calc-main { display: contents; }
-  .calc .live { grid-area: live; padding: 2.5rem 2.5rem 0.5rem; border-radius: 2rem 0 0 0; }
-  .calc .account { grid-area: account; margin-top: -1px; padding: 0.5rem 2.5rem 2.5rem; border-radius: 0 0 0 2rem; }
-  .calc .calc-controls { grid-area: controls; padding: 0.5rem 2.5rem; border-left: 0; border-radius: 0 2rem 2rem 0; }
-  .calc-cta { margin-top: auto; }
-  .result-sources { margin-top: 0.5rem; }
-  /* o número vira cartaz: ocupa a largura do painel e encolhe com a quantidade de dígitos */
-  .live-body { grid-template-columns: minmax(0, 1fr); grid-template-areas: "big" "unit" "money"; align-items: start; gap: 0.25rem; }
-  .live-body--text { grid-template-areas: "text" "sub"; }
-  .live-figure { container-type: inline-size; }
-  .live-big { font-size: clamp(3.5rem, calc(135cqw / var(--chars, 3)), 9rem); }
-  .live-sub { display: none; }
-  .live-body--text .live-sub { display: block; }
-}
-
-@media (max-width: 380px) {
-  .calc-cta { align-self: stretch; }
+  .calc { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 0; }
+  .calc > .live { order: 1; padding: 2.5rem; border-radius: 2rem 0 0 2rem; }
+  /* a tinta é a altura toda; o conteúdo acompanha a rolagem e o botão nunca sai da tela */
+  .live-sticky { position: sticky; top: 5.5rem; }
+  .calc > .calc-controls { order: 2; padding: 0.5rem 2.5rem; border-left: 0; border-radius: 0 2rem 2rem 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .choice span, .odo-col::before, .slider::-webkit-slider-thumb, .slider::-moz-range-thumb, .bar > span { transition: none; }
+  .choice span, .odo-col::before, .slider::-webkit-slider-thumb, .slider::-moz-range-thumb, .bar > span, .routine--row { transition: none; }
 }

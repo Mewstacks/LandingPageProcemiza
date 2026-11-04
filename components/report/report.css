@@ -1,0 +1,31 @@
+/* Relatório na página: papel, serifa no número, tabela simples. Impressão limpa (sem cabeçalho nem rodapé do site). */
+main.report-page { background: linear-gradient(to bottom, var(--color-ink-950) 0 11rem, var(--color-paper) 11rem); }
+.report-wrap { padding-block: calc(var(--section-y) + 4.5rem) var(--section-y); }
+.report { display: grid; gap: 2rem; max-width: 46rem; margin-inline: auto; color: var(--text); }
+.report p, .report li { font-size: var(--fs-body); line-height: 1.55; }
+.report-wait { max-width: 46rem; margin-inline: auto; color: var(--text); }
+.report-head { display: grid; gap: 0.5rem; padding: 2rem; border-radius: 1.5rem; background: var(--color-ink-850); color: var(--color-paper); }
+.report .report-head p.report-meta { color: var(--color-mist); }
+.report p.report-label { margin: 0; color: var(--color-mist); font-size: var(--fs-small); }
+.report p.report-big { margin: 0; font-family: var(--font-display); font-weight: 340; font-size: clamp(2.75rem, 11vw, 5rem); line-height: 1; letter-spacing: -0.03em; }
+.report p.report-sub { margin: 0; font-size: var(--fs-lead); }
+.report p.report-meta { margin: 0; color: var(--text-muted); font-size: var(--fs-small); line-height: 1.5; }
+.report-h { margin: 0 0 0.75rem; color: var(--text-muted); font-size: var(--fs-tiny); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.report-table { width: 100%; border-collapse: collapse; font-size: var(--fs-small); font-variant-numeric: tabular-nums; }
+.report-table th, .report-table td { padding: 0.75rem 0.5rem; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+.report-table thead th { color: var(--text-muted); font-size: var(--fs-tiny); font-weight: 500; }
+.report-table tbody th, .report-table tfoot th { font-weight: 600; }
+.report-table th span { display: block; color: var(--text-muted); font-size: var(--fs-tiny); font-weight: 400; }
+.report-table td:last-child, .report-table th:last-child { text-align: right; }
+.report-table tfoot td, .report-table tfoot th { border-bottom: 0; font-weight: 600; }
+.report ul { margin: 0; padding-left: 1.25rem; list-style: disc; }
+.report a:not(.btn) { color: var(--accent-text); text-underline-offset: 3px; }
+.report-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.report-actions .btn-ghost { border-color: var(--control-border); }
+@media (max-width: 599px) { .report-table { font-size: var(--fs-tiny); } .report-head { padding: 1.5rem 1.25rem; } }
+@media print {
+  .site-header, .site-footer, .consent, .skip-link, .report-actions, .page-hero { display: none !important; }
+  main.report-page { background: none; }
+  .report-head { background: none; color: #000; border: 1px solid #000; }
+  .report .report-head p.report-meta, .report p.report-label { color: #333; }
+}
