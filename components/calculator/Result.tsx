@@ -9,6 +9,8 @@ type Props = {
   /** E-mail para onde o relatório foi, quando foi. */
   sentTo: string | null;
   spoken: string;
+  /** O que a pessoa montou, uma linha por item. */
+  recap: string[];
   whatsappUrl: string;
   onReveal: () => void;
   onReport: () => void;
@@ -23,24 +25,18 @@ const range = (a: number, b: number) => (formatHours(a) === formatHours(b) ? `${
  * dígitos que rolam, o Prudente ao lado e a faixa em barra. Os dígitos são desenho (`aria-hidden`):
  * quem fala é `spoken`, numa região educada.
  */
-export function Result({ outcome, revealed, sentTo, spoken, whatsappUrl, onReveal, onReport }: Props) {
+export function Result({ outcome, revealed, sentTo, spoken, recap, whatsappUrl, onReveal, onReport }: Props) {
   const ok = outcome.status === "ok";
 
   if (!revealed || !ok) {
     return (
       <section className="live theme-dark" aria-label="Resultado" data-ui>
         <div className="live-sticky">
-        <div className="live-body" aria-hidden="true">
-          <p className="live-label">Devolvidos por ano, até</p>
-          <p className="live-big live-big--empty">R$ ———</p>
-          <p className="live-sub live-sub--empty">Prudente <b>R$ ———</b></p>
-          <div className="bar" />
-          <p className="bar-legend">
-            <span>Voltam <b>— h</b> por mês</span>
-            <span>Hoje — h</span>
-          </p>
-          <p className="live-sources">{SOURCES}</p>
-        </div>
+        <ul className="live-recap">
+          {recap.map((line, i) => (
+            <li key={i}>{line}</li>
+          ))}
+        </ul>
         <div className="live-actions">
           <button type="button" className="btn btn-primary live-action" onClick={onReveal} disabled={!ok}>
             Ver resultado

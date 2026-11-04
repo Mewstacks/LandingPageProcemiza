@@ -8,18 +8,19 @@
 .calc-section { padding-block: var(--section-y); }
 .calc-title { margin: 0 0 clamp(1.5rem, 3vw, 2.25rem); font-family: var(--font-display); font-weight: 350; font-size: var(--fs-display); line-height: 1.04; letter-spacing: -0.02em; text-wrap: balance; }
 
-.calc { display: grid; gap: 0.75rem; min-width: 0; }
-.calc > .live { order: 2; }
-.calc > .calc-controls { order: 1; }
-
-/* ---------------------------------- controles ------------------------------ */
-
-.calc-controls { display: grid; align-content: start; min-width: 0; padding: 0 1.25rem; border: 1px solid var(--border); border-radius: 1.25rem; background: var(--surface-raised); }
+/* um cartão só, no centro, como Wise: etapas no alto, uma coisa por vez, botão embaixo */
+.calc { display: grid; gap: 1.5rem; min-width: 0; max-width: 40rem; margin-inline: auto; padding: 1.5rem 1.25rem; border: 1px solid var(--border); border-radius: 1.75rem; background: var(--surface-raised); }
+.stepper { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.stepper-item { display: grid; gap: 0.5rem; }
+.stepper-bar { height: 0.25rem; border-radius: 999px; background: var(--control-border); }
+.stepper-item[data-state="done"] .stepper-bar, .stepper-item[data-state="now"] .stepper-bar { background: var(--text); }
+.stepper-label { color: var(--text-muted); font-size: var(--fs-small); }
+.stepper-item[data-state="now"] .stepper-label { color: var(--text); font-weight: 600; }
+.step { display: grid; gap: 1.5rem; min-width: 0; }
+.calc-nav { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.calc-nav .btn-primary { min-width: 10rem; }
 .field, .field-group { display: grid; gap: 0.25rem; min-width: 0; margin: 0; padding: 0; border: 0; }
 .field-group { gap: 0.5rem; }
-/* uma linha fina entre os blocos, sem caixa em volta de cada um */
-.calc-controls > * { padding-block: 1.25rem; border-top: 1px solid var(--border); }
-.calc-controls > :first-child { border-top: 0; }
 .field-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
 .field-label { display: block; padding: 0; margin-bottom: 0.75rem; color: var(--text-muted); font-size: var(--fs-small); font-weight: 500; line-height: 1.3; }
 .field-head .field-label { margin-bottom: 0; }
@@ -29,8 +30,7 @@
 /* rotinas: a aberta mostra os controles; as outras viram uma linha */
 .routines { display: grid; gap: 0.5rem; min-width: 0; }
 .routine--open { display: grid; gap: 0; }
-.routine--open > .field, .routine--open > .field-group { padding-block: 0.875rem; border-top: 1px solid var(--border); }
-.routine--open > :first-child { padding-top: 0; border-top: 0; }
+.routine--open { gap: 1.5rem; }
 .routine--row { display: flex; align-items: center; gap: 0.875rem; width: 100%; min-height: 2.75rem; padding: 0.5rem 0.875rem; border: 1px solid var(--control-border); border-radius: 0.875rem; background: transparent; color: var(--text); font: inherit; font-size: var(--fs-small); text-align: left; cursor: pointer; transition: background-color var(--duration-fast) ease; }
 .routine-n { display: inline-grid; place-items: center; flex: none; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--text); color: var(--surface-raised); font-size: var(--fs-tiny); font-weight: 600; }
 .routine-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -95,7 +95,7 @@
 
 /* ---------------------------------- painel de tinta ------------------------ */
 
-.live { z-index: 2; display: flex; flex-direction: column; gap: 1.25rem; min-width: 0; padding: 1.5rem 1.25rem; border-radius: 1.25rem; }
+.live { display: flex; flex-direction: column; gap: 1.25rem; min-width: 0; padding: 1.5rem 1.25rem; border-radius: 1.25rem; }
 .live-body { display: grid; gap: 0.5rem; min-width: 0; }
 .live-label { margin: 0; color: var(--text-muted); font-size: var(--fs-small); }
 .live-figure { container-type: inline-size; min-width: 0; }
@@ -104,7 +104,10 @@
 .live-sub { margin: 0; color: var(--text); font-size: var(--fs-lead); font-variant-numeric: tabular-nums; }
 .live-sub b { font-weight: 600; }
 .live-sources { margin: 0.25rem 0 0; color: var(--text-subtle); font-size: var(--fs-tiny); line-height: 1.5; }
-.live-sticky { display: grid; gap: 1.25rem; align-content: start; min-width: 0; }
+.live-sticky { display: grid; gap: 1.5rem; align-content: start; min-width: 0; }
+.live-recap { display: grid; gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
+.live-recap li { padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); color: var(--text); font-family: var(--font-display); font-size: var(--fs-lead); font-weight: 340; line-height: 1.25; }
+.live-recap li:last-child { padding-bottom: 0; border-bottom: 0; }
 .live-actions { display: grid; gap: 0.5rem; }
 .live-action { width: 100%; }
 .live-sub--empty, .live-sub--empty b { color: var(--text-subtle); }
@@ -160,20 +163,16 @@
 /* --------------------------------- larguras -------------------------------- */
 
 @media (min-width: 600px) {
+  .calc { padding: 2rem; }
   .live { padding: 2rem; }
-  .calc-controls { padding-inline: 1.75rem; }
   .sheet-body { padding: 2rem; }
-}
-
-/* Desktop: tinta e papel viram um objeto só, da mesma altura. O botão desce para o pé do painel. */
-@media (min-width: 900px) {
-  .calc { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 0; }
-  .calc > .live { order: 1; padding: 2.5rem; border-radius: 2rem 0 0 2rem; }
-  /* a tinta é a altura toda; o conteúdo acompanha a rolagem e o botão nunca sai da tela */
-  .live-sticky { position: sticky; top: 5.5rem; }
-  .calc > .calc-controls { order: 2; padding: 0.5rem 2.5rem; border-left: 0; border-radius: 0 2rem 2rem 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .choice span, .odo-col::before, .slider::-webkit-slider-thumb, .slider::-moz-range-thumb, .bar > span, .routine--row { transition: none; }
 }
+
+/* o valor é o protagonista do passo 2 */
+.who .money { min-height: 5rem; }
+.who .money-unit { font-size: var(--fs-h3); }
+.who .money-input { font-size: clamp(2.5rem, 9vw, 3.5rem); }
