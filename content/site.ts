@@ -51,7 +51,7 @@ export const hero = {
 } as const;
 
 export const calculator = {
-  title: "Quanto sua rotina devolve?",
+  title: "Qual meu ganho automatizando?",
 } as const;
 
 /** O fecho da página: a ideia do hero volta como cartaz e um convite. */
