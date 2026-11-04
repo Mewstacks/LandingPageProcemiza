@@ -131,7 +131,7 @@
 /* cinza = o tempo de hoje, laranja suave = até o teto, laranja cheio = o prudente (as faixas também estão escritas) */
 .bar { position: relative; height: 1.25rem; margin-top: 0.5rem; overflow: hidden; border-radius: 0.5rem; background: color-mix(in oklab, var(--text) 16%, var(--surface)); }
 .bar > span { position: absolute; inset: 0; transform-origin: left center; transition: transform 520ms var(--ease-out); }
-.bar-high { background: color-mix(in oklab, var(--color-accent) 55%, var(--surface)); transform: scaleX(var(--high)); }
+.bar-high { background: var(--color-accent); transform: scaleX(var(--high)); }
 .bar-low { background: var(--color-accent); transform: scaleX(var(--low)); }
 .bar-legend { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.125rem 1rem; margin: 0; color: var(--text-muted); font-size: var(--fs-small); font-variant-numeric: tabular-nums; }
 .bar-legend b { color: var(--text); font-weight: 600; }

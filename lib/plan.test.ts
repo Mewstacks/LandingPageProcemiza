@@ -16,11 +16,11 @@ describe("execuções por mês", () => {
 
 describe("uma rotina", () => {
   const out = evaluate({ routines: [copiar], pay });
-  it("30 min, 5 por semana: 10,83 h hoje e 60% a 90% voltam", () => {
+  it("30 min, 5 por semana: 10,83 h hoje e 60% a 93% voltam", () => {
     if (out.status !== "ok") throw new Error("esperava ok");
     expect(out.hoursBefore).toBeCloseTo(10.833, 2);
     expect(out.prudent.hours).toBeCloseTo(6.5, 2);
-    expect(out.ceiling.hours).toBeCloseTo(9.75, 2);
+    expect(out.ceiling.hours).toBeCloseTo(10.075, 2);
     expect(out.prudent.share).toBeCloseTo(0.6, 5);
   });
   it("reais = horas × custo da hora × 12 por ano", () => {

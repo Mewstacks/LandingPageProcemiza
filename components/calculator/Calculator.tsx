@@ -60,7 +60,7 @@ export function Calculator({ titled = true }: { titled?: boolean }) {
   };
 
   const spokenNow =
-    revealed && outcome.status === "ok" ? `Devolve até ${formatBRL(outcome.ceiling.brlYear)} por ano. Prudente: ${formatBRL(outcome.prudent.brlYear)}.` : "";
+    revealed && outcome.status === "ok" ? `Devolve até ${formatBRL(outcome.ceiling.brlYear)} por ano.` : "";
   const spoken = useDebounced(spokenNow, 700);
 
   const reveal = () => {

@@ -9,7 +9,8 @@
  * - MIT SMR 2016 (Lacity e Willcocks): verificação de regra, 30 pessoas → cerca de 12 (−60%).
  * - LSE 15/03 (Xchanging, 2015): 93% dos casos sem humano, 7% voltam para pessoas. Um caso, Blue Prism.
  * - MGI 2023, Exhibit 10: processar dados 90,5%, coletar 79%, aplicar expertise 58,5%, interagir 45%.
- * - Dell'Acqua et al. 2026: tarefas dentro da fronteira 25,1% mais rápidas; fora dela, pior.
+ * - Dell'Acqua et al. 2026: tarefas dentro da fronteira 25,1% mais rápidas; fora dela, pior (base do Prudente de Procurar).
+ * Teto = potencial técnico do MGI 2023 (ou 93% do Xchanging para copiar e conferir): máximo teórico, nunca promessa.
  * - Brynjolfsson, Li e Raymond (QJE 2025): atendimento +14% por hora, novatos +34%.
  */
 export type Kind = "dados" | "conferir" | "avisar" | "buscar" | "decidir" | "pessoas";
@@ -24,12 +25,12 @@ export type Evidence = {
 };
 
 export const KINDS: readonly Evidence[] = [
-  { id: "dados", label: "Copiar ou digitar", short: "Copiar", prudent: 0.6, ceiling: 0.9, source: "MIT SMR 2016 · MGI 2023 · LSE 2015" },
-  { id: "conferir", label: "Conferir com regra", short: "Conferir", prudent: 0.6, ceiling: 0.9, source: "MIT SMR 2016 · MGI 2023 · LSE 2015" },
-  { id: "avisar", label: "Avisar ou enviar", short: "Avisar", prudent: 0.6, ceiling: 0.9, source: "MIT SMR 2016 · MGI 2023" },
+  { id: "dados", label: "Copiar ou digitar", short: "Copiar", prudent: 0.6, ceiling: 0.93, source: "MIT SMR 2016 · MGI 2023 · LSE 2015" },
+  { id: "conferir", label: "Conferir com regra", short: "Conferir", prudent: 0.6, ceiling: 0.93, source: "MIT SMR 2016 · MGI 2023 · LSE 2015" },
+  { id: "avisar", label: "Avisar ou enviar", short: "Avisar", prudent: 0.6, ceiling: 0.905, source: "MIT SMR 2016 · MGI 2023" },
   { id: "buscar", label: "Procurar ou juntar", short: "Procurar", prudent: 0.25, ceiling: 0.79, source: "Dell'Acqua 2026 · MGI 2023" },
-  { id: "decidir", label: "Analisar ou decidir", short: "Analisar", prudent: 0, ceiling: 0.25, source: "Dell'Acqua 2026" },
-  { id: "pessoas", label: "Falar com gente", short: "Conversar", prudent: 0, ceiling: 0.34, source: "Brynjolfsson 2025" },
+  { id: "decidir", label: "Analisar ou decidir", short: "Analisar", prudent: 0, ceiling: 0.585, source: "MGI 2023" },
+  { id: "pessoas", label: "Falar com gente", short: "Conversar", prudent: 0, ceiling: 0.45, source: "MGI 2023" },
 ];
 
 export type Source = { name: string; year: number; note: string; url: string };

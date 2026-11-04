@@ -18,8 +18,6 @@ type Props = {
 
 const SOURCES = "MIT SMR 2016 · LSE 2015 · MGI 2023";
 
-const range = (a: number, b: number) => (formatHours(a) === formatHours(b) ? `${formatHours(a)} h` : `${formatHours(a)} a ${formatHours(b)} h`);
-
 /**
  * O painel de tinta. Antes do clique é um esqueleto com um botão só. Depois, o número do Teto em
  * dígitos que rolam, o Prudente ao lado e a faixa em barra. Os dígitos são desenho (`aria-hidden`):
@@ -57,13 +55,11 @@ export function Result({ outcome, revealed, sentTo, spoken, recap, whatsappUrl, 
         <div className="live-figure" style={{ "--chars": text.length } as CSSProperties}>
           <p className="live-big"><Odometer text={text} /></p>
         </div>
-        <p className="live-sub">Prudente <b>{formatBRL(outcome.prudent.brlYear)}</b></p>
-        <div className="bar" style={{ "--high": outcome.ceiling.share, "--low": outcome.prudent.share } as CSSProperties}>
+        <div className="bar" style={{ "--high": outcome.ceiling.share } as CSSProperties}>
           <span className="bar-high" />
-          <span className="bar-low" />
         </div>
         <p className="bar-legend">
-          <span>Voltam <b>{range(outcome.prudent.hours, outcome.ceiling.hours)}</b> por mês</span>
+          <span>Voltam até <b>{formatHours(outcome.ceiling.hours)} h</b> por mês</span>
           <span>Hoje {formatHours(outcome.hoursBefore)} h</span>
         </p>
         <p className="live-sources">{SOURCES}</p>
