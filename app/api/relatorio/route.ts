@@ -67,8 +67,11 @@ export async function POST(req: Request) {
   // Robô recebe "ok" e nada acontece: não ensina o que o barrou.
   if (looksLikeBot(trap)) return json(200, { ok: true });
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
-  if (!allow(`ip:${ip ?? "?"}`, 20, 3_600_000) || !allow(`mail:${lead.email}`, 3, 3_600_000)) return json(429, { error: "rate" });
+  // por IP antes do desafio (limita as chamadas ao siteverify); por e-mail só depois, para que quem
+  // não passa no desafio não gaste a cota de um endereço alheio
+  if (!allow(`ip:${ip ?? "?"}`, 20, 3_600_000)) return json(429, { error: "rate" });
   if (!(await turnstileOk(turnstile, ip))) return json(400, { error: "challenge" });
+  if (!allow(`mail:${lead.email}`, 3, 3_600_000)) return json(429, { error: "rate" });
 
   const resend = getResend();
   const team = process.env.LEADS_TO_EMAIL;
