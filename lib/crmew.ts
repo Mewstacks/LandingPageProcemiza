@@ -18,7 +18,7 @@ export function crmewPayload(r: ReportModel, lead: Lead, formId: string) {
       contact_phone: lead.whatsapp ?? "",
       wants_contact: lead.wantsContact,
       origin: "site",
-      value_year_prudent: r.headline.prudent,
+      value_year_prudent: r.internal.prudent,
       value_year_ceiling: r.headline.ceiling,
       notes: [`Relatório ${r.id}`, ...r.rows.map((x) => `${x.label}, ${x.time}, ${x.freq}: voltam ${x.hoursBack}, ${x.brlYear}/ano`), ...r.how, r.reportUrl].join("\n"),
     },

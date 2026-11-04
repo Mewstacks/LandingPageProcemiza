@@ -19,7 +19,9 @@ export type ReportModel = {
   company: string;
   subject: string;
   preheader: string;
-  headline: { ceiling: string; prudent: string; hoursBack: string; people: string; share: string; threeYears: string };
+  headline: { ceiling: string; hoursBack: string; people: string; share: string; threeYears: string };
+  /** Só para a equipe e o CRMew: nunca vai ao relatório do lead. */
+  internal: { prudent: string };
   rows: ReportRow[];
   totals: { hoursNow: string; hoursBack: string; brlYear: string };
   how: string[];
@@ -43,7 +45,7 @@ const OUTSIDE = [
 ];
 
 const LIMITS_TEXT =
-  "Faixa, não promessa. O Prudente vem de casos e experimentos medidos; o Teto é o potencial técnico, que a pesquisa descreve como máximo teórico. Não há estudo com PMEs brasileiras. As horas devolvidas só viram dinheiro se forem reaproveitadas.";
+  "Teto, não promessa: é o potencial técnico que a pesquisa descreve como máximo teórico. Não há estudo com PMEs brasileiras. As horas devolvidas só viram dinheiro se forem reaproveitadas.";
 
 function fnv(s: string): number {
   let h = 2166136261;
@@ -59,8 +61,6 @@ export function reportId(plan: Plan, email: string, now: Date): string {
   const tag = fnv(`${encodePlan(plan)}|${email.toLowerCase()}|${day}`).toString(36).toUpperCase().padStart(4, "0").slice(-4);
   return `PRC-${day}-${tag}`;
 }
-
-const range = (a: number, b: number, f: (n: number) => string) => (f(a) === f(b) ? f(a) : `${f(a)} a ${f(b)}`);
 
 export function buildReport(plan: Plan, lead: Lead, now: Date, origin: string, whatsappBase: string): ReportModel | null {
   const out = evaluate(plan);
@@ -79,8 +79,8 @@ function model(plan: Plan, o: Outcome, lead: Lead, now: Date, origin: string, wh
     time: formatMinutes(l.routine.minutes),
     freq: `${l.routine.runs} ${PERIOD[l.routine.period]}`,
     hoursNow: `${formatHours(l.hoursBefore)} h`,
-    hoursBack: `${range(l.prudent.hours, l.ceiling.hours, formatHours)} h`,
-    brlYear: range(l.prudent.brlYear, l.ceiling.brlYear, formatBRL),
+    hoursBack: `até ${formatHours(l.ceiling.hours)} h`,
+    brlYear: `até ${formatBRL(l.ceiling.brlYear)}`,
   }));
 
   const how: string[] = [];
@@ -97,10 +97,10 @@ function model(plan: Plan, o: Outcome, lead: Lead, now: Date, origin: string, wh
   );
   const kinds = [...new Set(plan.routines.map((r) => r.kind))].map(evidenceOf).filter((e) => e !== undefined);
   how.push(
-    `Parte do tempo que volta por tipo de trabalho: ${kinds.map((k) => `${k.short} ${formatPercent(k.prudent)} a ${formatPercent(k.ceiling)}`).join(", ")}. Prudente a Teto.`,
+    `Teto da parte do tempo que volta, por tipo de trabalho: ${kinds.map((k) => `${k.short} ${formatPercent(k.ceiling)}`).join(", ")}.`,
   );
 
-  const text = `Olá! Pedi o relatório ${id} no site: até ${ceiling} por ano devolvidos (prudente ${prudent}). Quero conversar sobre automatizar essas rotinas.`;
+  const text = `Olá! Pedi o relatório ${id} no site: até ${ceiling} por ano devolvidos. Quero conversar sobre automatizar essas rotinas.`;
 
   return {
     id,
@@ -111,21 +111,21 @@ function model(plan: Plan, o: Outcome, lead: Lead, now: Date, origin: string, wh
     preheader: "Conta por rotina, premissas e fontes. PDF em anexo.",
     headline: {
       ceiling,
-      prudent,
-      hoursBack: `${range(o.prudent.hours, o.ceiling.hours, formatHours)} h por mês`,
-      people: `${range(o.prudent.fte, o.ceiling.fte, (n) => formatFixed(n, 1))} pessoa${o.ceiling.fte >= 1.05 ? "s" : ""} em tempo integral`,
-      share: `${formatPercent(o.prudent.share)} a ${formatPercent(o.ceiling.share)} do tempo de hoje`,
-      threeYears: range(o.threeYears.prudent, o.threeYears.ceiling, formatBRL),
+      hoursBack: `até ${formatHours(o.ceiling.hours)} h por mês`,
+      people: `até ${formatFixed(o.ceiling.fte, 1)} pessoa${o.ceiling.fte >= 1.05 ? "s" : ""} em tempo integral`,
+      share: `até ${formatPercent(o.ceiling.share)} do tempo de hoje`,
+      threeYears: `até ${formatBRL(o.threeYears.ceiling)}`,
     },
+    internal: { prudent },
     rows,
     totals: {
       hoursNow: `${formatHours(o.hoursBefore)} h`,
-      hoursBack: `${range(o.prudent.hours, o.ceiling.hours, formatHours)} h`,
-      brlYear: range(o.prudent.brlYear, o.ceiling.brlYear, formatBRL),
+      hoursBack: `até ${formatHours(o.ceiling.hours)} h`,
+      brlYear: `até ${formatBRL(o.ceiling.brlYear)}`,
     },
     how,
-    invest: { m12: formatBRL(o.invest.m12), m24: formatBRL(o.invest.m24) },
-    sensitivity: `Se o tempo informado estiver 25% alto, o Prudente cai para ${formatBRL(o.sensitivity.brlYear)} por ano.`,
+    invest: { m12: formatBRL(o.ceiling.brlYear), m24: formatBRL(o.ceiling.brlYear * 2) },
+    sensitivity: `Se o tempo informado estiver 25% alto, o teto cai para ${formatBRL(o.ceiling.brlYear * 0.75)} por ano.`,
     outside: OUTSIDE,
     sources: SOURCES,
     limits: LIMITS_TEXT,

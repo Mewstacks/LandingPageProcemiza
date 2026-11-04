@@ -20,7 +20,8 @@ describe("relatório", () => {
     expect(r.rows).toHaveLength(2);
     expect(r.firstName).toBe("Ana");
     expect(r.subject).toMatch(/^Seu relatório: até R\$ [\d.]+ por ano devolvidos$/);
-    expect(r.headline.prudent).toMatch(/R\$/);
+    expect(r.internal.prudent).toMatch(/R\$/);
+    expect(JSON.stringify({ ...r, internal: null })).not.toMatch(/prudente/i);
   });
   it("id tem o formato PRC-AAAAMMDD-XXXX e é estável para o mesmo pedido", () => {
     expect(r.id).toMatch(/^PRC-20261104-[0-9A-Z]{4}$/);

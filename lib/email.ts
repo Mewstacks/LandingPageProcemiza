@@ -36,7 +36,6 @@ export function reportEmail(r: ReportModel): { html: string; text: string } {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${INK};border-radius:12px"><tr><td style="padding:28px 24px;font-family:${SANS};color:${PAPER}">
 <p style="margin:0 0 6px;font-size:13px;color:#cbc8c0">Devolvidos por ano, até</p>
 <p style="margin:0;font-family:${SERIF};font-size:44px;line-height:1.1;color:#ffffff">${esc(r.headline.ceiling)}</p>
-<p style="margin:10px 0 0;font-size:15px;color:#ffffff">Prudente: <strong>${esc(r.headline.prudent)}</strong></p>
 <p style="margin:14px 0 0;font-size:14px;color:#cbc8c0">${esc(r.headline.hoursBack)} · ${esc(r.headline.people)}<br>${esc(r.headline.share)}<br>Em 3 anos: ${esc(r.headline.threeYears)}</p>
 </td></tr></table>
 
@@ -52,7 +51,7 @@ ${h("Como chegamos")}
 ${r.how.map((t) => `<p style="margin:0 0 8px;font-family:${SANS};font-size:14px;line-height:1.55;color:${INK}">${esc(t)}</p>`).join("")}
 
 ${h("Teto de investimento")}
-<p style="margin:0;font-family:${SANS};font-size:15px;line-height:1.55;color:${INK}">Se a implantação custar até <strong>${esc(r.invest.m12)}</strong> o prudente paga em 12 meses; até <strong>${esc(r.invest.m24)}</strong>, em 24.</p>
+<p style="margin:0;font-family:${SANS};font-size:15px;line-height:1.55;color:${INK}">Se a implantação custar até <strong>${esc(r.invest.m12)}</strong>, o teto paga em 12 meses; até <strong>${esc(r.invest.m24)}</strong>, em 24.</p>
 
 ${h("Fora da conta")}
 <ul style="margin:0;padding-left:20px;font-family:${SANS};font-size:14px;line-height:1.6;color:${INK}">${r.outside.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
@@ -77,7 +76,7 @@ ${body}
     `Relatório nº ${r.id} · ${r.dateLabel}`,
     `Olá, ${r.firstName}. A sua conta:`,
     "",
-    `Devolvidos por ano, até ${r.headline.ceiling}. Prudente: ${r.headline.prudent}.`,
+    `Devolvidos por ano, até ${r.headline.ceiling}.`,
     `${r.headline.hoursBack} · ${r.headline.people} · ${r.headline.share}`,
     `Em 3 anos: ${r.headline.threeYears}`,
     "",
@@ -90,7 +89,7 @@ ${body}
     ...r.how,
     "",
     "TETO DE INVESTIMENTO",
-    `Até ${r.invest.m12} o prudente paga em 12 meses; até ${r.invest.m24}, em 24.`,
+    `Até ${r.invest.m12} o teto paga em 12 meses; até ${r.invest.m24}, em 24.`,
     "",
     "FORA DA CONTA",
     ...r.outside.map((t) => `- ${t}`),
@@ -120,7 +119,7 @@ export function teamEmail(r: ReportModel, lead: Lead): { subject: string; text: 
       `Empresa: ${lead.company}`,
       `WhatsApp: ${lead.whatsapp || "não informado"}`,
       "",
-      `Até ${r.headline.ceiling}/ano (prudente ${r.headline.prudent})`,
+      `Até ${r.headline.ceiling}/ano (prudente ${r.internal.prudent})`,
       ...r.rows.map((x) => `- ${x.label}, ${x.time}, ${x.freq}: voltam ${x.hoursBack}, ${x.brlYear}/ano`),
       ...r.how,
       "",

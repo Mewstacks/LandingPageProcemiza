@@ -36,7 +36,6 @@ export function ReportView() {
         <p className="report-meta">{r.dateLabel}</p>
         <p className="report-label">Devolvidos por ano, até</p>
         <p className="report-big">{r.headline.ceiling}</p>
-        <p className="report-sub">Prudente <b>{r.headline.prudent}</b></p>
         <p className="report-meta">{r.headline.hoursBack} · {r.headline.people} · {r.headline.share}</p>
         <p className="report-meta">Em 3 anos: {r.headline.threeYears}</p>
       </header>
@@ -71,7 +70,7 @@ export function ReportView() {
 
       <section aria-labelledby="rp-teto">
         <h2 id="rp-teto" className="report-h">Teto de investimento</h2>
-        <p>Se a implantação custar até <b>{r.invest.m12}</b> o prudente paga em 12 meses; até <b>{r.invest.m24}</b>, em 24.</p>
+        <p>Se a implantação custar até <b>{r.invest.m12}</b> o teto paga em 12 meses; até <b>{r.invest.m24}</b>, em 24.</p>
       </section>
 
       <section aria-labelledby="rp-fora">

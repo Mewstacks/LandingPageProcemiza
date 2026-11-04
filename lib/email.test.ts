@@ -19,7 +19,7 @@ describe("e-mail do relatório", () => {
   });
   it("tem número, prudente, fontes, WhatsApp e texto simples", () => {
     expect(html).toContain(r.headline.ceiling);
-    expect(html).toContain("Prudente");
+    expect(html).not.toContain("Prudente");
     expect(html).toContain("mckinsey.com");
     expect(html).toContain("Falar no WhatsApp");
     expect(text).toContain(r.id);

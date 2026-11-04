@@ -63,12 +63,11 @@ export function reportDocument(r: ReportModel) {
       h(View, { key: "hero", style: s.hero }, [
         T(s.heroLabel, "Devolvidos por ano, até"),
         T(s.heroNum, r.headline.ceiling),
-        T(s.heroLine, `Prudente: ${r.headline.prudent}`),
         T(s.heroSub, `${r.headline.hoursBack} · ${r.headline.people}`),
         T(s.heroSub, `${r.headline.share} · Em 3 anos: ${r.headline.threeYears}`),
       ]),
       T(s.h2, "Em uma frase"),
-      T(s.p, `As rotinas informadas devolvem de ${r.headline.prudent} a ${r.headline.ceiling} por ano, contando só o tempo de quem faz. É uma faixa: o Prudente vem de casos e experimentos medidos; o Teto é o potencial técnico.`),
+      T(s.p, `As rotinas informadas devolvem até ${r.headline.ceiling} por ano, contando só o tempo de quem faz. É um teto: o potencial técnico descrito na pesquisa, não uma promessa.`),
       footer(r, 1),
     ]),
     h(Page, { size: "A4", style: s.page }, [
@@ -93,7 +92,7 @@ export function reportDocument(r: ReportModel) {
     ]),
     h(Page, { size: "A4", style: s.page }, [
       T(s.h2, "Teto de investimento"),
-      T(s.p, `Se a implantação custar até ${r.invest.m12}, o prudente paga em 12 meses; até ${r.invest.m24}, em 24.`),
+      T(s.p, `Se a implantação custar até ${r.invest.m12}, o teto paga em 12 meses; até ${r.invest.m24}, em 24.`),
       T(s.h2, "Fora da conta"),
       ...r.outside.map((t, i) => h(Text, { key: i, style: s.li }, `• ${t}`)),
       T(s.h2, "Fontes"),
