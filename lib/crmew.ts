@@ -13,7 +13,6 @@ export function crmewPayload(r: ReportModel, lead: Lead, formId: string) {
     response_id: r.id,
     lead: {
       company: lead.company,
-      contact_name: lead.name,
       contact_email: lead.email,
       contact_phone: lead.whatsapp ?? "",
       wants_contact: lead.wantsContact,

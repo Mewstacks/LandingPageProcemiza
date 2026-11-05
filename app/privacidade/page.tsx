@@ -40,7 +40,7 @@ export default function Page() {
         </PageSection>
         <PageSection id="relatorio" title="Relatório por e-mail">
           <p>
-            Se você pedir o relatório completo, enviamos nome, e-mail, empresa e a simulação (rotinas, salário ou custo informado,
+            Se você pedir o relatório completo, enviamos e-mail, empresa e a simulação (rotinas, salário ou custo informado,
             regime e benefícios) ao nosso servidor. Usamos esses dados para gerar e enviar o relatório e a Procemiza recebe um aviso
             com a simulação inteira. Base legal: procedimentos preliminares a pedido do titular (LGPD, art. 7º, V).
           </p>

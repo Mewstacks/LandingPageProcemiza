@@ -31,9 +31,18 @@ function originAllowed(req: Request): boolean {
   }
 }
 
+/** Só o motivo (nome da variável, código do provedor): nunca nome, e-mail ou empresa de quem enviou. */
+function why(reason: string, detail?: { name?: string; statusCode?: number | null }) {
+  console.error(`[relatorio] ${reason}`, detail ? `${detail.name ?? "erro"} ${detail.statusCode ?? ""}`.trim() : "");
+}
+
 async function turnstileOk(token: string, ip: string | null): Promise<boolean> {
   const secret = process.env.TURNSTILE_SECRET_KEY;
-  if (!secret) return process.env.NODE_ENV !== "production";
+  if (!secret) {
+    if (process.env.NODE_ENV !== "production") return true;
+    why("recusado: falta TURNSTILE_SECRET_KEY (em produção o endpoint exige o desafio)");
+    return false;
+  }
   if (!token) return false;
   try {
     const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
@@ -75,7 +84,10 @@ export async function POST(req: Request) {
 
   const resend = getResend();
   const team = process.env.LEADS_TO_EMAIL;
-  if (!resend || !team) return json(503, { error: "unavailable" });
+  if (!resend || !team) {
+    why(`indisponível: falta ${[!resend && "RESEND_API_KEY", !team && "LEADS_TO_EMAIL"].filter(Boolean).join(" e ")}`);
+    return json(503, { error: "unavailable" });
+  }
 
   const origin = process.env.NEXT_PUBLIC_SITE_URL ?? site.domain;
   const report = buildReport(plan, lead, new Date(), origin, site.contactUrl);
@@ -89,7 +101,10 @@ export async function POST(req: Request) {
     { from: DEFAULT_FROM_EMAIL, to: team, subject: notice.subject, text: notice.text, replyTo: lead.email },
     { idempotencyKey: `report-team/${report.id}` },
   );
-  if (toTeam.error) return json(502, { error: "send" });
+  if (toTeam.error) {
+    why("falhou o envio para a equipe", toTeam.error);
+    return json(502, { error: "send" });
+  }
 
   // 2) a pessoa: e-mail + PDF. Se o PDF falhar, o e-mail sai igual, com o link da página.
   const { html, text } = reportEmail(report);
@@ -111,7 +126,10 @@ export async function POST(req: Request) {
     },
     { idempotencyKey: `report-lead/${report.id}` },
   );
-  if (toLead.error) return json(502, { error: "send" });
+  if (toLead.error) {
+    why("falhou o envio para a pessoa", toLead.error);
+    return json(502, { error: "send" });
+  }
 
   // 3) CRMew depois da resposta: não segura a tela, e falhar não derruba nada.
   after(async () => {

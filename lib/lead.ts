@@ -45,13 +45,11 @@ export function parseLeadRequest(body: unknown): Parsed {
   const b = body as Record<string, unknown>;
   const l = (typeof b.lead === "object" && b.lead !== null ? b.lead : {}) as Record<string, unknown>;
 
-  const name = clean(l.name, 120);
   const email = clean(l.email, 254).toLowerCase();
   const company = clean(l.company, 120);
   const wantsContact = l.wantsContact === true;
   const whatsapp = clean(l.whatsapp, 30).replace(/[^\d+]/g, "");
 
-  if (name.length < 2) return { ok: false, field: "name" };
   if (!EMAIL.test(email)) return { ok: false, field: "email" };
   if (company.length < 2) return { ok: false, field: "company" };
   const digits = whatsapp.replace(/\D/g, "");
@@ -65,7 +63,7 @@ export function parseLeadRequest(body: unknown): Parsed {
     ok: true,
     value: {
       plan,
-      lead: { name, email, company, wantsContact, ...(wantsContact ? { whatsapp: digits } : {}) },
+      lead: { email, company, wantsContact, ...(wantsContact ? { whatsapp: digits } : {}) },
       trap: { website: clean(trap.website, 200), elapsedMs: typeof trap.elapsedMs === "number" ? trap.elapsedMs : 0 },
       turnstile: clean(b.turnstile, 2100),
     },

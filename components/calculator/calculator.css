@@ -47,11 +47,13 @@
 
 /* quem faz */
 .who { display: grid; gap: 1rem; min-width: 0; }
-.money { display: flex; align-items: baseline; gap: 0.5rem; min-height: 3.5rem; padding: 0 0.25rem; border-bottom: 2px solid var(--control-border); }
+/* min-width:0 no .money e width:0 no input: o <input> traz largura intrínseca de ~20 caracteres e,
+   sem isso, empurra a coluna do grid para fora do cartão (a linha vazava na etapa Quem faz) */
+.money { display: flex; align-items: baseline; gap: 0.5rem; min-width: 0; min-height: 3.5rem; padding: 0 0.25rem; border-bottom: 2px solid var(--control-border); }
 .money:focus-within { border-bottom-color: var(--focus); }
 .money[data-invalid] { border-bottom-color: var(--danger-text); }
 .money-unit { color: var(--text-muted); font-size: var(--fs-lead); }
-.money-input { flex: 1; min-width: 0; padding: 0.5rem 0; border: 0; outline: 0; background: transparent; color: var(--text); font-family: var(--font-display); font-size: var(--fs-h3); font-weight: 350; font-variant-numeric: lining-nums tabular-nums; }
+.money-input { flex: 1 1 0; width: 0; min-width: 0; padding: 0.5rem 0; border: 0; outline: 0; background: transparent; color: var(--text); font-family: var(--font-display); font-size: var(--fs-h3); font-weight: 350; font-variant-numeric: lining-nums tabular-nums; }
 
 /* ---------------------------------- slider --------------------------------- */
 
@@ -105,9 +107,6 @@
 .live-sub b { font-weight: 600; }
 .live-sources { margin: 0.25rem 0 0; color: var(--text-subtle); font-size: var(--fs-tiny); line-height: 1.5; }
 .live-sticky { display: grid; gap: 1.5rem; align-content: start; min-width: 0; }
-.live-recap { display: grid; gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
-.live-recap li { padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); color: var(--text); font-family: var(--font-display); font-size: var(--fs-lead); font-weight: 340; line-height: 1.25; }
-.live-recap li:last-child { padding-bottom: 0; border-bottom: 0; }
 .live-actions { display: grid; gap: 0.5rem; }
 .live-action { width: 100%; }
 .live-sub--empty, .live-sub--empty b { color: var(--text-subtle); }
@@ -142,13 +141,11 @@
 .sheet::backdrop { background: color-mix(in oklab, var(--color-ink-950) 72%, transparent); }
 .sheet-body { display: grid; gap: 1.25rem; padding: 1.75rem 1.5rem 1.5rem; }
 .sheet-title { margin: 0; font-family: var(--font-display); font-weight: 350; font-size: var(--fs-h3); line-height: 1.1; }
-.sheet-report { display: grid; gap: 1rem; padding: 1.25rem; border: 1px solid var(--border); border-radius: 1.25rem; background: var(--surface-raised); }
-.sheet-h { margin: 0; font-size: var(--fs-body); font-weight: 600; }
-.sheet-list { margin: -0.5rem 0 0; color: var(--text-muted); font-size: var(--fs-small); }
+.sheet-report { display: grid; gap: 1rem; }
+.sheet-list { margin: 0; color: var(--text-muted); font-size: var(--fs-small); }
 .sheet-send { width: 100%; }
 .sheet-fine { margin: 0; color: var(--text-muted); font-size: var(--fs-tiny); line-height: 1.5; }
 .sheet-fine a, .field-error a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
-.sheet-number { display: flex; align-items: center; gap: 0.875rem; }
 .text-input { width: 100%; min-height: 2.75rem; padding: 0 0.875rem; border: 1px solid var(--control-border); border-radius: 0.75rem; background: var(--surface); color: var(--text); font: inherit; font-size: var(--fs-body); }
 .text-input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .text-input[aria-invalid="true"] { border-color: var(--danger-text); }

@@ -9,7 +9,7 @@ const plan: Plan = {
   ],
   pay: { mode: "bruto", salary: 5000, regime: "presumido", benefits: 0 },
 };
-const lead: Lead = { name: "Ana Souza", email: "ana@miolo.com.br", company: "Miolo", wantsContact: true, whatsapp: "54999990000" };
+const lead: Lead = { email: "ana@miolo.com.br", company: "Miolo", wantsContact: true, whatsapp: "54999990000" };
 const now = new Date("2026-11-04T15:00:00Z");
 
 describe("relatório", () => {
@@ -18,7 +18,8 @@ describe("relatório", () => {
   it("monta com número, linhas e totais", () => {
     expect(r).not.toBeNull();
     expect(r.rows).toHaveLength(2);
-    expect(r.firstName).toBe("Ana");
+    expect(r.company).toBe("Miolo");
+    expect("firstName" in r).toBe(false);
     expect(r.subject).toMatch(/^Seu relatório: até R\$ [\d.]+ por ano devolvidos$/);
     expect(r.internal.prudent).toMatch(/R\$/);
     expect(JSON.stringify({ ...r, internal: null })).not.toMatch(/prudente/i);

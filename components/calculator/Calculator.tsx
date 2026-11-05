@@ -7,8 +7,6 @@ import { site } from "@/content/site";
 import { hoursBucket, track } from "@/lib/analytics";
 import { BENEFIT_STOPS } from "@/lib/draft";
 import { COST } from "@/lib/cost";
-import { evidenceOf } from "@/lib/evidence";
-import { formatMinutes } from "@/lib/format";
 import { formatBRL } from "@/lib/format";
 import { Choice } from "./Choice";
 import { Money } from "./Money";
@@ -38,45 +36,41 @@ function useDebounced<T>(value: T, ms: number): T {
 }
 
 /**
- * Rotinas e quem as faz; o resultado só aparece depois do clique em "Ver resultado", e ali a pessoa
- * escolhe: relatório completo por e-mail ou só o número. A conta vive em lib/plan.ts; o servidor
- * recalcula tudo antes de enviar o relatório. Aqui só desenho, foco e estado.
+ * Rotinas, quem as faz e, no fim, o resultado resumido (o teto por ano) na tela. O relatório completo
+ * só sai por e-mail, a pedido: e-mail e empresa. A conta vive em lib/plan.ts; o servidor recalcula tudo
+ * antes de enviar o relatório. Aqui só desenho, foco e estado.
  */
 export function Calculator({ titled = true }: { titled?: boolean }) {
   const uid = useId();
   const { draft, plan, outcome, update } = useDraft();
-  const [revealed, setRevealed] = useState(false);
   const [dialog, setDialog] = useState(false);
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [step, setStep] = useState(0);
   const title = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
-    if (step > 0 || revealed) title.current?.focus({ preventScroll: true });
-  }, [step, revealed]);
+    if (step > 0) title.current?.focus({ preventScroll: true });
+  }, [step]);
 
   const change: typeof update = (patch) => {
     setSentTo(null);
     update(patch);
   };
 
-  const spokenNow =
-    revealed && outcome.status === "ok" ? `Devolve até ${formatBRL(outcome.ceiling.brlYear)} por ano.` : "";
-  const spoken = useDebounced(spokenNow, 700);
+  const final = step === 2 && outcome.status === "ok";
+  const spoken = useDebounced(final ? `Devolve até ${formatBRL(outcome.ceiling.brlYear)} por ano.` : "", 700);
 
-  const reveal = () => {
-    if (outcome.status !== "ok") return;
-    setDialog(false);
-    setRevealed(true);
+  // medição: uma vez por chegada ao resultado, só faixa de horas e quantidade de rotinas
+  const shown = useRef(false);
+  useEffect(() => {
+    if (!final) {
+      shown.current = false;
+      return;
+    }
+    if (shown.current) return;
+    shown.current = true;
     track("number_revealed", { hours_bucket: hoursBucket(outcome.prudent.hours), routines: plan.routines.length });
-  };
+  }, [final, outcome, plan.routines.length]);
 
-  const PER = { dia: "por dia", semana: "por semana", mes: "por mês" } as const;
-  const recap = [
-    ...draft.routines.map((r) => `${evidenceOf(r.kind)?.label ?? ""} · ${formatMinutes(r.minutes)} · ${r.runs} ${PER[r.period]}`),
-    draft.mode === "bruto"
-      ? `${formatBRL(draft.salary)} bruto · ${draft.regime === "simples" ? "Simples" : "Presumido ou real"}${draft.benefits > 0 ? ` · ${formatBRL(draft.benefits)} de benefícios` : ""}`
-      : `${formatBRL(draft.monthly)} de custo total`,
-  ];
   const Heading = titled ? "h3" : "h2";
 
   return (
@@ -116,16 +110,7 @@ export function Calculator({ titled = true }: { titled?: boolean }) {
       ) : null}
 
       {step === 2 ? (
-        <Result
-          outcome={outcome}
-          revealed={revealed}
-          sentTo={sentTo}
-          spoken={spoken}
-          recap={recap}
-          whatsappUrl={site.contactUrl}
-          onReveal={() => setDialog(true)}
-          onReport={() => setDialog(true)}
-        />
+        <Result outcome={outcome} sentTo={sentTo} spoken={spoken} whatsappUrl={site.contactUrl} onReport={() => setDialog(true)} />
       ) : null}
 
       <div className="calc-nav">
@@ -143,9 +128,8 @@ export function Calculator({ titled = true }: { titled?: boolean }) {
         open={dialog}
         plan={plan}
         onClose={() => setDialog(false)}
-        onNumber={reveal}
         onSent={(email) => {
-          reveal();
+          setDialog(false);
           setSentTo(email);
         }}
       />

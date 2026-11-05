@@ -13,8 +13,8 @@ const plan: Plan = {
 
 describe("PDF do relatório", () => {
   it("renderiza vários seguidos no mesmo processo (bug de glifos do react-pdf 4.9)", async () => {
-    for (const name of ["Ana Souza", "João Conceição", "Mário Ávila"]) {
-      const r = buildReport(plan, { name, email: "a@b.com", company: "Açaí & Cia", wantsContact: false }, new Date(), "https://www.procemiza.com.br", "https://wa.me/555494898181")!;
+    for (const company of ["Açaí & Cia", "João Conceição Ltda", "Mário Ávila ME"]) {
+      const r = buildReport(plan, { email: "a@b.com", company, wantsContact: false }, new Date(), "https://www.procemiza.com.br", "https://wa.me/555494898181")!;
       const buf = await reportPdf(r);
       expect(buf.subarray(0, 5).toString()).toBe("%PDF-");
       expect(buf.length).toBeGreaterThan(5000);

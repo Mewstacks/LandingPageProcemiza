@@ -9,14 +9,12 @@ type Props = {
   open: boolean;
   plan: Plan;
   onClose: () => void;
-  /** "Só o número". */
-  onNumber: () => void;
   /** Relatório enviado: guarda para onde foi. */
   onSent: (email: string) => void;
 };
 
 type Status = "idle" | "sending" | "error";
-type Errors = Partial<Record<"name" | "email" | "company" | "whatsapp", string>>;
+type Errors = Partial<Record<"email" | "company" | "whatsapp", string>>;
 
 declare global {
   interface Window {
@@ -28,18 +26,17 @@ const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 const EMAIL = /^[^\s@<>"]{1,64}@[^\s@<>"]{1,255}\.[^\s@<>"]{2,}$/;
 
 /**
- * A escolha depois do "Ver resultado": relatório completo por e-mail (formulário curto) ou só o
- * número. `<dialog>` nativo: foco preso, Esc fecha, o fundo fica inerte. Honeypot e tempo de
- * preenchimento seguem junto; com chave do Turnstile configurada, o desafio roda aqui.
+ * Pedido do relatório completo por e-mail: só e-mail e empresa. O resumo já está na tela; aqui só
+ * vai o que sai por e-mail. `<dialog>` nativo: foco preso, Esc fecha, o fundo fica inerte. Honeypot e
+ * tempo de preenchimento seguem junto; com chave do Turnstile configurada, o desafio roda aqui.
  */
-export function ResultDialog({ open, plan, onClose, onNumber, onSent }: Props) {
+export function ResultDialog({ open, plan, onClose, onSent }: Props) {
   const uid = useId();
   const ref = useRef<HTMLDialogElement>(null);
   const opened = useRef(0);
   const token = useRef("");
   const widget = useRef<HTMLDivElement>(null);
 
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
   const [wants, setWants] = useState(false);
@@ -77,7 +74,6 @@ export function ResultDialog({ open, plan, onClose, onNumber, onSent }: Props) {
   async function submit(e: FormEvent) {
     e.preventDefault();
     const found: Errors = {};
-    if (name.trim().length < 2) found.name = "Informe o nome";
     if (!EMAIL.test(email.trim())) found.email = "Informe um e-mail válido";
     if (company.trim().length < 2) found.company = "Informe a empresa";
     const digits = whatsapp.replace(/\D/g, "");
@@ -94,7 +90,7 @@ export function ResultDialog({ open, plan, onClose, onNumber, onSent }: Props) {
         body: JSON.stringify({
           routines: plan.routines,
           pay: plan.pay,
-          lead: { name, email, company, wantsContact: wants, whatsapp: wants ? whatsapp : "" },
+          lead: { email, company, wantsContact: wants, whatsapp: wants ? whatsapp : "" },
           trap: { website, elapsedMs: Date.now() - opened.current },
           turnstile: token.current,
         }),
@@ -115,18 +111,12 @@ export function ResultDialog({ open, plan, onClose, onNumber, onSent }: Props) {
     <dialog ref={ref} className="sheet theme-light" aria-labelledby={`${uid}-titulo`} onClose={onClose} onClick={(e) => e.target === ref.current && onClose()}>
       <form className="sheet-body" onSubmit={submit} noValidate>
         <h2 id={`${uid}-titulo`} className="sheet-title">
-          Resultado pronto
+          Relatório completo
         </h2>
 
         <div className="sheet-report">
-          <h3 className="sheet-h">Relatório completo</h3>
           <p className="sheet-list">PDF e e-mail · Conta por rotina · Teto de investimento · Fontes</p>
 
-          <div className="field">
-            <label className="field-label" htmlFor={`${uid}-name`}>Nome</label>
-            <input id={`${uid}-name`} className="text-input" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} aria-invalid={!!errors.name} aria-describedby={err("name")} />
-            {errors.name ? <p id={err("name")} className="field-error" role="alert">{errors.name}</p> : null}
-          </div>
           <div className="field">
             <label className="field-label" htmlFor={`${uid}-email`}>E-mail</label>
             <input id={`${uid}-email`} className="text-input" type="email" inputMode="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} aria-invalid={!!errors.email} aria-describedby={err("email")} />
@@ -171,16 +161,12 @@ export function ResultDialog({ open, plan, onClose, onNumber, onSent }: Props) {
           <button type="submit" className="btn btn-primary sheet-send" disabled={status === "sending"}>
             {status === "sending" ? "Enviando" : status === "error" ? "Tentar de novo" : "Enviar relatório"}
           </button>
-          <p className="sheet-fine">
-            Usamos nome, e-mail e empresa para enviar o relatório. <a href="/privacidade">Privacidade</a>
-          </p>
-        </div>
-
-        <div className="sheet-number">
-          <button type="button" className="btn btn-ghost" onClick={onNumber}>
-            Só o número
+          <button type="button" className="btn btn-ghost sheet-send" onClick={onClose}>
+            Fechar
           </button>
-          <span className="sheet-fine">Sem cadastro</span>
+          <p className="sheet-fine">
+            Usamos e-mail e empresa para enviar o relatório. <a href="/privacidade">Privacidade</a>
+          </p>
         </div>
       </form>
     </dialog>

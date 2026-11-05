@@ -7,7 +7,7 @@ do visitante.
 
 - Next.js 15 (App Router), React 19, TypeScript, Tailwind v4 (tokens em `@theme static`) e CSS próprio.
 - Fraunces nos títulos, Archivo na leitura.
-- Site estático (todas as rotas pré-renderizadas), exceto `POST /api/relatorio` (relatório por e-mail). Variáveis em `.env.example`; sem elas o endpoint responde 503 e o resto do site funciona.
+- Site estático (todas as rotas pré-renderizadas), exceto `POST /api/relatorio` (relatório por e-mail). Variáveis em `.env.example`; sem `RESEND_API_KEY` e `LEADS_TO_EMAIL` o endpoint responde 503 e, em produção, sem `TURNSTILE_SECRET_KEY` responde 400 (`challenge`); o resto do site funciona. O motivo de cada recusa vai para o log da Vercel (`[relatorio] …`), sem dado pessoal. O formulário pede só e-mail e empresa.
 
 ```bash
 npm install

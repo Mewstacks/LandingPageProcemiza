@@ -8,14 +8,13 @@ import { encodePlan } from "./share";
  * O relatório como dados já formatados. Uma função pura alimenta o e-mail, o PDF e a página:
  * os três mostram sempre os mesmos números. Texto honesto: faixa, não promessa.
  */
-export type Lead = { name: string; email: string; company: string; wantsContact: boolean; whatsapp?: string };
+export type Lead = { email: string; company: string; wantsContact: boolean; whatsapp?: string };
 
 export type ReportRow = { label: string; time: string; freq: string; hoursNow: string; hoursBack: string; brlYear: string };
 
 export type ReportModel = {
   id: string;
   dateLabel: string;
-  firstName: string;
   company: string;
   subject: string;
   preheader: string;
@@ -70,7 +69,6 @@ export function buildReport(plan: Plan, lead: Lead, now: Date, origin: string, w
 
 function model(plan: Plan, o: Outcome, lead: Lead, now: Date, origin: string, whatsappBase: string): ReportModel {
   const id = reportId(plan, lead.email, now);
-  const firstName = (lead.name.trim().split(/\s+/)[0] ?? "").replace(/[^\p{L}'-]/gu, "").slice(0, 30) || "você";
   const ceiling = formatBRL(o.ceiling.brlYear);
   const prudent = formatBRL(o.prudent.brlYear);
 
@@ -105,7 +103,6 @@ function model(plan: Plan, o: Outcome, lead: Lead, now: Date, origin: string, wh
   return {
     id,
     dateLabel: new Intl.DateTimeFormat("pt-BR", { day: "numeric", month: "long", year: "numeric", timeZone: "America/Sao_Paulo" }).format(now),
-    firstName,
     company: lead.company.trim(),
     subject: `Seu relatório: até ${ceiling} por ano devolvidos`,
     preheader: "Conta por rotina, premissas e fontes. PDF em anexo.",

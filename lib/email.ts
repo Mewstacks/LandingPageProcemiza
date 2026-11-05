@@ -31,7 +31,7 @@ export function reportEmail(r: ReportModel): { html: string; text: string } {
 
   const body = `
 <p style="margin:0 0 4px;font-family:${SANS};font-size:12px;color:${MUTED}">Relatório nº ${esc(r.id)} · ${esc(r.dateLabel)}</p>
-<p style="margin:0 0 20px;font-family:${SANS};font-size:16px;color:${INK}">Olá, ${esc(r.firstName)}. A sua conta:</p>
+<p style="margin:0 0 20px;font-family:${SANS};font-size:16px;color:${INK}">A conta da ${esc(r.company)}:</p>
 
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${INK};border-radius:12px"><tr><td style="padding:28px 24px;font-family:${SANS};color:${PAPER}">
 <p style="margin:0 0 6px;font-size:13px;color:#cbc8c0">Devolvidos por ano, até</p>
@@ -74,7 +74,7 @@ ${body}
 
   const text = [
     `Relatório nº ${r.id} · ${r.dateLabel}`,
-    `Olá, ${r.firstName}. A sua conta:`,
+    `A conta da ${r.company}:`,
     "",
     `Devolvidos por ano, até ${r.headline.ceiling}.`,
     `${r.headline.hoursBack} · ${r.headline.people} · ${r.headline.share}`,
@@ -110,11 +110,10 @@ ${body}
 export function teamEmail(r: ReportModel, lead: Lead): { subject: string; text: string } {
   const hot = lead.wantsContact;
   return {
-    subject: `${hot ? "[Quente] " : ""}${lead.name} · ${lead.company} · até ${r.headline.ceiling}/ano`,
+    subject: `${hot ? "[Quente] " : ""}${lead.company} · até ${r.headline.ceiling}/ano`,
     text: [
       `Relatório ${r.id}`,
       `Quer falar: ${hot ? "SIM" : "não"}`,
-      `Nome: ${lead.name}`,
       `E-mail: ${lead.email}`,
       `Empresa: ${lead.company}`,
       `WhatsApp: ${lead.whatsapp || "não informado"}`,

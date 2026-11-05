@@ -5,45 +5,22 @@ import { Odometer } from "./Odometer";
 
 type Props = {
   outcome: Outcome | Invalid;
-  revealed: boolean;
   /** E-mail para onde o relatório foi, quando foi. */
   sentTo: string | null;
   spoken: string;
-  /** O que a pessoa montou, uma linha por item. */
-  recap: string[];
   whatsappUrl: string;
-  onReveal: () => void;
   onReport: () => void;
 };
 
 const SOURCES = "MIT SMR 2016 · LSE 2015 · MGI 2023";
 
 /**
- * O painel de tinta. Antes do clique é um esqueleto com um botão só. Depois, o número do Teto em
- * dígitos que rolam, o Prudente ao lado e a faixa em barra. Os dígitos são desenho (`aria-hidden`):
- * quem fala é `spoken`, numa região educada.
+ * O painel de tinta do fim: o resumo (o Teto por ano em dígitos que rolam, as horas e a faixa em
+ * barra) já na tela. O relatório completo só vai por e-mail, a pedido. Os dígitos são desenho
+ * (`aria-hidden`): quem fala é `spoken`, numa região educada.
  */
-export function Result({ outcome, revealed, sentTo, spoken, recap, whatsappUrl, onReveal, onReport }: Props) {
-  const ok = outcome.status === "ok";
-
-  if (!revealed || !ok) {
-    return (
-      <section className="live theme-dark" aria-label="Resultado" data-ui>
-        <div className="live-sticky">
-        <ul className="live-recap">
-          {recap.map((line, i) => (
-            <li key={i}>{line}</li>
-          ))}
-        </ul>
-        <div className="live-actions">
-          <button type="button" className="btn btn-primary live-action" onClick={onReveal} disabled={!ok}>
-            Ver resultado
-          </button>
-        </div>
-        </div>
-      </section>
-    );
-  }
+export function Result({ outcome, sentTo, spoken, whatsappUrl, onReport }: Props) {
+  if (outcome.status !== "ok") return null;
 
   const text = formatBRL(outcome.ceiling.brlYear);
   return (

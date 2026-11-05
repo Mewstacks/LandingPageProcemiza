@@ -16,7 +16,7 @@ export function ReportView() {
 
   useEffect(() => {
     const plan = decodePlan(window.location.hash);
-    const r = plan ? buildReport(plan, { name: "Você", email: "", company: "", wantsContact: false }, new Date(), window.location.origin, site.contactUrl) : null;
+    const r = plan ? buildReport(plan, { email: "", company: "", wantsContact: false }, new Date(), window.location.origin, site.contactUrl) : null;
     setState(r ? { r } : "invalid");
   }, []);
 
