@@ -7,20 +7,33 @@ const plan: Plan = {
   routines: [{ kind: "dados", minutes: 30, runs: 5, period: "semana" }],
   pay: { mode: "bruto", salary: 5000, regime: "presumido", benefits: 0 },
 };
-const lead: Lead = { email: "ana@x.com", company: 'A&B <script> <b>"S"</b>', wantsContact: true };
+const lead: Lead = { email: "ana@x.com", company: "A&B Açaí", wantsContact: true };
+const hostile = (company: string) => buildReport(plan, { ...lead, company }, new Date("2026-11-04T15:00:00Z"), "https://www.procemiza.com.br", "https://wa.me/555494898181")!;
 const r = buildReport(plan, lead, new Date("2026-11-04T15:00:00Z"), "https://www.procemiza.com.br", "https://wa.me/555494898181")!;
 
 describe("e-mail do relatório", () => {
   const { html, text } = reportEmail(r);
   it("escapa o que a pessoa digitou", () => {
     expect(esc(`<&>"'`)).toBe("&lt;&amp;&gt;&quot;&#39;");
-    expect(html).not.toContain("<script>");
-    expect(html).not.toContain("<b>");
+    const evil = reportEmail(hostile('A&B <script>alert(1)</script> <b>"S"</b>'));
+    expect(evil.html).not.toContain("<script>");
+    expect(evil.html).not.toContain("<b>");
   });
-  it("sem nome: cumprimenta pela empresa, nunca por 'undefined'", () => {
-    expect(html).toContain("A conta da A&amp;B");
-    expect(text).toContain("A conta da A&B");
+  it("saudação neutra: não repete nada que a pessoa digitou, nem 'undefined'", () => {
+    expect(html).toContain("A sua conta:");
+    expect(text).toContain("A sua conta:");
     expect(html + text).not.toContain("undefined");
+    expect(html + text).not.toContain("Açaí");
+  });
+  it.each([
+    ["link", "Pague agora em https://evil.example/x"],
+    ["domínio", "Confirme em evil.com.br"],
+    ["e-mail", "fraude@evil.com"],
+    ["frase sem link", "Você ganhou, responda este e-mail com a senha"],
+  ])("empresa com %s não chega ao e-mail da pessoa (nem html, nem texto, nem assunto)", (_n, company) => {
+    const r2 = hostile(company);
+    const out = reportEmail(r2);
+    expect(out.html + out.text + r2.subject + r2.preheader).not.toMatch(/evil|pague|confirme|fraude|senha|ganhou/i);
   });
   it("tem número, prudente, fontes, WhatsApp e texto simples", () => {
     expect(html).toContain(r.headline.ceiling);

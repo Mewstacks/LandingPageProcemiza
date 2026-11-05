@@ -15,7 +15,6 @@ export type ReportRow = { label: string; time: string; freq: string; hoursNow: s
 export type ReportModel = {
   id: string;
   dateLabel: string;
-  company: string;
   subject: string;
   preheader: string;
   headline: { ceiling: string; hoursBack: string; people: string; share: string; threeYears: string };
@@ -103,7 +102,6 @@ function model(plan: Plan, o: Outcome, lead: Lead, now: Date, origin: string, wh
   return {
     id,
     dateLabel: new Intl.DateTimeFormat("pt-BR", { day: "numeric", month: "long", year: "numeric", timeZone: "America/Sao_Paulo" }).format(now),
-    company: lead.company.trim(),
     subject: `Seu relatório: até ${ceiling} por ano devolvidos`,
     preheader: "Conta por rotina, premissas e fontes. PDF em anexo.",
     headline: {

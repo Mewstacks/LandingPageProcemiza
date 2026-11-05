@@ -18,7 +18,8 @@ describe("relatório", () => {
   it("monta com número, linhas e totais", () => {
     expect(r).not.toBeNull();
     expect(r.rows).toHaveLength(2);
-    expect(r.company).toBe("Miolo");
+    // nada que a pessoa digitou (nome, empresa) volta no relatório que ela recebe
+    expect("company" in r).toBe(false);
     expect("firstName" in r).toBe(false);
     expect(r.subject).toMatch(/^Seu relatório: até R\$ [\d.]+ por ano devolvidos$/);
     expect(r.internal.prudent).toMatch(/R\$/);
