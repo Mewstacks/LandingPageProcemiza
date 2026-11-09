@@ -12,7 +12,7 @@ export type Solution = {
 export const solutions: readonly Solution[] = [
   {
     id: "automacao",
-    title: "Automação de rotinas",
+    title: "Automação de processos",
     line: "A tarefa repetida vira fluxo automático.",
     example: "Um pedido chega, é conferido e vira tarefa para o responsável.",
     href: pages.automacao.path,

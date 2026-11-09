@@ -19,7 +19,7 @@ export const pages = {
     title: "Procemiza | Automação, integração e sistemas sob medida",
     description:
       "Automatizamos rotinas, integramos sistemas e criamos sistemas sob medida para empresas. Calcule quanto tempo sua rotina devolve.",
-    modified: "2026-10-30",
+    modified: "2026-11-09",
     priority: 1,
   },
   calculadora: {
@@ -28,7 +28,7 @@ export const pages = {
     title: "Calculadora de ganho com automação",
     description:
       "Informe rotinas, tempo e salário e veja o ganho por ano em faixa, com fontes. Relatório completo por e-mail.",
-    modified: "2026-10-30",
+    modified: "2026-11-05",
     priority: 0.9,
   },
   automacao: {
@@ -37,7 +37,7 @@ export const pages = {
     title: "Automação de processos e rotinas",
     description:
       "Transforme tarefas que se repetem em fluxos com critérios claros, do recebimento da informação ao encaminhamento para a pessoa certa.",
-    modified: "2026-10-28",
+    modified: "2026-10-31",
     priority: 0.8,
   },
   integracao: {
@@ -46,7 +46,7 @@ export const pages = {
     title: "Integração de sistemas para empresas",
     description:
       "Conecte atendimento, operação e gestão para que a informação circule com contexto, sem copiar e colar entre telas.",
-    modified: "2026-10-28",
+    modified: "2026-10-31",
     priority: 0.8,
   },
   sobMedida: {
@@ -55,7 +55,7 @@ export const pages = {
     title: "Sistemas sob medida para a sua operação",
     description:
       "Uma ferramenta construída em torno do seu jeito de trabalhar, com as regras, as permissões e as etapas que a operação precisa.",
-    modified: "2026-10-28",
+    modified: "2026-10-31",
     priority: 0.8,
   },
   privacidade: {
@@ -63,7 +63,7 @@ export const pages = {
     name: "Privacidade",
     title: "Política de privacidade",
     description: "Que dados o site trata, para quê e como exercer seus direitos pela LGPD.",
-    modified: "2026-11-04",
+    modified: "2026-11-05",
     priority: 0.2,
   },
 } as const satisfies Record<string, PageMeta>;
