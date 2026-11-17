@@ -44,10 +44,12 @@ describe("seo", () => {
     }
   });
 
-  it("organização omite campos sem valor (nada vazio ou inventado)", () => {
+  it("organização traz CNPJ e cidade do cadastro e omite o que não tem valor (e-mail, redes)", () => {
     const [org] = organizationNodes() as Record<string, unknown>[];
-    expect(org).not.toHaveProperty("taxID");
-    expect(org).not.toHaveProperty("address");
+    expect(org.taxID).toBe("68.567.123/0001-42");
+    expect(org.legalName).toBe("Procemiza Processos Automatizados Ltda");
+    expect(org.address).toMatchObject({ addressLocality: "Caxias do Sul", addressRegion: "RS", addressCountry: "BR" });
+    expect(org).not.toHaveProperty("email");
     expect(org).not.toHaveProperty("sameAs");
     expect(org["@id"]).toBe("https://www.procemiza.com.br/#organization");
   });

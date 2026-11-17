@@ -15,10 +15,12 @@ export type Entity = {
 };
 
 export const entity: Entity = {
-  legalName: "Procemiza — Inteligência de Negócios",
-  cityState: undefined,
+  // Razão social e CNPJ conferidos no cadastro da Receita (CNPJ 68.567.123/0001-42, matriz em Caxias do Sul).
+  // O e-mail do cadastro é o do contador: não é contato do site, por isso fica vazio.
+  legalName: "Procemiza Processos Automatizados Ltda",
+  cityState: "Caxias do Sul, RS",
   email: undefined,
-  cnpj: undefined,
+  cnpj: "68.567.123/0001-42",
   social: [],
 };
 
