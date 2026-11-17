@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { entity, nav, site } from "@/content/site";
+import { pages, sectorKeys } from "@/content/pages";
 import { CookiePreferences } from "@/components/consent/Analytics";
 
 export function Footer() {
@@ -13,6 +14,9 @@ export function Footer() {
         </div>
         <nav aria-label="Navegação do rodapé">
           <ul>{nav.map((item) => <li key={item.href}><Link href={item.href}>{item.label}</Link></li>)}</ul>
+        </nav>
+        <nav aria-label="Setores">
+          <ul>{sectorKeys.map((k) => <li key={k}><Link href={pages[k].path}>{pages[k].name}</Link></li>)}</ul>
         </nav>
         <ul className="footer-contact">
           <li>

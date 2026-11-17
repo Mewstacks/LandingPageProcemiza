@@ -43,6 +43,7 @@ export const cta = {
   primary: "Calcular ganho",
   whatsapp: "Falar no WhatsApp",
   final: "Falar no WhatsApp",
+  diagnostic: "Pedir diagnóstico",
 } as const;
 
 export const hero = {

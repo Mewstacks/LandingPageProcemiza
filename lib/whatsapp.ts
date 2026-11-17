@@ -65,3 +65,10 @@ export function formatPhone(contactUrl: string): string {
   const match = digits.match(/^55(\d{2})(\d{4,5})(\d{4})$/);
   return match ? `+55 ${match[1]} ${match[2]}-${match[3]}` : `+${digits}`;
 }
+
+/** Pedido de diagnóstico de uma rotina: o sistema de atendimento reconhece o começo da frase. */
+export const DIAGNOSTIC_MESSAGE = "Olá! Quero um diagnóstico de uma rotina da minha empresa.";
+
+export function buildDiagnosticUrl(base: string): string {
+  return `${base}?text=${encodeURIComponent(DIAGNOSTIC_MESSAGE)}`;
+}

@@ -58,6 +58,51 @@ export const pages = {
     modified: "2026-10-31",
     priority: 0.8,
   },
+  distribuidoras: {
+    path: "/automacao-para-distribuidoras",
+    name: "Distribuidoras e atacado",
+    title: "Automação para distribuidoras e atacado",
+    description:
+      "Pedido por WhatsApp que vira pedido no sistema, nota de entrada sem digitar e cadastro fiscal conferido. Calcule quanto tempo a rotina devolve.",
+    modified: "2026-11-17",
+    priority: 0.7,
+  },
+  transportadoras: {
+    path: "/automacao-para-transportadoras",
+    name: "Transportadoras",
+    title: "Automação para transportadoras e logística",
+    description:
+      "CT-e, canhoto e fatura de frete conferidos sem digitar de novo. Calcule quanto tempo a rotina da sua transportadora devolve.",
+    modified: "2026-11-17",
+    priority: 0.7,
+  },
+  industrias: {
+    path: "/automacao-para-industrias",
+    name: "Indústrias",
+    title: "Automação para indústrias",
+    description:
+      "Pedido de cliente, nota de entrada e compras sem lançamento manual entre sistemas. Calcule quanto tempo a rotina da fábrica devolve.",
+    modified: "2026-11-17",
+    priority: 0.7,
+  },
+  clinicas: {
+    path: "/automacao-para-clinicas",
+    name: "Clínicas e laboratórios",
+    title: "Automação para clínicas e laboratórios",
+    description:
+      "Faturamento de convênio, glosa e repasse conferidos sem planilha. Calcule quanto tempo a rotina da clínica devolve.",
+    modified: "2026-11-17",
+    priority: 0.7,
+  },
+  contabeis: {
+    path: "/automacao-para-escritorios-contabeis",
+    name: "Escritórios contábeis",
+    title: "Automação para escritórios contábeis",
+    description:
+      "Nota baixada, conferida e lançada sem digitar; pedido de documento respondido no WhatsApp. Calcule quanto tempo o fechamento devolve.",
+    modified: "2026-11-17",
+    priority: 0.7,
+  },
   privacidade: {
     path: "/privacidade",
     name: "Privacidade",
@@ -70,3 +115,6 @@ export const pages = {
 
 export type PageKey = keyof typeof pages;
 export const pageList: readonly PageMeta[] = Object.values(pages);
+
+/** Páginas por setor: uma por tipo de empresa com rotina repetida; alimentam o rodapé e o sitemap. */
+export const sectorKeys = ["distribuidoras", "transportadoras", "industrias", "clinicas", "contabeis"] as const satisfies readonly PageKey[];

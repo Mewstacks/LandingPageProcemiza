@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildMessage, buildWhatsAppUrl, cleanRoutine, formatPhone, MESSAGE_MAX, ROUTINE_MAX } from "./whatsapp";
+import { buildDiagnosticUrl, DIAGNOSTIC_MESSAGE, buildMessage, buildWhatsAppUrl, cleanRoutine, formatPhone, MESSAGE_MAX, ROUTINE_MAX } from "./whatsapp";
 
 const base = "https://wa.me/555494898181";
 
@@ -79,5 +79,14 @@ describe("buildWhatsAppUrl", () => {
     const decoded = decodeURIComponent(url.split("?text=")[1]);
     expect(decoded).toContain(routine);
     expect(new URL(url).searchParams.get("text")).toBe(decoded);
+  });
+});
+
+describe("diagnóstico", () => {
+  it("abre o WhatsApp com o pedido de diagnóstico, que o sistema de atendimento reconhece", () => {
+    const url = buildDiagnosticUrl("https://wa.me/5554900000000");
+    expect(url.startsWith("https://wa.me/5554900000000?text=")).toBe(true);
+    expect(decodeURIComponent(url.split("?text=")[1])).toBe(DIAGNOSTIC_MESSAGE);
+    expect(DIAGNOSTIC_MESSAGE.startsWith("Olá! Quero um diagnóstico")).toBe(true);
   });
 });

@@ -1,4 +1,5 @@
 import { cta, pilot, site } from "@/content/site";
+import { buildDiagnosticUrl } from "@/lib/whatsapp";
 
 /**
  * Tinta de novo. Na home a ideia do início volta como cartaz, com o único botão laranja da página;
@@ -8,10 +9,16 @@ export function PilotCTA({ compact = false }: { compact?: boolean }) {
   // uma frase por linha; o texto lido continua sendo o título inteiro
   const lines = pilot.title.split(/(?<=\.)\s+/);
   const button = (
-    <a href={site.contactUrl} target="_blank" rel="noopener noreferrer" className="btn btn-accent">
-      {cta.final}
-      <span className="sr-only"> (abre em nova aba)</span>
-    </a>
+    <>
+      <a href={site.contactUrl} target="_blank" rel="noopener noreferrer" className="btn btn-accent">
+        {cta.final}
+        <span className="sr-only"> (abre em nova aba)</span>
+      </a>
+      <a href={buildDiagnosticUrl(site.contactUrl)} target="_blank" rel="noopener noreferrer" className="text-link">
+        {cta.diagnostic}
+        <span className="sr-only"> (abre em nova aba)</span>
+      </a>
+    </>
   );
   return (
     <section id="contato" className={`cta theme-dark${compact ? " cta--compact" : ""}`} aria-labelledby="piloto-title">

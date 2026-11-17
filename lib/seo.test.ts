@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { pages, pageList } from "@/content/pages";
+import { pages, pageList, sectorKeys } from "@/content/pages";
 import { absoluteUrl, breadcrumbNode, buildMetadata, graph, organizationNodes, serializeJsonLd } from "./seo";
 
 describe("seo", () => {
@@ -24,6 +24,15 @@ describe("seo", () => {
     for (const p of pageList) {
       expect(p.title.length).toBeLessThanOrEqual(60);
       expect(p.description.length).toBeLessThanOrEqual(170);
+    }
+  });
+
+  it("cada setor tem página própria no sitemap, com título que cita o setor", () => {
+    expect(sectorKeys.length).toBeGreaterThanOrEqual(5);
+    for (const k of sectorKeys) {
+      expect(pageList).toContain(pages[k]);
+      expect(pages[k].path).toMatch(/^\/automacao-para-/);
+      expect(pages[k].title.startsWith("Automação para")).toBe(true);
     }
   });
 
